@@ -1,0 +1,21 @@
+{
+	"name": "watersharing-blocks",
+	"version": "1.0.0",
+	"description": "Build scripts for Gutenberg Blocks.",
+	"main": "index.js",
+	"scripts": {
+		"blocks": "wp-scripts build --webpack-src-dir=src/ --output-path=build/"
+	},
+	"author": "Troy Web Consulting",
+	"license": "ISC",
+	"devDependencies": {
+		"@wordpress/scripts": "^27.3.0"
+	},
+	"dependencies": {
+		"@wordpress/blocks": "^12.29.0",
+		"@wordpress/components": "^27.0.0",
+		"@wordpress/editor": "^13.29.0",
+		"@wordpress/element": "^5.29.0",
+		"@wordpress/i18n": "^4.52.0"
+	}
+}

@@ -1,0 +1,85 @@
+/* Watersharing Button Styles */
+.watersharing-blocks, .watersharing-table {
+	&.full-width {
+		max-width: 100%;
+	}
+
+	.watersharing-submit-button {
+		background: $blue;
+		border: none;
+		border-radius: 10px;
+		box-shadow: $drop-shadow;
+		color: #FFF;
+		cursor: pointer;
+		font-size: 16px; font-size: 1rem;
+		line-height: 1.5;
+		padding: 8px 24px;
+
+		&:hover {
+			background: $grey;
+		}
+
+		&:disabled, .disabled {
+			cursor: pointer;
+			opacity: 0.65;
+			pointer-events: none;
+		}
+	}
+
+	:disabled, .disabled {
+		cursor: pointer;
+		opacity: 0.65;
+		pointer-events: none;
+	}
+}
+
+/* Watersharing Input Styles */
+.watersharing-blocks {
+	input, input.input, input[type='date'], input[type='text'], select {
+		background-color: #FFF;
+		background-clip: padding-box;
+		border: 1px solid $light-grey;
+		border-radius: 10px;
+		box-sizing: border-box;
+		font-size: 16px; font-size: 1rem;
+		line-height: 1.5;
+		padding: 8px 16px;
+	}
+}
+
+/* Watersharing Responsive Layout Classes */
+.watersharing-row {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+
+	& > * {
+		align-self: stretch;
+		box-sizing: border-box;
+		flex-shrink: 0;
+		max-width: 100%;
+		width: 100%;
+	}
+
+	&.no-margin-bottom {
+		margin-bottom: 0;
+	}
+
+	.watersharing-col-half {
+		flex: 0 0 auto;
+		width: 50%;
+	}
+
+	.watersharing-col-third {
+		@media (min-width: 992px) {
+			flex: 0 0 auto;
+			width: 33.3333333%;
+		}
+	}
+
+	.watersharing-col {
+		flex: 0 0 auto;
+		width: 100%;
+	}
+
+}

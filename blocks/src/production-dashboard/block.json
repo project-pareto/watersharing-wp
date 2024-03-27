@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "watersharing/production-dashboard",
+	"version": "0.1.0",
+	"title": "Production Dashboard (Have Water Requests)",
+	"category": "watersharing",
+	"description": "Displays a dashboard of 'have water' request submissions by user for the watersharing project.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "production-dashboard",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}

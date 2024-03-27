@@ -1,0 +1,150 @@
+.tablesorter-default {
+    width: 100%
+}
+
+.tablesorter-default .tablesorter-header {
+    cursor: pointer
+}
+
+.tablesorter-default .sorter-false {
+    cursor: default
+}
+
+.tablesorter-default .tablesorter-header-inner {
+    padding: 4px 18px 4px 4px;
+    position: relative
+}
+
+.tablesorter-default thead .tablesorter-header {
+    background-position: 100%;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    padding: 4px 18px 4px 4px;
+    white-space: normal
+}
+
+.tablesorter-default thead .nosort {
+    background: none!important
+}
+
+.tablesorter-default thead .tablesorter-headerUnSorted {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgOEgxbDctOHptMCAxSDFsNyA3eiIgZmlsbD0iIzIyMiIvPjwvc3ZnPg==)
+}
+
+.tablesorter-default thead .tablesorter-headerAsc {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgMTFIMWw3LTh6IiBmaWxsPSIjMjIyIi8+PC9zdmc+)
+}
+
+.tablesorter-default thead .tablesorter-headerDesc {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgNkgxbDcgN3oiIGZpbGw9IiMyMjIiLz48L3N2Zz4=)
+}
+
+.tablesorter-default-dark thead .tablesorter-headerUnSorted {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgOEgxbDctOHptMCAxSDFsNyA3eiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPg==)
+}
+
+.tablesorter-default-dark thead .tablesorter-headerAsc {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgMTFIMWw3LTh6IiBmaWxsPSIjZmZmIi8+PC9zdmc+)
+}
+
+.tablesorter-default-dark thead .tablesorter-headerDesc {
+    background-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxOCIgaGVpZ2h0PSIxMiIgdmlld0JveD0iMCAwIDI0IDE2Ij48cGF0aCBkPSJNMTUgNkgxbDcgN3oiIGZpbGw9IiNmZmYiLz48L3N2Zz4=)
+}
+
+.tablesorter-default>tbody>tr.odd>td,.tablesorter-default>tbody>tr.tablesorter-hasChildRow.odd:hover~tr.tablesorter-hasChildRow.odd~.tablesorter-childRow.odd>td {
+    background-color: #f9f9f9
+}
+
+.tablesorter-default>tbody>tr.even:hover>td,.tablesorter-default>tbody>tr.hover>td,.tablesorter-default>tbody>tr.odd:hover>td,.tablesorter-default>tbody>tr.tablesorter-hasChildRow.even:hover~.tablesorter-childRow.even>td,.tablesorter-default>tbody>tr.tablesorter-hasChildRow.odd:hover~.tablesorter-childRow.odd>td {
+    background-color: #f5f5f5
+}
+
+.tablesorter-default>tbody>tr.even>td,.tablesorter-default>tbody>tr.tablesorter-hasChildRow.even:hover~tr.tablesorter-hasChildRow.even~.tablesorter-childRow.even>td {
+    background-color: #fff
+}
+
+.tablesorter-default .tablesorter-processing {
+    background-image: url(data:image/gif;base64,R0lGODlhFAAUAKEAAO7u7lpaWgAAAAAAACH/C05FVFNDQVBFMi4wAwEAAAAh+QQBCgACACwAAAAAFAAUAAACQZRvoIDtu1wLQUAlqKTVxqwhXIiBnDg6Y4eyx4lKW5XK7wrLeK3vbq8J2W4T4e1nMhpWrZCTt3xKZ8kgsggdJmUFACH5BAEKAAIALAcAAAALAAcAAAIUVB6ii7jajgCAuUmtovxtXnmdUAAAIfkEAQoAAgAsDQACAAcACwAAAhRUIpmHy/3gUVQAQO9NetuugCFWAAAh+QQBCgACACwNAAcABwALAAACE5QVcZjKbVo6ck2AF95m5/6BSwEAIfkEAQoAAgAsBwANAAsABwAAAhOUH3kr6QaAcSrGWe1VQl+mMUIBACH5BAEKAAIALAIADQALAAcAAAIUlICmh7ncTAgqijkruDiv7n2YUAAAIfkEAQoAAgAsAAAHAAcACwAAAhQUIGmHyedehIoqFXLKfPOAaZdWAAAh+QQFCgACACwAAAIABwALAAACFJQFcJiXb15zLYRl7cla8OtlGGgUADs=);
+    background-position: 50%!important;
+    background-repeat: no-repeat!important
+}
+
+.tablesorter-default>.caption {
+    background-color: #fff
+}
+
+.tablesorter-default .tablesorter-filter-row input.tablesorter-filter,.tablesorter-default .tablesorter-filter-row select.tablesorter-filter {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #333;
+    margin: 0;
+    padding: 4px 6px;
+    -webkit-transition: height .1s ease;
+    -moz-transition: height .1s ease;
+    -o-transition: height .1s ease;
+    transition: height .1s ease;
+    width: 98%
+}
+
+.tablesorter-default .tablesorter-filter-row .tablesorter-filter.disabled {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+    box-sizing: border-box;
+    color: #555;
+    cursor: not-allowed;
+    transition: height .1s ease
+}
+
+.tablesorter-default .tablesorter-filter-row {
+    background-color: #efefef
+}
+
+.tablesorter-default .tablesorter-filter-row td {
+    background-color: #efefef;
+    line-height: normal;
+    padding: 4px 6px;
+    text-align: center;
+    -webkit-transition: line-height .1s ease;
+    -moz-transition: line-height .1s ease;
+    -o-transition: line-height .1s ease;
+    transition: line-height .1s ease;
+    vertical-align: middle
+}
+
+.tablesorter-default .tablesorter-filter-row.hideme td {
+    line-height: 0;
+    margin: 0;
+    padding: 2px
+}
+
+.tablesorter-default .tablesorter-filter-row.hideme * {
+    border: 0;
+    height: 1px;
+    margin: 0;
+    min-height: 0;
+    opacity: 0;
+    padding: 0
+}
+
+.tablesorter .filtered {
+    display: none
+}
+
+.tablesorter-default .tablesorter-pager select {
+    display: inline-block;
+    padding: 4px 6px;
+    width: auto
+}
+
+.tablesorter-default .tablesorter-pager .pagedisplay {
+    border: 0
+}
+
+.tablesorter .tablesorter-errorRow td {
+    background-color: #e6bf99;
+    cursor: pointer;
+    text-align: center
+}

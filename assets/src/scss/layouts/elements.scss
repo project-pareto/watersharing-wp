@@ -1,0 +1,331 @@
+/* Watersharing Card Styles */
+.watersharing-blocks {
+	.watersharing-card-wrap {
+		background: #FFF;
+		border-radius: 10px;
+		box-shadow: $drop-shadow;
+		margin-bottom: 3rem;
+		overflow: auto;
+
+		.watersharing-card-inner {
+			.watersharing-card-header {
+				background: $dark-blue;
+				text-align: center;
+				padding-top: 1.5rem;
+				padding-bottom: 1rem;
+
+				.watersharing-card-title {
+					color: #FFF;
+					display: block;
+					font-size: 1.625rem;
+					font-weight: 500;
+					line-height: 1.75;
+				}
+			}
+
+			.watersharing-card-body {
+				@media (min-width: 576px) {
+					padding: 40px 60px 60px;
+				}
+
+				padding: 20px;
+			}
+		}
+	}
+}
+
+/* Watersharing Form Styles */
+.watersharing-blocks {
+	.watersharing-form {
+		.watersharing-row {
+			margin-bottom: 1rem;
+		}
+
+		input, input.input, input[type='date'], input[type='text'], select {
+			width: 100%;
+		}
+
+		.watersharing-form-label {
+			@media (min-width: 576px) {
+				text-align: right;
+				flex: 0 0 auto;
+				width: 25%;
+			}
+
+			flex-shrink: 0;
+			font-weight: 700;
+			line-height: 1.5;
+			max-width: 100%;
+			padding: 7px 10px 7px 0;
+			width: 100%;
+		}
+
+		.watersharing-input-col {
+			@media (min-width: 576px) {
+				flex: 0 0 auto;
+				width: 75%;
+			}
+
+			flex-shrink: 0;
+			max-width: 100%;
+			width: 100%;
+		}
+
+		.watersharing-date-sep {
+			@media (min-width: 576px) {
+				display: block;
+			}
+
+			display: none;
+			flex: 0 0 auto;
+			width: 16.66666667%;
+			text-align: center;
+		}
+
+		.watersharing-date-col {
+			@media (min-width: 576px) {
+				flex: 0 0 auto;
+				margin-bottom: 0;
+				width: 41.66667%;
+			}
+
+			margin-bottom: 8px;
+		}
+
+		.watersharing-section-break {
+			border-bottom: 1px solid $light-grey;
+			margin-top: 3rem;
+			margin-bottom: 1rem;
+
+			.watersharing-info-text {
+				font-size: 14px;
+				margin-bottom: 8px;
+			}
+		}
+
+		.watersharing-submit-button {
+			width: 100%;
+		}
+	}
+}
+
+/* Watersharing Match Request Table Styles */
+table.watersharing-table {
+	border-collapse: separate;
+	border-spacing: 0 .125em;
+	margin-bottom: 1rem;
+	vertical-align: top;
+	width: 100%;
+
+	@media( max-width: 767px) {
+		th {
+			display: none;
+		}
+
+		tbody, td, thead, tr {
+			display: block;
+		}
+
+		tr.watersharing-request-row {
+			> td {
+				border-bottom: 1px solid $light-blue;
+			}
+		}
+	}
+
+	& > thead {
+		vertical-align: bottom;
+
+		th {
+			line-height: 2;
+			padding: 4px 18px 4px 4px;
+			text-align: left;
+		}
+	}
+
+	tr.watersharing-request-detail {
+		display: table-row;
+
+		&.collapse {
+			display: none;
+		}
+
+		&:not(collapse) > td > div {
+			max-height: 250px;
+		}
+
+		&.collapsing > td > div {
+		    max-height: 0;
+		}
+
+		& > td {
+			overflow: hidden;
+
+			> div {
+				transition: max-height .35s ease;
+			}
+		}
+	}
+
+	tr.watersharing-request-row {
+		background: #FFF;
+		box-shadow: $drop-shadow;
+		position: relative;
+
+		@media (max-width: 767px) {
+			margin-bottom: 10px;
+		}
+
+		&.closed {
+			background: #EAEAEA;
+		}
+
+		&.row-expanded {
+			background: #D8E2F3;
+		}
+
+		& > td {
+			padding: .5rem .5rem;
+			border-bottom-width: 1px;
+
+			&.align-middle {
+				vertical-align: middle;
+			}
+
+			input[type=checkbox] {
+			    height: 20px;
+			    margin-top: 6px;
+			    width: 20px;
+
+				&:hover {
+					cursor: pointer;
+				}
+			}
+
+			.toggle-row {
+				&.disabled {
+					pointer-events: none;
+					opacity: .35;
+				}
+
+				.fa {
+				    transition: all .4s ease
+				}
+
+				&.active .fa {
+					transform: rotate(90deg)
+				}
+			}
+		}
+	}
+
+	span.status-matched {
+	    color: #70ad47;
+	    font-weight: 700
+	}
+
+	span.status-pending {
+	    color: #4e79a7;
+	    font-weight: 700
+	}
+
+	span.matches {
+		&.matched i {
+		    color: #70ad47
+		}
+
+		i {
+			color: #a32828;
+			margin-right: 10px
+		}
+	}
+
+	.watersharing-request-detail {
+		background: $light-blue;
+
+		.watersharing-match-block {
+			font-size: 14px;
+			padding: .5rem 1rem;
+
+			.watersharing-match-detail {
+				@media (min-width: 992px) {
+					flex: 0 0 auto;
+					width: 66.6666667%;
+				}
+			}
+		}
+
+		.watersharing-contact {
+			span {
+				display: block;
+
+				&.heading {
+					font-size: 18px;
+					margin-bottom: 10px;
+				}
+			}
+		}
+
+		.watersharing-no-contact {
+			align-self: center;
+			color: $blue;
+			text-align: center;
+		}
+	}
+
+	.watersharing-match-col, .watersharing-contact {
+		background: #FFF;
+		border: 1px solid $light-blue;
+		padding: 10px;
+	}
+
+	.hide-on-mobile {
+		display: none;
+
+		@media (min-width: 768px) {
+			display: block;
+		}
+	}
+
+	.show-on-mobile {
+		display: none;
+
+		@media (max-width: 767px) {
+			display: inline;
+		}
+	}
+
+	.watersharing-match-action {
+	    background: none;
+	    box-shadow: none;
+	    color: #4e79a7;
+	    padding: 0;
+
+		&.approval {
+		    color: #000;
+		    cursor: pointer;
+		    font-size: 16px;
+		    font-weight: 700;
+		    margin-right: 20px;
+		    text-decoration: none;
+
+			&.decline-action.checked i, &.decline-action:hover i {
+				color: $red;
+			}
+
+			&.approve-action.checked i, &.approve-action:hover i {
+				color: $green;
+			}
+
+			&.checked {
+				pointer-events: none;
+			}
+
+			i {
+				color: $light-blue;
+				font-size: 24px;
+				margin-right: 10px
+			}
+		}
+	}
+}
