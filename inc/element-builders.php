@@ -409,7 +409,7 @@ function buildRequestTable( $type = '' ) {
 					<tr>
 						<th class='nosort'></th>
 						<th>Pad Name</th>
-						<th>Date Ranage</th>
+						<th>Date Range</th>
 						<th>Status</th>
 						<th>Rate (bpd)</th>
 						<th>Match Found?</th>
