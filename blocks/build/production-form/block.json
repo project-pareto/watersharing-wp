@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "watersharing/production-form",
+  "version": "0.1.0",
+  "title": "Production Form (Have Water Request)",
+  "category": "watersharing",
+  "description": "Creates a 'have water' request submission form for the watersharing project.",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "production-form",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js"
+}
