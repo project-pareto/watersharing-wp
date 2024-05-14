@@ -1,16 +1,15 @@
 (function($) {
-	console.log("Ready to roll...");
 
-		// format number only inputs
-		$('.geoentry').on('input', function() {
-			var value = $(this).val();
-			// Remove any non-numeric characters except period and hyphen
-			value = value.replace(/[^0-9.-]/g, '');
-			// Remove leading zeros
-			value = value.replace(/^0+/, '');
+	// format number only inputs
+	$('.geoentry').on('input', function() {
+		var value = $(this).val();
+		// Remove any non-numeric characters except period and hyphen
+		value = value.replace(/[^0-9.-]/g, '');
+		// Remove leading zeros
+		value = value.replace(/^0+/, '');
 
-			$(this).val(value);
-		});
+		$(this).val(value);
+	});
 
 	// alert user of changing request status
 	$(document).on('click', '.post-status-submit', function(event) {
@@ -82,6 +81,27 @@
 			 	$(element).closest("tr").next("tr").addClass("show");
 		    }, 100, tdElement );
 		}
+	});
+
+	// Bind change event to the select element
+	$(document).on( 'change', 'select[name="well_pad"]', function() {
+		// Get the selected option value
+		var selectedValue = $(this).val();
+
+		// Get additional data attributes from the selected option
+		var selectedLat = $(this).find(':selected').data('lat');
+		var selectedLong = $(this).find(':selected').data('long');
+		var selectedTitle = $(this).find(':selected').data('title');
+
+		$('input#well_name').val(selectedTitle);
+		$('input#latitude').val(selectedLat);
+		$('input#longitude').val(selectedLong);
+
+		//add read only class after updating value
+		$('input#well_name').addClass('readonly');
+		$('input#latitude').addClass('readonly');
+		$('input#longitude').addClass('readonly');
+
 	});
 
 })(jQuery);

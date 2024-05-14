@@ -21,26 +21,5 @@
  */
 
 /* eslint-disable no-console */
-(function($) {
-	// Bind change event to the select element
-	$('select[name="well_pad"]').on('change', function() {
-		// Get the selected option value
-		var selectedValue = $(this).val();
 
-		// Get additional data attributes from the selected option
-		var selectedLat = $(this).find(':selected').data('lat');
-		var selectedLong = $(this).find(':selected').data('long');
-		var selectedTitle = $(this).find(':selected').data('title');
-
-		$('input#well_name').val(selectedTitle);
-		$('input#latitude').val(selectedLat);
-		$('input#longitude').val(selectedLong);
-
-		//add read only class after updating value
-		$('input#well_name').addClass('readonly');
-		$('input#latitude').addClass('readonly');
-		$('input#longitude').addClass('readonly');
-
-	});
-})(jQuery);
 /* eslint-enable no-console */

@@ -387,6 +387,13 @@ function buildRequestTable( $type = '' ) {
 						</td>
 					</tr>
 					<tr class='watersharing-request-detail collapse' data-row-number='row-$number'>
+						<td class='align-middle d-none'><input type='checkbox' name='post_ids[]' value='$post' onclick=\"updateSubmitButton('$type')\" /></td>
+						<td class='align-middle d-none'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
+						<td class='align-middle d-none'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
+						<td class='align-middle d-none'><strong class='label show-on-mobile'>Status: </strong>$status</td>
+						<td class='align-middle d-none'><strong class='label show-on-mobile'>Rate (bbp): </strong>$rate</td>
+						<td class='align-middle d-none'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
+						<td class='align-middle d-none'></td>
 						<td colspan='7'>
 							$match_rows
 						</td>
