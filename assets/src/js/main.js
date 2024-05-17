@@ -11,11 +11,34 @@
 		$(this).val(value);
 	});
 
+	// unlock row management action
+	function updateSubmitButton( type = '' ) {
+	  var checkboxes = document.querySelectorAll('input[type="checkbox"]');
+	  var submitButton = document.getElementById( type + '-status-submit');
+
+	  for (var i = 0; i < checkboxes.length; i++) {
+		if (checkboxes[i].checked) {
+		  submitButton.disabled = false;
+		  return;
+		}
+	  }
+
+	  submitButton.disabled = true;
+	}
+
+	$(document).on( 'click', 'input.watersharing-input-row', function() {
+		var type = $(this).data('watershare-type');
+		updateSubmitButton( type );
+	})
+
+
 	// alert user of changing request status
 	$(document).on('click', '.post-status-submit', function(event) {
-		var postAction = document.getElementById('post_action').value;
 
-		if( postAction === '' ) {
+		var input = $(this);
+		var postAction = $(this).prev('select').val();
+
+		if( postAction === '' || postAction === null ) {
 			event.preventDefault();
 			alert('Please select an action');
 		}
@@ -103,5 +126,76 @@
 		$('input#longitude').addClass('readonly');
 
 	});
+
+	$(document).on('click', 'a.approval', function() {
+		var dataTable = '#' + $(this).data('table');
+		dataTable = $(dataTable).parent();
+
+		var params = [];
+		params.lookupid = $(this).data('lookup')
+		params.matchid = $(this).data('match');
+		params.parentid = $(this).data('parent');
+		params.interaction = $(this).data('action');
+		params.interactiontype = $(this).data('match-type');
+		params.dataTable = dataTable;
+		params.rowOpen = $(this).parents().eq(7).data('row-number');
+
+		var userConfirmed = confirm( 'Are you sure you want to ' + params.interaction + ' this match?' );
+
+		if( userConfirmed ) {
+			ajaxMatch( params );
+		}
+
+	})
+
+	function ajaxMatch(params) {
+		$.ajax({
+			url: '/wp-admin/admin-ajax.php',
+			type: 'POST',
+			data: {
+				action			:	'ajax_approval',
+				lookup_record	:	params.lookupid,
+				parent_record	:	params.parentid,
+				match_record	:	params.matchid,
+				action_status	:	params.interaction,
+				action_type		:	params.interactiontype
+			},
+			dataType: 'json',
+
+
+			beforeSend: function(xhr) {
+				$(params.dataTable).html('');
+			},
+			success: function(output) {
+				console.log( output );
+				$(params.dataTable).html(output);
+				sortTables();
+			},
+			complete: function(xhr) {
+			},
+			error: function(result) {
+			}
+
+		})
+	}
+
+	function sortTables() {
+		$('table.tablesorter').each(function() {
+			var tableID = $(this).attr('id');
+
+			$('#' + tableID).tablesorter().bind("sortEnd", function(e,t) {
+				$('#' + tableID + ' .row-summary').each(function() {
+					var rowSummary = $(this)
+					var rowIdentifer = rowSummary.data('row-number')
+					var rowExpander = $('#' + tableID + " .row-expanded[data-row-number='" + rowIdentifer + "']")
+					rowSummary.after(rowExpander)
+				})
+			});
+		});
+	}
+
+	$(document).ready( function() {
+		sortTables();
+	})
 
 })(jQuery);

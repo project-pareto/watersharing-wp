@@ -374,7 +374,7 @@ function buildRequestTable( $type = '' ) {
 			( isset( get_post_meta( $post, 'status', true )['value'] ) && get_post_meta( $post, 'status', true ) === 'closed' ) ? $row_class = " closed" : $row_class = "";
 			$rows .= "
 					<tr class='watersharing-request-row$row_class' data-row-number='row-$number'>
-						<td class='align-middle hide-on-mobile'><input type='checkbox' name='post_ids[]' value='$post' onclick=\"updateSubmitButton('$type')\" /></td>
+						<td class='align-middle hide-on-mobile'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Status: </strong>$status</td>
@@ -387,7 +387,7 @@ function buildRequestTable( $type = '' ) {
 						</td>
 					</tr>
 					<tr class='watersharing-request-detail collapse' data-row-number='row-$number'>
-						<td class='align-middle d-none'><input type='checkbox' name='post_ids[]' value='$post' onclick=\"updateSubmitButton('$type')\" /></td>
+						<td class='align-middle d-none'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Status: </strong>$status</td>
