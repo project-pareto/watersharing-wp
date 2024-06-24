@@ -332,7 +332,7 @@ function buildRequestTable( $type = '' ) {
 							";
 					}
 
-					( $type === 'water_demand' ) ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)"
+					( $type === 'water_demand' ) ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
 
 					$match_rows .= "
 							<div>
