@@ -332,6 +332,8 @@ function buildRequestTable( $type = '' ) {
 							";
 					}
 
+					( $type === 'water_demand' ) ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)"
+
 					$match_rows .= "
 							<div>
 								<div class='watersharing-row watersharing-match-block'>
@@ -357,7 +359,7 @@ function buildRequestTable( $type = '' ) {
 												<strong>Rate (bpd):</strong> $fullfilled
 											</div>
 											<div class='watersharing-col-half watersharing-match-col'>
-												<strong>Disposal Avoided (bbl):</strong> $avoided
+												<strong>$avoid_label:</strong> $avoided
 											</div>
 										</div>
 									</div>
