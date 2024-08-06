@@ -68,7 +68,7 @@ function watersharing_menu() {
 		'watersharing-settings',
 		'watersharing_settings_page',
         'dashicons-location',
-        5
+        6
     );
 
 	add_submenu_page(
@@ -102,17 +102,44 @@ function watersharing_menu() {
 		'edit_posts',
 		'edit.php?post_type=matched_requests',
 	);
+}
+
+// Water Management Menu - Contains Settings with Trading / Sharing Toggle
+function watermanagement_menu() {
+
+	require_once( plugin_dir_path( __FILE__ ) . 'inc/watermanagement-settings.php' );
+
+	add_menu_page(
+        'WaterManagement',
+        'WaterManagement',
+        'edit_posts',
+		'watermanagement-settings',
+		'watermanagement_settings_page',
+        'dashicons-location',
+        5
+    );
 
 	add_submenu_page(
-		'watersharing-settings',
+		'watermanagement-settings',
+		'Watermanagement Settings',
+		'Settings',
+		'edit_posts',
+		'watermanagement-settings',
+	);
+	
+	add_submenu_page(
+		'watermanagement-settings',
 		'Well Pads',
 		'Well Pads',
 		'edit_posts',
 		'edit.php?post_type=well_pad',
 	);
-
 }
-add_action( 'admin_menu', 'watersharing_menu' );
+$watersharing_toggle = get_option('watersharing_toggle');
+if($watersharing_toggle){
+	add_action( 'admin_menu', 'watersharing_menu' );
+}
+add_action( 'admin_menu', 'watermanagement_menu' );
 
 // require plugin files
 require_once( 'inc/types-taxonomies.php' );
