@@ -175,7 +175,9 @@ function register_watersharing_blocks()
         register_block_type( $block_dir );
     }
 }
-add_action('init', 'register_watersharing_blocks');
+if($watersharing_toggle){
+	add_action('init', 'register_watersharing_blocks');
+}
 
 // handle request dashboard post updates
 function change_post_status_callback() {
