@@ -1,7 +1,7 @@
 <?php
 
 /**
- * watersharing PARETO Water Share Plugin
+ * watermanagement PARETO Water Management Plugin
  *
  * @package           WordPress Plugin
  * @author            Troy Web Consulting
@@ -56,7 +56,7 @@ function watersharing_admin_enqueue( $hook ) {
 }
 add_action( 'admin_enqueue_scripts', 'watersharing_admin_enqueue' );
 
-// setup the settings page
+// setup the sharing settings page
 function watersharing_menu() {
 
 	require_once( plugin_dir_path( __FILE__ ) . 'inc/watersharing-settings.php' );
@@ -104,6 +104,54 @@ function watersharing_menu() {
 	);
 }
 
+// setup the trading settings page
+function watertrading_menu() {
+
+	require_once( plugin_dir_path( __FILE__ ) . 'inc/watertrading-settings.php' );
+
+	add_menu_page(
+        'Watertrading',
+        'Watertrading',
+        'edit_posts',
+		'watertrading-settings',
+		'watertrading_settings_page',
+        'dashicons-location',
+        7
+    );
+
+	add_submenu_page(
+		'watertrading-settings',
+		'Watertrading Settings',
+		'Settings',
+		'edit_posts',
+		'watertrading-settings',
+	);
+
+	add_submenu_page(
+		'watertrading-settings',
+		'Production (Have Water) Requests',
+		'Production',
+		'edit_posts',
+		'edit.php?post_type=trade_supply',
+	);
+
+	add_submenu_page(
+		'watertrading-settings',
+		'Consumption (Need Water) Requests',
+		'Consumption',
+		'edit_posts',
+		'edit.php?post_type=trade_demand',
+	);
+
+	add_submenu_page(
+		'watertrading-settings',
+		'Match Lookup',
+		'Match Lookup',
+		'edit_posts',
+		'edit.php?post_type=matched_requests',
+	);
+}
+
 // Water Management Menu - Contains Settings with Trading / Sharing Toggle
 function watermanagement_menu() {
 
@@ -138,6 +186,10 @@ function watermanagement_menu() {
 $watersharing_toggle = get_option('watersharing_toggle');
 if($watersharing_toggle){
 	add_action( 'admin_menu', 'watersharing_menu' );
+}
+$watertrading_toggle = get_option('watertrading_toggle');
+if($watertrading_toggle){
+	add_action( 'admin_menu', 'watertrading_menu' );
 }
 add_action( 'admin_menu', 'watermanagement_menu' );
 

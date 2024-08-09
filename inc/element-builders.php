@@ -14,7 +14,15 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 
 	switch( $type ) {
 		case 'input':
-			$html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
+			if ($options === 'checkbox') {
+				$html .= "
+				<div class = meta-box-checkbox> 
+				<input type='checkbox' name='$name' id='$name' class='meta-box-input'>
+				</div>";
+			}
+			else{
+				$html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
+			}
 			break;
 
 		case 'select':
