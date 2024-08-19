@@ -216,26 +216,114 @@ function watersharing_requests_fields( $post ) {
 function watertrading_requests_fields( $post ) {
 	buildMetaField( 'select', 'status', 'Record Status', get_post_meta( $post->ID, 'status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'matched' => 'Matched', 'closed' => 'Closed' ) );
 	buildMetaField( 'input', 'well_name', 'Well Name', get_post_meta( $post->ID, 'well_name', true ), 'text' );
+	
+	echo "<div class='meta-field-group-inline'>";
 	buildMetaField( 'input', 'latitude', 'Latitude', get_post_meta( $post->ID, 'latitude', true ), 'text' );
 	buildMetaField( 'input', 'longitude', 'Longitude', get_post_meta( $post->ID, 'longitude', true ), 'text' );
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
 	buildMetaField( 'input', 'start_date', 'Start Date', get_post_meta( $post->ID, 'start_date', true ), 'date' );
 	buildMetaField( 'input', 'end_date', 'End Date', get_post_meta( $post->ID, 'end_date', true ), 'date' );
+	echo "</div>";
+
 	buildMetaField( 'input', 'rate_bpd', 'Rate (BPD)', get_post_meta( $post->ID, 'rate_bpd', true ), 'text' );
 	buildMetaField( 'input', 'transport_radius', 'Transport Radius', get_post_meta( $post->ID, 'transport_radius', true ), 'text' );
 	buildMetaField( 'input', 'water_quality', 'Water Quality', get_post_meta( $post->ID, 'water_quality', true ), 'text' );
-	buildMetaField( 'select', 'bid_type', 'Bid Type', get_post_meta( $post->ID, 'bid_type', true ), array( 'willing_to_pay' => 'Willing to pay', 'paid_at_least' => 'Paid at least') );
+	buildMetaField( 'input', 'can_accept_trucks', 'I can accept trucks', get_post_meta( $post->ID, 'can_accept_trucks', true), 'checkbox');
+	buildMetaField( 'input', 'can_accept_pipelines', 'I can accept (temporary) pipelines', get_post_meta( $post->ID, 'can_accept_pipelines', true), 'checkbox');
+	// buildMetaField( 'select', 'bid_type', 'Bid Type', get_post_meta( $post->ID, 'bid_type', true ), array( 'willing_to_pay' => 'Willing to pay', 'paid_at_least' => 'Paid at least') );
+	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'willing_to_pay' => 'Willing to pay', 'paid_at_least' => 'Paid at least') );
 	buildMetaField( 'input', 'bid_amount', 'Bid Amount', get_post_meta( $post->ID, 'bid_amount', true), 'text');
 	buildMetaField( 'select', 'bid_units', 'Bid Units', get_post_meta( $post->ID, 'bid_units', true), array( 'philip' => 'philip', 'needstotellus' => 'needstotellus') );
 	buildMetaField( 'input', 'can_deliver', 'Can deliver', get_post_meta( $post->ID, 'can_deliver', true), 'checkbox');
 	buildMetaField( 'input', 'truck', 'Truck', get_post_meta( $post->ID, 'truck', true), 'checkbox');
+	
+	echo "<div class='meta-field-group-inline'>";
 	buildMetaField( 'input', 'truck_transport_radius', 'Truck Transport Radius', get_post_meta( $post->ID, 'truck_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'truck_transport_bid', 'Truck Transport Bid',get_post_meta( $post->ID, 'truck_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'truck_capacity', 'Truck Capacity',get_post_meta( $post->ID, 'truck_capacity', 'true'), 'text');
+	echo "</div>";
+
 	buildMetaField( 'input', 'layflats', 'Layflats', get_post_meta( $post->ID, 'layflats', true), 'checkbox');
+	
+	echo "<div class='meta-field-group-inline'>";
 	buildMetaField( 'input', 'layflats_transport_radius', 'Layflats Transport Radius',get_post_meta( $post->ID, 'layflats_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'layflats_transport_bid', 'Layflats Transport Bid',get_post_meta( $post->ID, 'layflats_transport_bid', 'true'), 'text');
 	buildMetaField( 'input', 'layflats_capacity', 'Layflats Capacity',get_post_meta( $post->ID, 'layflats_capacity', 'true'), 'text');
+	echo "</div>";
+
 	buildMetaField( 'input', 'quality_disclosures', 'Quality Disclosures', get_post_meta( $post->ID, 'quality_disclosures', true), 'checkbox');
+
+	//Quality Disclosures
+
+	// echo "<div class='meta-field-group-inline'>";
+	// buildMetaField( 'input', 'salinity_measure_units', 'Salinity Units', get_post_meta( $post->ID, 'salinity_measure_units', true), 'text');
+	// buildMetaField( 'input', 'salinity_measure_atleast', 'Salinity At Least', get_post_meta( $post->ID, 'salinity_measure_atleast', true), 'text');
+	// buildMetaField( 'input', 'salinity_measure_value', 'Salinity value', get_post_meta( $post->ID, 'salinity_measure_value', true), 'text');
+	// echo "</div>";
+	
+	// echo "<div class='meta-field-group-inline'>";
+	// buildMetaField( 'input', 'ammonia_measure_units', 'Ammonia Units', get_post_meta( $post->ID, 'ammonia_measure_units', true), 'text');
+	// buildMetaField( 'input', 'ammonia_measure_atleast', 'Ammonia At Least', get_post_meta( $post->ID, 'ammonia_at_least', true), 'text');
+	// buildMetaField( 'input', 'ammonia_measure_value', 'Ammonia Value', get_post_meta( $post->ID, 'ammonia_measure_value', true), 'text');
+	// echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'tss_measure_units', 'TSS Units', get_post_meta( $post->ID, 'TSS_measure_units', true), 'text');
+	buildMetaField( 'input', 'tss_measure_atleast', 'TSS At Least', get_post_meta( $post->ID, 'TSS_at_least', true), 'text');
+	buildMetaField( 'input', 'tss_measure_value', 'TSS Value', get_post_meta( $post->ID, 'TSS_measure_value', true), 'text');
+	echo "</div>";
+	
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'tds_measure_units', 'TDS Units', get_post_meta( $post->ID, 'TDS_measure_units', true), 'text');
+	buildMetaField( 'input', 'tds_measure_atleast', 'TDS At Least', get_post_meta( $post->ID, 'TDS_at_least', true), 'text');
+	buildMetaField( 'input', 'tds_measure_value', 'TDS Value', get_post_meta( $post->ID, 'TDS_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'chloride_measure_units', 'Chloride Units', get_post_meta( $post->ID, 'Chloride_measure_units', true), 'text');
+	buildMetaField( 'input', 'chloride_measure_atleast', 'Chloride At Least', get_post_meta( $post->ID, 'Chloride_at_least', true), 'text');
+	buildMetaField( 'input', 'chloride_measure_value', 'Chloride Value', get_post_meta( $post->ID, 'Chloride_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'barium_measure_units', 'Barium Units', get_post_meta( $post->ID, 'Barium_measure_units', true), 'text');
+	buildMetaField( 'input', 'barium_measure_atleast', 'Barium At Least', get_post_meta( $post->ID, 'Barium_at_least', true), 'text');
+	buildMetaField( 'input', 'barium_measure_value', 'Barium Value', get_post_meta( $post->ID, 'Barium_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'calciumcarbonates_measure_units', 'Calcium Carbonates Units', get_post_meta( $post->ID, 'CalciumCarbonates_measure_units', true), 'text');
+	buildMetaField( 'input', 'calciumcarbonates_measure_atleast', 'Calcium Carbonates At Least', get_post_meta( $post->ID, 'CalciumCarbonates_at_least', true), 'text');
+	buildMetaField( 'input', 'calciumcarbonates_measure_value', 'Calcium Carbonates Value', get_post_meta( $post->ID, 'CalciumCarbonates_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'iron_measure_units', 'Iron Units', get_post_meta( $post->ID, 'iron_measure_units', true), 'text');
+	buildMetaField( 'input', 'iron_measure_atleast', 'Iron At Least', get_post_meta( $post->ID, 'iron_at_least', true), 'text');
+	buildMetaField( 'input', 'iron_measure_value', 'Iron Value', get_post_meta( $post->ID, 'iron_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'boron_measure_units', 'Boron Units', get_post_meta( $post->ID, 'boron_measure_units', true), 'text');
+	buildMetaField( 'input', 'boron_measure_atleast', 'Boron At Least', get_post_meta( $post->ID, 'boron_at_least', true), 'text');
+	buildMetaField( 'input', 'boron_measure_value', 'Boron Value', get_post_meta( $post->ID, 'boron_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'hydrogensulfide_measure_units', 'Hydrogen Sulfide Units', get_post_meta( $post->ID, 'hydrogensulfide_measure_units', true), 'text');
+	buildMetaField( 'input', 'hydrogensulfide_measure_atleast', 'Hydrogen Sulfide At Least', get_post_meta( $post->ID, 'hydrogensulfide_at_least', true), 'text');
+	buildMetaField( 'input', 'hydrogensulfide_measure_value', 'Hydrogen Sulfide Value', get_post_meta( $post->ID, 'hydrogensulfide_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'norm_measure_units', 'NORM Units', get_post_meta( $post->ID, 'norm_measure_units', true), 'text');
+	buildMetaField( 'input', 'norm_measure_atleast', 'NORM At Least', get_post_meta( $post->ID, 'norm_at_least', true), 'text');
+	buildMetaField( 'input', 'norm_measure_value', 'NORM Value', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
+	echo "</div>";
+	
+	//18 fields, 3 for each disclosure title by quality measure as first word in naming convention
 
 	$matchlookup = [];
 	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_requests', 'fields' => 'ids' ) );
@@ -319,7 +407,9 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
-		'match_lookup' 		=> 'sanitize_text_field',
+		'can_accept_trucks' => 'sanitize_text_field',
+		'can_accept_pipes' => 'sanitize_text_field',
+ 		'match_lookup' 		=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field',
 		'bid_type' 		    => 'sanitize_text_field',
 		'bid_amount' 		=> 'sanitize_text_field',
@@ -330,6 +420,12 @@ $custom_metafields = array(
 		'truck_transport_bid' 		=> 'sanitize_text_field',
 		'layflats_capacity' => 'sanitize_text_field',
 		'quality_disclosures' 		=> 'sanitize_text_field',
+		'salinity_measure_units'    => 'sanitize_text_field',
+		'salinity_measure_atleast'    => 'sanitize_text_field',
+		'salinity_measure_value'    => 'sanitize_text_field',
+		'ammonia_measure_units'     => 'sanitize_text_field',
+		'ammonia_measure_atleast'   => 'sanitize_text_field',
+		'ammonia_measure_value'     => 'sanitize_text_field',
 	),
 	'water_demand' => array(
 		'status' 			=> 'sanitize_text_field',

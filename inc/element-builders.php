@@ -3,56 +3,84 @@
 //dynamic function to create the form fields
 function buildMetaField( $type = "", $name = "", $label = "", $value = "", $options = "" )
 {
+    $html = "<div class='custom-meta-field'>";
+    if( !empty( $label ) ) {
+        $label = esc_html($label) . ':';
+        $html .= "<label class='input-label' for='$name'>$label</label>";
+    }
 
-	$html = "<div class='custom-meta-field'>";
-	if( !empty( $label ) ) {
-		$label = esc_html($label) . ':';
-		$html .= "<label class='input-label' for='$name'>$label</label>";
-	}
+    ( !empty( $name ) ) ? $name = esc_html( $name ) : "";
 
-	( !empty( $name ) ) ? $name = esc_html( $name ) : "";
+    switch( $type ) {
+        case 'input':
+            if ($options === 'checkbox') {
+                $checked = $value ? 'checked' : '';
+                $html .= "
+                <div class='meta-box-checkbox'> 
+                    <input type='checkbox' name='$name' id='$name' class='meta-box-input' value='1' $checked>
+                </div>";
+            } elseif (is_array($options) && !empty($options)) {
+				$html .= "<div class=meta-box-radio>";
+				foreach ($options as $option_value => $option_label) {
+                    $checked = checked($value, $option_value, false);
+                    $html .= "
+                    <div class='meta-radio-select'>
+                        <label>
+                            <input type='radio' name='$name' id='$name-$option_value' value='$option_value' $checked> $option_label
+                        </label>
+                    </div>";
+                }
+				$html .= "</div>";
+            } else {
+                $html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
+            }
+            break;
 
-	switch( $type ) {
-		case 'input':
-			if ($options === 'checkbox') {
-				$html .= "
-				<div class = meta-box-checkbox> 
-				<input type='checkbox' name='$name' id='$name' class='meta-box-input'>
-				</div>";
-			}
-			else{
-				$html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
-			}
-			break;
+        case 'select':
+            $html .= "<select name='$name' id='$name' class='meta-box-select'>";
 
-		case 'select':
-			$html .= "<select name='$name' id='$name' class='meta-box-select'>";
+            if( !empty ( $options ) && is_array( $options ) ) {
+                $html .= "<option value=''>-- Please select --</option>";
+                foreach( $options as $option_value => $label ) {
+                    $selected = selected( $value, $option_value, false );
+                    $html .= "<option value='$option_value' $selected>$label</option>";
+                }
+            }
 
-			if( !empty ( $options ) && is_array( $options ) ) {
-				$html .= "<option value=''>-- Please select --</option>";
-				foreach( $options as $option_value => $label ) {
-					$selected = selected( $value, $option_value, false );
-					$html .= "<option value='$option_value' $selected>$label</option>";
-				}
-			}
+            $html .= "</select>";
+            break;
 
-			$html .= "</select>";
-			break;
+        case 'textarea':
+            $html .= "<textarea name='$name' id='$name' class='meta-box-textarea'>$value</textarea>";
+            break;
 
-		case 'textarea':
-			$html .= "<textarea name='$name' id='$name' class='meta-box-textarea'>$value</textarea>";
-			break;
+        default:
+            break;
+    }
 
-		default:
-			break;
-	}
+    $html .= "</div>";
 
-	$html .= "</div>";
-
-	echo $html;
-
+    echo $html;
 }
 
+// Function for saving checkbox data
+function save_watertrading_requests_fields( $post_id ) {
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
+        return;
+
+	if (!current_user_can('edit_page', $post_id)) {
+		return;
+	}
+
+    $checkbox_fields = ['can_accept_trucks', 'can_accept_pipelines','can_deliver', 'truck', 'layflats', 'quality_disclosures'];
+    
+    foreach ($checkbox_fields as $field) {
+        $value = isset($_POST[$field]) ? 1 : 0;
+        update_post_meta($post_id, $field, $value);
+    }
+}
+
+add_action( 'save_post', 'save_watertrading_requests_fields' );
 
 // function to build out request form fields
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $placeholder = "", $acf_key = "", $class = "", $readOnly = '' ) {

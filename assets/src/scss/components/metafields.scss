@@ -12,6 +12,18 @@
     font-weight: bold;
 }
 
+.meta-field-group-inline {
+    display: flex;
+    gap: 15px; /* Space between the label and input */
+    margin-bottom: 20px; /* Space between rows */
+    width: 100%; /* Ensure full width for each group */
+
+    .custom-meta-field{
+        display: flex;
+        flex-direction: column; 
+    }
+}
+
 .meta-box-input,
 .meta-box-select,
 .meta-box-textarea {
@@ -27,3 +39,10 @@
     padding: 8px;
     display:flex;
 }
+
+.meta-box-radio{
+    margin-bottom: 10px;
+    display:flex;
+    gap:10px;
+}
+
