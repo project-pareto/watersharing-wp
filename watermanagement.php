@@ -84,7 +84,7 @@ function watersharing_menu() {
 		'Production (Have Water) Requests',
 		'Production',
 		'edit_posts',
-		'edit.php?post_type=water_supply',
+		'edit.php?post_type=share_supply',
 	);
 
 	add_submenu_page(
@@ -92,7 +92,7 @@ function watersharing_menu() {
 		'Consumption (Need Water) Requests',
 		'Consumption',
 		'edit_posts',
-		'edit.php?post_type=water_demand',
+		'edit.php?post_type=share_demand',
 	);
 
 	add_submenu_page(
@@ -100,7 +100,7 @@ function watersharing_menu() {
 		'Match Lookup',
 		'Match Lookup',
 		'edit_posts',
-		'edit.php?post_type=matched_requests',
+		'edit.php?post_type=matched_shares',
 	);
 }
 

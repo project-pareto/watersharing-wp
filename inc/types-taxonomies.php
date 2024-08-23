@@ -50,7 +50,7 @@ function register_watermanagement_posttypes() {
 	);
 	
 
-	register_post_type('water_supply', $ws_supargs);
+	register_post_type('share_supply', $ws_supargs);
 	register_post_type('trade_supply', $wt_supargs);
 
 	// Consumption Recordes for Water Sharing Requests
@@ -75,7 +75,7 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	register_post_type('water_demand', $demargs);
+	register_post_type('share_demand', $demargs);
 	register_post_type('trade_demand', $demargs);
 
 	// Match Lookup Records for Water Sharing
@@ -134,9 +134,9 @@ add_action('init', 'register_watermanagement_posttypes');
 
 // expose users as authors to the water request records
 function register_watermanagement_userrecords() {
-	add_post_type_support( 'water_supply', 'author' );
+	add_post_type_support( 'share_supply', 'author' );
 	add_post_type_support( 'trade_supply', 'author' );
-	add_post_type_support( 'water_demand', 'author' );
+	add_post_type_support( 'share_demand', 'author' );
 	add_post_type_support( 'trade_demand', 'author' );
 }
 add_action('init', 'register_watermanagement_userrecords');
@@ -146,7 +146,7 @@ add_action('init', 'register_watermanagement_userrecords');
 function register_watersharing_metafields() {
 
 	// create the meta box for water requests
-	add_meta_box( 'waterRequestsFields', 'Water Requests Fields', 'watersharing_requests_fields', array('water_supply', 'water_demand'), 'normal', 'high' );
+	add_meta_box( 'waterRequestsFields', 'Water Requests Fields', 'watersharing_requests_fields', array('share_supply', 'share_demand'), 'normal', 'high' );
 
 	// create the meta box for well pads
 	add_meta_box( 'wellPadFields', 'Well Pad Fields', 'watermanagement_wellpad_fields', 'well_pad', 'normal', 'high' );
@@ -325,7 +325,7 @@ function watermanagement_wellpad_fields( $post ) {
 function watersharing_match_fields( $post ) {
 
 	$producerlookup = [];
-	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'water_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
+	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'share_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
 	if( $producers ) {
 		foreach( $producers as $producer ) {
 			$producerlookup[$producer] = get_the_title( $producer );
@@ -337,7 +337,7 @@ function watersharing_match_fields( $post ) {
 	buildMetaField( 'select', 'producer_approval', 'Production Request Approval Status', get_post_meta( $post->ID, 'producer_approval', true ), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline' ) );
 
 	$consumerlookup = [];
-	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'water_demand', 'post_status' => 'publish', 'fields' => 'ids'));
+	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'share_demand', 'post_status' => 'publish', 'fields' => 'ids'));
 	if ($consumers) {
 		foreach ($consumers as $consumer) {
 			$consumerlookup[$consumer] = get_the_title($consumer);
@@ -358,7 +358,7 @@ function watersharing_match_fields( $post ) {
 function watertrading_match_fields( $post ) {
 
 	$producerlookup = [];
-	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'water_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
+	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'share_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
 	if( $producers ) {
 		foreach( $producers as $producer ) {
 			$producerlookup[$producer] = get_the_title( $producer );
@@ -370,7 +370,7 @@ function watertrading_match_fields( $post ) {
 	buildMetaField( 'select', 'producer_trade_approval', 'Production Trade Request Approval Status', get_post_meta( $post->ID, 'producer_trade_approval', true ), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline' ) );
 
 	$consumerlookup = [];
-	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'water_demand', 'post_status' => 'publish', 'fields' => 'ids'));
+	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'share_demand', 'post_status' => 'publish', 'fields' => 'ids'));
 	if ($consumers) {
 		foreach ($consumers as $consumer) {
 			$consumerlookup[$consumer] = get_the_title($consumer);
@@ -400,7 +400,7 @@ add_action('edit_user_profile', 'watermanagement_user_fields');
 
 // arrays of each post types fields to perform sanitization
 $custom_metafields = array(
-	'water_supply' => array(
+	'share_supply' => array(
 		'status' 			=> 'sanitize_text_field',
 		'well_name' 		=> 'sanitize_text_field',
 		'latitude' 			=> 'sanitize_text_field',
@@ -464,7 +464,7 @@ $custom_metafields = array(
 		'norm_at_least'   => 'sanitize_text_field',
 		'norm_measure_value'     => 'sanitize_text_field',
 	),
-	'water_demand' => array(
+	'share_demand' => array(
 		'status' 			=> 'sanitize_text_field',
 		'well_name' 		=> 'sanitize_text_field',
 		'latitude' 			=> 'sanitize_text_field',

@@ -168,8 +168,7 @@ function buildRequestForm($type = "", $title = "") {
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
 
-	//Added Trade Logic
-	($type === 'water_supply' || $type === 'trade_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+	($type === 'share_supply' || $type === 'trade_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
 
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
@@ -221,13 +220,11 @@ function buildRequestForm($type = "", $title = "") {
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {
-	//Commented out to add trade post types
-	// ( $post_type === 'water_supply' ) ? $post_type = 'producer_request' : $post_type = 'consumption_request';
 
-	if($post_type === 'water_supply'){
+	if($post_type === 'share_supply'){
 		$post_type = 'producer_request';
 	}
-	elseif($post_type === 'water_demand'){
+	elseif($post_type === 'share_demand'){
 		$post_type = 'consumption_request';
 	}
 	elseif($post_type === 'trade_supply'){
@@ -243,7 +240,7 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 			'no_found_rows'				=> false,
 			'update_post_meta_cache'	=> false,
 			'update_post_term_cache'	=> false,
-			'post_type'					=> 'matched_requests',
+			'post_type' => (strpos($post_type, 'share') !== false) ? 'matched_shares' : 'matched_trades',
 			'posts_per_page'			=> -1,
 			'fields'					=> 'ids',
 			'meta_query'				=> array(
@@ -320,18 +317,16 @@ function buildRequestTable( $type = '' ) {
 				foreach( $lookups as $lookup ) {
 					$count++;
 
-					( $type === 'water_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
+					( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
 					$user_action = get_post_meta( $lookup, $user_interaction, true );
 					$avoided = get_post_meta( $lookup, 'disposal_avoided', true );
 					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
 					$lookup_distance = get_post_meta( $lookup, 'matched_distance', true );
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
 
-					// ( $type === 'water_supply' ) ? $match_type = 'consumption_request' : $match_type = 'producer_request';
-					if($type === 'water_supply') { $match_type = 'consumption_request'; }
-					elseif($type === 'water_demand') {$match_type = 'producer_request'; }
+					if($type === 'share_supply') { $match_type = 'consumption_request'; }
+					elseif($type === 'share_demand') {$match_type = 'producer_request'; }
 
-					// ( $type === 'water_supply' ) ? $match_post_type = 'water_demand' : $match_post_type = 'water_supply';
 					if($type === 'trade_supply') { $match_type = 'consumption_trade'; }
 					elseif($type === 'trade_demand') {$match_type = 'producer_trade'; }
 
@@ -392,7 +387,7 @@ function buildRequestTable( $type = '' ) {
 					}
 
 					//Added logic for trading
-					( $type === 'water_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
+					( $type === 'share_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
 
 					$match_rows .= "
 							<div>
