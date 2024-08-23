@@ -286,64 +286,63 @@ function watertrading_requests_fields( $post ) {
 
 	echo "<label class = 'input-label-group'>TSS</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'tss_measure_units', 'Units', get_post_meta( $post->ID, 'tss_measure_units', true), 'text');
+	buildMetaField( 'select', 'tss_measure_units', 'Units', get_post_meta( $post->ID, 'tss_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'tss_at_least', 'At Least', get_post_meta( $post->ID, 'tss_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'tss_measure_value', 'Value', get_post_meta( $post->ID, 'tss_measure_value', true), 'text');
 	echo "</div>";
 	
 	echo "<label class = 'input-label-group'>TDS</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'tds_measure_units', 'Units', get_post_meta( $post->ID, 'tds_measure_units', true), 'text');
+	buildMetaField( 'select', 'tds_measure_units', 'Units', get_post_meta( $post->ID, 'tds_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'tds_at_least', 'At Least', get_post_meta( $post->ID, 'tds_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value'));
 	buildMetaField( 'input', 'tds_measure_value', 'Value', get_post_meta( $post->ID, 'tds_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Chloride</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'chloride_measure_units', 'Units', get_post_meta( $post->ID, 'chloride_measure_units', true), 'text');
+	buildMetaField( 'select', 'chloride_measure_units', 'Units', get_post_meta( $post->ID, 'chloride_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'chloride_at_least', 'At Least', get_post_meta( $post->ID, 'chloride_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'chloride_measure_value', 'Value', get_post_meta( $post->ID, 'chloride_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Barium</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'barium_measure_units', 'Units', get_post_meta( $post->ID, 'barium_measure_units', true), 'text');
+	buildMetaField( 'select', 'barium_measure_units', 'Units', get_post_meta( $post->ID, 'barium_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'barium_at_least', 'At Least', get_post_meta( $post->ID, 'barium_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'barium_measure_value', 'Value', get_post_meta( $post->ID, 'barium_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Calcium</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'calciumcarbonates_measure_units', 'Units', get_post_meta( $post->ID, 'calciumcarbonates_measure_units', true), 'text');
+	buildMetaField( 'select', 'calciumcarbonates_measure_units', 'Units', get_post_meta( $post->ID, 'calciumcarbonates_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'calciumcarbonates_at_least', 'At Least', get_post_meta( $post->ID, 'calciumcarbonates_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'calciumcarbonates_measure_value', 'Value', get_post_meta( $post->ID, 'calciumcarbonates_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Iron</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'iron_measure_units', 'Units', get_post_meta( $post->ID, 'iron_measure_units', true), 'text');
+	buildMetaField( 'select', 'iron_measure_units', 'Units', get_post_meta( $post->ID, 'iron_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'iron_at_least', 'At Least', get_post_meta( $post->ID, 'iron_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'iron_measure_value', 'Value', get_post_meta( $post->ID, 'iron_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Boron</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'boron_measure_units', 'Units', get_post_meta( $post->ID, 'boron_measure_units', true), 'text');
+	buildMetaField( 'select', 'boron_measure_units', 'Units', get_post_meta( $post->ID, 'boron_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'boron_at_least', 'At Least', get_post_meta( $post->ID, 'boron_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'boron_measure_value', 'Value', get_post_meta( $post->ID, 'boron_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Hydrogen Sulfide</label>";
 	echo "<div class='meta-field-group-inline'>";
-	buildMetaField( 'input', 'hydrogensulfide_measure_units', 'Units', get_post_meta( $post->ID, 'hydrogensulfide_measure_units', true), 'text');
+	buildMetaField( 'select', 'hydrogensulfide_measure_units', 'Units', get_post_meta( $post->ID, 'hydrogensulfide_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'hydrogensulfide_at_least', 'At Least', get_post_meta( $post->ID, 'hydrogensulfide_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'hydrogensulfide_measure_value', 'Value', get_post_meta( $post->ID, 'hydrogensulfide_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Norm</label>";
 	echo "<div class='meta-field-group-inline'>";
-	
-	buildMetaField( 'input', 'norm_measure_units', 'Units', get_post_meta( $post->ID, 'norm_measure_units', true), 'text');
+	buildMetaField( 'select', 'norm_measure_units', 'Units', get_post_meta( $post->ID, 'norm_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'norm_at_least', 'At Least', get_post_meta( $post->ID, 'norm_at_least', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
 	buildMetaField( 'input', 'norm_measure_value', 'Value', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
@@ -423,7 +422,7 @@ function watertrading_match_fields( $post ) {
 	}
 
 	//Register Trading Production Fields
-	buildMetaField('select', 'consumption_trade', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade', true), $consumerlookup);
+	buildMetaField('select', 'consumption_trade_request', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade_request', true), $consumerlookup);
 	buildMetaField('select', 'consumption_trade_approval', 'Consumption Trade Request Approval Status', get_post_meta($post->ID, 'consumption_trade_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
 	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
@@ -580,7 +579,7 @@ $custom_metafields = array(
 		'userid' 			=> 'sanitize_text_field'
 	),
 
-	'matched_share_requests' => array(
+	'matched_requests' => array(
 		'producer_request' 		=> 'sanitize_text_field',
 		'producer_approval' 	=> 'sanitize_text_field',
 		'consumption_request'	=> 'santitize_text_field',
@@ -593,9 +592,9 @@ $custom_metafields = array(
 
 	'matched_trades' => array(
 		'producer_request' 		=> 'sanitize_text_field',
-		'producer_approval' 	=> 'sanitize_text_field',
-		'consumption_request'	=> 'santitize_text_field',
-		'consumption_approval' 	=> 'santitize_text_field',
+		'producer_trade_approval' 	=> 'sanitize_text_field',
+		'consumption_trade_request'	=> 'santitize_text_field',
+		'consumption_trade_approval' 	=> 'santitize_text_field',
 		'matched_distance' 		=> 'santitize_text_field',
 		'matched_rate' 			=> 'sanitize_text_field',
 		'disposal_avoided' 		=> 'santize_text_field',
