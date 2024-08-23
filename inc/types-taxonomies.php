@@ -145,7 +145,7 @@ function register_watermanagement_posttypes() {
 	// );
 
 	register_post_type('matched_requests', $mreargs); //Update to matched shares
-	register_post_type('matched_trades', $wt_mreargs);
+	register_post_type('matched_trades', $mreargs);
 
 
 	// Well pad records for Water Sharing
