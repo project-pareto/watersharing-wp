@@ -167,7 +167,10 @@ function buildRequestForm($type = "", $title = "") {
 	$longitude = buildFormField('longitude', 'Longitude', 'text', 'required', 'Longitude', '', ' geoentry',);
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
-	($type === 'water_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+
+	//Added Trade Logic
+	($type === 'water_supply' || $type === 'trade_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
 	$action = esc_url( admin_url('admin-post.php') );
@@ -218,7 +221,21 @@ function buildRequestForm($type = "", $title = "") {
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {
-	( $post_type === 'water_supply' ) ? $post_type = 'producer_request' : $post_type = 'consumption_request';
+	//Commented out to add trade post types
+	// ( $post_type === 'water_supply' ) ? $post_type = 'producer_request' : $post_type = 'consumption_request';
+
+	if($post_type === 'water_supply'){
+		$post_type = 'producer_request';
+	}
+	elseif($post_type === 'water_demand'){
+		$post_type = 'consumption_request';
+	}
+	elseif($post_type === 'trade_supply'){
+		$post_type = 'producer_trade';
+	}
+	elseif($post_type === 'trade_demand'){
+		$post_type = 'consumption_trade';
+	}
 
 	// query for the matches
 	$query = new WP_Query(
@@ -309,8 +326,14 @@ function buildRequestTable( $type = '' ) {
 					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
 					$lookup_distance = get_post_meta( $lookup, 'matched_distance', true );
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
-					( $type === 'water_supply' ) ? $match_type = 'consumption_request' : $match_type = 'producer_request';
-					( $type === 'water_supply' ) ? $match_post_type = 'water_demand' : $match_post_type = 'water_supply';
+
+					// ( $type === 'water_supply' ) ? $match_type = 'consumption_request' : $match_type = 'producer_request';
+					if($type === 'water_supply') { $match_type = 'consumption_request'; }
+					elseif($type === 'water_demand') {$match_type = 'producer_request'; }
+
+					// ( $type === 'water_supply' ) ? $match_post_type = 'water_demand' : $match_post_type = 'water_supply';
+					if($type === 'trade_supply') { $match_type = 'consumption_trade'; }
+					elseif($type === 'trade_demand') {$match_type = 'producer_trade'; }
 
 					$match_record = get_post_meta( $lookup, $match_type, true );
 					$match_id = $match_record;
@@ -368,7 +391,8 @@ function buildRequestTable( $type = '' ) {
 							";
 					}
 
-					( $type === 'water_demand' ) ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
+					//Added logic for trading
+					( $type === 'water_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
 
 					$match_rows .= "
 							<div>

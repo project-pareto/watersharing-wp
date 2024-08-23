@@ -148,7 +148,7 @@ function watertrading_menu() {
 		'Match Lookup',
 		'Match Lookup',
 		'edit_posts',
-		'edit.php?post_type=matched_requests',
+		'edit.php?post_type=matched_trades',
 	);
 }
 

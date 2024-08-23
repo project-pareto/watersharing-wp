@@ -6,6 +6,10 @@
     background-color: #f9f9f9;
 }
 
+.input-label-group{
+    font-weight: bold;
+}
+
 .meta-box-label {
     display: block;
     margin-bottom: 5px;
@@ -14,13 +18,15 @@
 
 .meta-field-group-inline {
     display: flex;
-    gap: 15px; /* Space between the label and input */
-    margin-bottom: 20px; /* Space between rows */
-    width: 100%; /* Ensure full width for each group */
+    gap: 15px; 
+    margin-bottom: 20px; 
+    width: 100%; 
+    flex-direction: row;
 
     .custom-meta-field{
         display: flex;
         flex-direction: column; 
+        flex: 1 0 0%;
     }
 }
 
