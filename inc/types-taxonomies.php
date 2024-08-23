@@ -75,28 +75,6 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	// Consumption Recordes for Water Sharing Requests
-	// $wt_demlabels = array(
-	// 	'name'			=> __('Consumption'),
-	// 	'singular_name'	=> __('Trade Water Consumption'),
-	// 	'edit_item'		=> __('Edit Water Consumption Request'),
-	// 	'update_item'	=> __('Update Water Consumption Request'),
-	// 	'add_new_item'	=> __('Add New Water Consumption Request')
-	// );
-
-	// $wt_demargs = array(
-	// 	'labels'		=> $wt_demlabels,
-	// 	'public'		=> true,
-	// 	'show_in_menu'	=> false,
-	// 	'has_archive'	=> false,
-	// 	'menu_icon'		=> 'dashicons-location',
-	// 	'menu_position'	=> 6,
-	// 	'hierarchical'	=> true,
-	// 	'supports'		=> array('title'),
-	// 	'rewrites'		=> array('slug' => 'consumption', 'with_front' => true),
-	// 	'publicly_queryable' => false
-	// );
-
 	register_post_type('water_demand', $demargs);
 	register_post_type('trade_demand', $demargs);
 
@@ -108,15 +86,6 @@ function register_watermanagement_posttypes() {
 		'update_item'	=> __('Update Match Lookup'),
 		'add_new_item'	=> __('Add New Match Lookup')
 	);
-
-	// Match Lookup Records for Water Trading
-	// $wt_mrelabels = array(
-	// 	'name'			=> __('Trade Match Lookup'),
-	// 	'singular_name'	=> __('Trade Match Lookup'),
-	// 	'edit_item'		=> __('Edit Match Lookup'),
-	// 	'update_item'	=> __('Update Match Lookup'),
-	// 	'add_new_item'	=> __('Add New Match Lookup')
-	// );
 
 	$mreargs = array(
 		'labels'		=> $mrelabels,
@@ -131,20 +100,8 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	// $wt_mreargs = array(
-	// 	'labels'		=> $wt_mrelabels,
-	// 	'public'		=> true,
-	// 	'show_in_menu'	=> false,
-	// 	'has_archive'	=> false,
-	// 	'menu_icon'		=> 'dashicons-location',
-	// 	'menu_position'	=> 6,
-	// 	'hierarchical'	=> true,
-	// 	'supports'		=> array('title'),
-	// 	'rewrites'		=> array('slug' => 'matches', 'with_front' => false),
-	// 	'publicly_queryable' => false
-	// );
 
-	register_post_type('matched_requests', $mreargs); //Update to matched shares
+	register_post_type('matched_shares', $mreargs); 
 	register_post_type('matched_trades', $mreargs);
 
 
@@ -195,7 +152,7 @@ function register_watersharing_metafields() {
 	add_meta_box( 'wellPadFields', 'Well Pad Fields', 'watermanagement_wellpad_fields', 'well_pad', 'normal', 'high' );
 
 	// create the meta box for match lookups
-	add_meta_box( 'matchLookupFields', 'Match Lookup Fields', 'watersharing_match_fields', 'matched_requests', 'normal', 'high' );
+	add_meta_box( 'matchLookupFields', 'Match Lookup Fields', 'watersharing_match_fields', 'matched_shares', 'normal', 'high' );
 }
 add_action('add_meta_boxes', 'register_watersharing_metafields');
 
@@ -232,7 +189,7 @@ function watersharing_requests_fields( $post ) {
 			$matchlookup[$match] = get_the_title( $match );
 		}
 	}
-	buildMetaField( 'select', 'match_request', 'Match Lookup Record', get_post_meta( $post->ID, 'match_request', true ), $matchlookup );
+	buildMetaField( 'select', 'share_request', 'Match Lookup Record', get_post_meta( $post->ID, 'share_request', true ), $matchlookup );
 }
 
 // function to build out individual meta fields for the water trading request records
@@ -357,7 +314,6 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'select', 'trade_request', 'Match Lookup Record', get_post_meta( $post->ID, 'trade_request', true ), $matchlookup );
 }
 
-//NOTE TO SELF: Might need to make a second one of these
 // function to build out individual meta fields for the well pad records
 function watermanagement_wellpad_fields( $post ) {
 	buildMetaField( 'input', 'latitude', 'Location Latitude', get_post_meta( $post->ID, 'latitude', true ), 'text' );
@@ -579,7 +535,7 @@ $custom_metafields = array(
 		'userid' 			=> 'sanitize_text_field'
 	),
 
-	'matched_requests' => array(
+	'matched_shares' => array(
 		'producer_request' 		=> 'sanitize_text_field',
 		'producer_approval' 	=> 'sanitize_text_field',
 		'consumption_request'	=> 'santitize_text_field',
