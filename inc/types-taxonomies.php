@@ -100,7 +100,6 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-
 	register_post_type('matched_shares', $mreargs); 
 	register_post_type('matched_trades', $mreargs);
 
@@ -183,7 +182,7 @@ function watersharing_requests_fields( $post ) {
 	buildMetaField( 'input', 'water_quality', 'Water Quality', get_post_meta( $post->ID, 'water_quality', true ), 'text' );
 
 	$matchlookup = [];
-	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_share_requests', 'fields' => 'ids' ) );
+	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_shares', 'fields' => 'ids' ) );
 	if( $matches ) {
 		foreach( $matches as $match ) {
 			$matchlookup[$match] = get_the_title( $match );
@@ -324,16 +323,16 @@ function watermanagement_wellpad_fields( $post ) {
 // function to build out individual meta fields for sharing match lookup records
 function watersharing_match_fields( $post ) {
 
-	$producerlookup = [];
+	$share_producerlookup = [];
 	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'share_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
 	if( $producers ) {
 		foreach( $producers as $producer ) {
-			$producerlookup[$producer] = get_the_title( $producer );
+			$share_producerlookup[$producer] = get_the_title( $producer );
 		}
 	}
 
 	//Register Sharing Production Fields 
-	buildMetaField( 'select', 'producer_request', 'Production Request Record', get_post_meta( $post->ID, 'producer_request', true ), $producerlookup );
+	buildMetaField( 'select', 'producer_request', 'Production Request Record', get_post_meta( $post->ID, 'producer_request', true ), $share_producerlookup );
 	buildMetaField( 'select', 'producer_approval', 'Production Request Approval Status', get_post_meta( $post->ID, 'producer_approval', true ), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline' ) );
 
 	$consumerlookup = [];
@@ -357,28 +356,26 @@ function watersharing_match_fields( $post ) {
 // function to build out individual meta fields for trading match lookup records
 function watertrading_match_fields( $post ) {
 
-	$producerlookup = [];
-	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'share_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
+	$trade_producerlookup = [];
+	$producers = get_posts( array( 'numberposts' => -1, 'post_type' => 'trade_supply', 'post_status' => 'publish', 'fields' => 'ids' ) );
 	if( $producers ) {
 		foreach( $producers as $producer ) {
-			$producerlookup[$producer] = get_the_title( $producer );
+			$trade_producerlookup[$producer] = get_the_title( $producer );
 		}
 	}
 
-	//Register Trading Production Fields
-	buildMetaField( 'select', 'producer_trade', 'Production Trade Request Record', get_post_meta( $post->ID, 'producer_trade', true ), $producerlookup );
+	buildMetaField( 'select', 'producer_trade', 'Production Trade Request Record', get_post_meta( $post->ID, 'producer_trade', true ), $trade_producerlookup );
 	buildMetaField( 'select', 'producer_trade_approval', 'Production Trade Request Approval Status', get_post_meta( $post->ID, 'producer_trade_approval', true ), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline' ) );
 
-	$consumerlookup = [];
+	$trade_consumerlookup = [];
 	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'share_demand', 'post_status' => 'publish', 'fields' => 'ids'));
 	if ($consumers) {
 		foreach ($consumers as $consumer) {
-			$consumerlookup[$consumer] = get_the_title($consumer);
+			$trade_consumerlookup[$consumer] = get_the_title($consumer);
 		}
 	}
 
-	//Register Trading Production Fields
-	buildMetaField('select', 'consumption_trade_request', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade_request', true), $consumerlookup);
+	buildMetaField('select', 'consumption_trade_request', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade_request', true), $trade_consumerlookup);
 	buildMetaField('select', 'consumption_trade_approval', 'Consumption Trade Request Approval Status', get_post_meta($post->ID, 'consumption_trade_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
 	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
@@ -410,7 +407,7 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
-		'match_lookup' 		=> 'sanitize_text_field',
+		'share_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field'
 	),
 	'trade_supply' => array(
@@ -424,16 +421,19 @@ $custom_metafields = array(
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
 		'can_accept_trucks' => 'sanitize_text_field',
-		'can_accept_pipes' => 'sanitize_text_field',
- 		'match_lookup' 		=> 'sanitize_text_field',
+		'can_accept_pipes'  => 'sanitize_text_field',
+ 		'trade_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field',
 		'bid_type' 		    => 'sanitize_text_field',
 		'bid_amount' 		=> 'sanitize_text_field',
 		'bid_units' 		=> 'sanitize_text_field',
 		'can_deliver' 		=> 'sanitize_text_field',
 		'truck' 		    => 'sanitize_text_field',
-		'truck_transport_radius' 		=> 'sanitize_text_field',
+		'truck_transport_radius' 	=> 'sanitize_text_field',
 		'truck_transport_bid' 		=> 'sanitize_text_field',
+		'truck_capacity' 	=> 'sanitize_text_field',
+		'layflats_transport_radius' => 'sanitize_text_field',
+		'layflats_transport_bid'    => 'sanitize_text_field',
 		'layflats_capacity' => 'sanitize_text_field',
 		'quality_disclosures' 		=> 'sanitize_text_field',
 		'tss_measure_units'    => 'sanitize_text_field',
@@ -474,7 +474,7 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
-		'match_lookup' 		=> 'sanitize_text_field',
+		'share_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field'
 	),
 	'trade_demand' => array(
@@ -488,17 +488,20 @@ $custom_metafields = array(
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
 		'can_accept_trucks' => 'sanitize_text_field',
-		'can_accept_pipes' => 'sanitize_text_field',
- 		'match_lookup' 		=> 'sanitize_text_field',
+		'can_accept_pipes' 	=> 'sanitize_text_field',
+ 		'trade_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field',
 		'bid_type' 		    => 'sanitize_text_field',
 		'bid_amount' 		=> 'sanitize_text_field',
 		'bid_units' 		=> 'sanitize_text_field',
 		'can_deliver' 		=> 'sanitize_text_field',
 		'truck' 		    => 'sanitize_text_field',
-		'truck_transport_radius' 		=> 'sanitize_text_field',
+		'truck_transport_radius' 	=> 'sanitize_text_field',
 		'truck_transport_bid' 		=> 'sanitize_text_field',
-		'layflats_capacity' 	=> 'sanitize_text_field',
+		'truck_capacity' 	=> 'sanitize_text_field',
+		'layflats_transport_radius' => 'sanitize_text_field',
+		'layflats_transport_bid'    => 'sanitize_text_field',
+		'layflats_capacity' => 'sanitize_text_field',
 		'quality_disclosures' 	=> 'sanitize_text_field',
 		'tss_measure_units'     => 'sanitize_text_field',
 		'tss_limit'   => 'sanitize_text_field',
@@ -547,6 +550,7 @@ $custom_metafields = array(
 	),
 
 	'matched_trades' => array(
+		'producer_trade'        => 'sanitize_text_field',
 		'producer_request' 		=> 'sanitize_text_field',
 		'producer_trade_approval' 	=> 'sanitize_text_field',
 		'consumption_trade_request'	=> 'santitize_text_field',
