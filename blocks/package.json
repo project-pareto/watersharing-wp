@@ -9,7 +9,7 @@
 	"author": "Troy Web Consulting",
 	"license": "ISC",
 	"devDependencies": {
-		"@wordpress/scripts": "^27.3.0"
+		"@wordpress/scripts": "^27.9.0"
 	},
 	"dependencies": {
 		"@wordpress/blocks": "^12.29.0",
