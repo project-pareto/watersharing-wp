@@ -202,25 +202,49 @@ require_once( 'inc/watersharing-settings.php' );
 require_once( 'inc/watersharing-json-exporter.php' );
 
 // define custom block categories
-function register_custom_guttenberg_categories( $categories ) {
+function register_ws_guttenberg_categories( $ws_categories ) {
 
-	$categories[] = array(
+	$ws_categories[] = array(
 		'slug'	=> 'watersharing',
-		'title'	=> 'Watersharing Blocks'
+		'title'	=> 'Watersharing Blocks',
 	);
 
-	return $categories;
-}
-if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
-	add_filter( 'block_categories_all', 'register_custom_guttenberg_categories' );
-} else {
-	add_filter( 'block_categories', 'register_custom_guttenberg_categories' );
+	return $ws_categories;
 }
 
-// register guttenberg blocks
+function register_wt_guttenberg_categories( $wt_categories ) {
+
+	$wt_categories[] = array(
+		'slug'  => 'watertrading',
+		'title' => 'Watertrading Blocks'
+	);
+
+	return $wt_categories;
+}
+if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
+	add_filter( 'block_categories_all', 'register_ws_guttenberg_categories' );
+	add_filter( 'block_categories_all', 'register_wt_guttenberg_categories' );
+
+} else {
+	add_filter( 'block_categories', 'register_ws_guttenberg_categories' );	
+	add_filter( 'block_categories', 'register_wt_guttenberg_categories' );
+}
+
+// register ws blocks
 function register_watersharing_blocks()
 {
-    $blocks_dir = __DIR__ . '/blocks/build/';
+    $blocks_dir = __DIR__ . '/blocks/build/ws-';
+    $block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
+
+    foreach ( $block_directories as $block_dir ) {
+        register_block_type( $block_dir );
+    }
+}
+
+//register wt blocks
+function register_watertrading_blocks()
+{
+    $blocks_dir = __DIR__ . '/blocks/build/wt-';
     $block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
 
     foreach ( $block_directories as $block_dir ) {
@@ -229,6 +253,9 @@ function register_watersharing_blocks()
 }
 if($watersharing_toggle){
 	add_action('init', 'register_watersharing_blocks');
+}
+if($watertrading_toggle){
+	add_action('init', 'register_watertrading_blocks');
 }
 
 // handle request dashboard post updates
