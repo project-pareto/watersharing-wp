@@ -1,5 +1,5 @@
 /* Watersharing Card Styles */
-.watersharing-blocks {
+.watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
 		border-radius: 10px;
@@ -35,7 +35,7 @@
 }
 
 /* Watersharing Form Styles */
-.watersharing-blocks {
+.watersharing-blocks, .watertrading-blocks {
 	.watersharing-form {
 		.watersharing-row {
 			margin-bottom: 1rem;
@@ -58,6 +58,10 @@
 			max-width: 100%;
 			padding: 7px 10px 7px 0;
 			width: 100%;
+
+			&.accordion{
+				width: 100% !important;
+			}
 		}
 
 		.watersharing-input-col {
@@ -69,6 +73,34 @@
 			flex-shrink: 0;
 			max-width: 100%;
 			width: 100%;
+			align-content: center;
+
+			&.accordion{
+				width: 100% !important;
+			}
+
+			&.two-col{
+				width: 42% !important;
+			}
+
+			&.three-col{
+				width: 31% !important;
+			}
+
+			&.no-label{
+				width:100%;
+			}
+		}
+
+		.watersharing-text-col {
+			@media (min-width: 576px) {
+				flex: 0 0 auto;
+				margin-bottom: 0;
+				width: 30%;
+				margin-right: 10px;
+			}
+
+			margin-bottom: 8px;
 		}
 
 		.watersharing-date-sep {
@@ -110,7 +142,7 @@
 }
 
 /* Watersharing Match Request Table Styles */
-table.watersharing-table {
+table.watersharing-table, table.watertrading-table{
 	border-collapse: separate;
 	border-spacing: 0 .125em;
 	margin-bottom: 1rem;

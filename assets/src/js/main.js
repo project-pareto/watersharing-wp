@@ -216,4 +216,68 @@
 		sortTables();
 	})
 
+	//Code for accordion component
+	$(document).ready(function () {
+		// Function to show the collapse
+		function showCollapse($element, $button) {
+		  if (!$element.hasClass('collapsing') && !$element.hasClass('show')) {
+			$element
+			  .removeClass('collapse')
+			  .addClass('collapsing') // Start collapsing animation
+			  .css('height', 0); // Initial height is set to 0
+			
+			// Trigger a reflow to allow the height change to animate
+			$element[0].offsetHeight;
+	  
+			// Get the scroll height to animate to
+			var height = $element[0].scrollHeight;
+			$element
+			  .css('height', height + 'px') // Set the height for transition
+			  .one('transitionend', function () {
+				// Cleanup after transition ends
+				$element.removeClass('collapsing').addClass('collapse show').css('height', '');
+			  });
+			  $button.removeClass('collapsed').attr('aria-expanded', true); // Remove collapsed state
+		  }
+		}
+	  
+		// Function to hide the collapse
+		function hideCollapse($element, $button) {
+		  if (!$element.hasClass('collapsing') && $element.hasClass('show')) {
+			$element
+			  .css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
+			  .removeClass('collapse show')
+			  .addClass('collapsing'); // Start collapsing animation
+	  
+			// Trigger a reflow
+			$element[0].offsetHeight;
+	  
+			$element
+			  .css('height', 0) // Animate to height of 0
+			  .one('transitionend', function () {
+				// Cleanup after transition ends
+				$element.removeClass('collapsing').addClass('collapse').css('height', '');
+			  });
+			  $button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
+		  }
+		}
+	  
+		// Add event listeners for all accordion buttons
+		$('.accordion-button').on('click', function () {
+			var targetSelector = $(this).attr('data-bs-target');
+			var $target = $(targetSelector);
+			var $button = $(this); // Current button
+	  
+			if ($target.hasClass('show')) {
+				hideCollapse($target, $button); // Hide the collapse
+			} else {
+				// Optionally, collapse other accordions if required
+				$('.accordion-collapse.show').each(function () {
+				hideCollapse($(this));
+				});
+				showCollapse($target, $button); // Show the clicked collapse
+			}
+		});
+	});
+
 })(jQuery);
