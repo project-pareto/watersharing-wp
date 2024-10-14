@@ -266,18 +266,69 @@
 		$('.accordion-button').on('click', function () {
 			var targetSelector = $(this).attr('data-bs-target');
 			var $target = $(targetSelector);
-			var $button = $(this); // Current button
-	  
+			var $button = $(this); 
+		
 			if ($target.hasClass('show')) {
-				hideCollapse($target, $button); // Hide the collapse
+				hideCollapse($target, $button); 
 			} else {
-				// Optionally, collapse other accordions if required
-				$('.accordion-collapse.show').each(function () {
-				hideCollapse($(this));
-				});
-				showCollapse($target, $button); // Show the clicked collapse
+				showCollapse($target, $button); 
 			}
 		});
-	});
+		
 
+		//Checkbox For disabling truck fields
+		$('#trucks-checkbox').change(function() {
+			// Check if the checkbox is checked
+			if ($(this).is(':checked')) {
+				// Enable the input fields if the checkbox is checked
+				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', false);
+			} else {
+				// Disable the input fields if the checkbox is unchecked
+				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+			}
+		});
+	
+		// Initially disable the inputs when the page loads
+		$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+
+		//Checkbox For disabling layflat fields
+		$('#layflats-checkbox').change(function() {
+			// Check if the checkbox is checked
+			if ($(this).is(':checked')) {
+				// Enable the input fields if the checkbox is checked
+				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', false);
+			} else {
+				// Disable the input fields if the checkbox is unchecked
+				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+			}
+		});
+	
+		// Initially disable the inputs when the page loads
+		$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+
+		//Calculating total / specific bid value
+		$("input[name='bid_amount'], input[name='rate_bpd'], #bid_units").change(function(){
+			var $bid = $("input[name='bid_amount']");
+			var $rate = $("input[name='rate_bpd']");
+			var $units = $("#bid_units");
+			
+			var bid = parseInt($bid.val(), 10);
+			var rate = parseInt($rate.val(), 10);
+			var unitsValue = $units.val();
+			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
+				if(unitsValue == "USD/bbl.day"){
+					$("#bid_total").val(bid * rate);
+					$("#bid_specific_total").val(bid);
+				}
+				else{
+					$("#bid_total").val(bid);
+					$("#bid_specific_total").val(bid / rate);
+				}
+			} else {
+				$("#bid_total").val('');
+				$("#bid_specific_total").val('');
+			}
+		});
+			
+	});
 })(jQuery);

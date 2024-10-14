@@ -6,5 +6,5 @@
 ?>
 
 <div class='watersharing-blocks'>
-	<?php echo buildRequestForm('water_supply', 'I Have Water'); ?>
+	<?php echo buildRequestForm('share_supply', 'I Have Water'); ?>
 </div>

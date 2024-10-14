@@ -6,5 +6,5 @@
 ?>
 
 <div class='watersharing-blocks full-width'>
-	<?php echo buildRequestTable('water_supply'); ?>
+	<?php echo buildRequestTable('share_supply'); ?>
 </div>

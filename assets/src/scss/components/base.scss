@@ -150,6 +150,7 @@
 	border-radius: 0;
 	overflow-anchor: none;
 	transition: var(--bs-accordion-transition);
+	padding-left: 0px;
   }
   @media (prefers-reduced-motion: reduce) {
 	.accordion-button {

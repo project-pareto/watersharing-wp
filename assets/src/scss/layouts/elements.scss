@@ -47,11 +47,14 @@
 
 		.watersharing-form-label {
 			@media (min-width: 576px) {
-				text-align: right;
+				text-align: left;
 				flex: 0 0 auto;
 				width: 25%;
+				align-items: center;
+				gap:5px;
 			}
 
+			display:flex;
 			flex-shrink: 0;
 			font-weight: 700;
 			line-height: 1.5;
@@ -61,6 +64,10 @@
 
 			&.accordion{
 				width: 100% !important;
+			}
+
+			.checkbox{
+				width:25% !important;
 			}
 		}
 

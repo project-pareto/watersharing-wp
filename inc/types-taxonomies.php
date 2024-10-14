@@ -212,31 +212,23 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'water_quality', 'Water Quality', get_post_meta( $post->ID, 'water_quality', true ), 'text' );
 	echo "</div>";
 
-	buildMetaField( 'input', 'can_accept_trucks', 'I can accept trucks', get_post_meta( $post->ID, 'can_accept_trucks', true), 'checkbox');
-	buildMetaField( 'input', 'can_accept_pipelines', 'I can accept (temporary) pipelines', get_post_meta( $post->ID, 'can_accept_pipelines', true), 'checkbox');
+	buildMetaField( 'input', 'site_compatibility', 'Site Compatibility', get_post_meta($post->ID, 'site_compatibility', true), array( 'trucks' => 'Trucks', 'pipelines' => 'Pipelines') );
 	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'willing_to_pay' => 'Willing to pay', 'paid_limit' => 'Paid at least') );
 	buildMetaField( 'input', 'bid_amount', 'Bid Amount', get_post_meta( $post->ID, 'bid_amount', true), 'text');
 	
 	buildMetaField( 'select', 'bid_units', 'Bid Units', get_post_meta( $post->ID, 'bid_units', true), array( 'USD/day' => 'USD/day', 'USD/bbl.day' => 'USD/bbl.day') );
-	
-	// buildMetaField( 'input', 'can_deliver', 'Can deliver', get_post_meta( $post->ID, 'can_deliver', true), 'checkbox');
-	// buildMetaField( 'input', 'truck', 'Truck', get_post_meta( $post->ID, 'truck', true), 'checkbox');
 	
 	echo "<div class='meta-field-group-inline'>";
 	buildMetaField( 'input', 'truck_transport_radius', 'Truck Transport Radius', get_post_meta( $post->ID, 'truck_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'truck_transport_bid', 'Truck Transport Bid',get_post_meta( $post->ID, 'truck_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'truck_capacity', 'Truck Capacity',get_post_meta( $post->ID, 'truck_capacity', 'true'), 'text');
 	echo "</div>";
-
-	// buildMetaField( 'input', 'layflats', 'Layflats', get_post_meta( $post->ID, 'layflats', true), 'checkbox');
 	
 	echo "<div class='meta-field-group-inline'>";	
 	buildMetaField( 'input', 'layflats_transport_radius', 'Layflats Transport Radius',get_post_meta( $post->ID, 'layflats_transport_radius', 'true'), 'text');
 	buildMetaField( 'input', 'layflats_transport_bid', 'Layflats Transport Bid',get_post_meta( $post->ID, 'layflats_transport_bid', 'true'), 'text');
 	buildMetaField( 'input', 'layflats_capacity', 'Layflats Capacity',get_post_meta( $post->ID, 'layflats_capacity', 'true'), 'text');
 	echo "</div>";
-
-	// buildMetaField( 'input', 'quality_disclosures', 'Quality Disclosures', get_post_meta( $post->ID, 'quality_disclosures', true), 'checkbox');
 
 	//Quality Disclosures
 
@@ -270,9 +262,9 @@ function watertrading_requests_fields( $post ) {
 
 	echo "<label class = 'input-label-group'>Calcium</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'calciumcarbonates_measure_units', 'Units', get_post_meta( $post->ID, 'calciumcarbonates_measure_units', true), array('ppm') );
-	buildMetaField( 'select', 'calciumcarbonates_limit', 'Limit', get_post_meta( $post->ID, 'calciumcarbonates_limit', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
-	buildMetaField( 'input', 'calciumcarbonates_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'calciumcarbonates_measure_value', true), 'text');
+	// buildMetaField( 'select', 'calciumcarbonate_measure_units', 'Units', get_post_meta( $post->ID, 'calciumcarbonate_measure_units', true), array('ppm') );
+	buildMetaField( 'select', 'calciumcarbonate_limit', 'Limit', get_post_meta( $post->ID, 'calciumcarbonate_limit', true), array( 'greater_than' => 'Greater Than Value', 'less_than' => 'Less Than Value') );
+	buildMetaField( 'input', 'calciumcarbonate_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'calciumcarbonate_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Iron</label>";

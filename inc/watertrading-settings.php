@@ -3,19 +3,19 @@
 // create the settings page
 function watertrading_settings_page() {
 	// Get currently saved values (if any)
-	$production_dashboard_page = get_option('production_dashboard_page');
-	$consumption_dashboard_page = get_option('consumption_dashboard_page');
+	$wt_production_dashboard_page = get_option('wt_production_dashboard_page');
+	$wt_consumption_dashboard_page = get_option('wt_consumption_dashboard_page');
 
 	$prod_form = wp_dropdown_pages(array(
-		'name'             	=> 'production_dashboard_page',
-		'selected'         	=> $production_dashboard_page,
+		'name'             	=> 'wt_production_dashboard_page',
+		'selected'         	=> $wt_production_dashboard_page,
 		'show_option_none' 	=> 'Select a page',
 		'echo'				=> 0
 	));
 
 	$cons_form = wp_dropdown_pages(array(
-		'name'             	=> 'consumption_dashboard_page',
-		'selected'         	=> $consumption_dashboard_page,
+		'name'             	=> 'wt_consumption_dashboard_page',
+		'selected'         	=> $wt_consumption_dashboard_page,
 		'show_option_none' 	=> 'Select a page',
 		'echo'				=> 0
 	));
@@ -45,13 +45,13 @@ function watertrading_settings_page() {
 
 // save the settings fields
 function save_watertrading_settings() {
-    if (isset($_POST['production_dashboard_page'])) {
-        update_option('production_dashboard_page', $_POST['production_dashboard_page']);
+    if (isset($_POST['wt_production_dashboard_page'])) {
+        update_option('wt_production_dashboard_page', $_POST['wt_production_dashboard_page']);
     }
-    if (isset($_POST['consumption_dashboard_page'])) {
-        update_option('consumption_dashboard_page', $_POST['consumption_dashboard_page']);
+    if (isset($_POST['wt_consumption_dashboard_page'])) {
+        update_option('wt_consumption_dashboard_page', $_POST['wt_consumption_dashboard_page']);
     }
 }
-add_action('admin_init', 'save_watersharing_settings');
+add_action('admin_init', 'save_watertrading_settings');
 
 ?>

@@ -63,25 +63,6 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
     echo $html;
 }
 
-// Function for saving checkbox data
-function save_watertrading_requests_fields( $post_id ) {
-    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
-        return;
-
-	if (!current_user_can('edit_page', $post_id)) {
-		return;
-	}
-
-    $checkbox_fields = ['can_accept_trucks', 'can_accept_pipelines','can_deliver', 'truck', 'layflats', 'quality_disclosures'];
-    
-    foreach ($checkbox_fields as $field) {
-        $value = isset($_POST[$field]) ? 1 : 0;
-        update_post_meta($post_id, $field, $value);
-    }
-}
-
-add_action( 'save_post', 'save_watertrading_requests_fields' );
-
 // function to build out request form fields
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $placeholder = "", $acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
@@ -93,7 +74,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			case 'number':
 				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
 				break;
-
+			
 			case 'date':
 				$input = "
 					<div class='watersharing-row no-margin-bottom'>
@@ -192,14 +173,14 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					<div class='watersharing-row'>			
 						<div class='watersharing-input-col accordion'>
 							<div class='qd-accordion'>
-								<div class='accordion' id='$id'>
+								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
 										<label class='watersharing-form-label accordion'>
 										<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$id_lower' aria-expanded='false' aria-controls='collapse-$id_lower'>
 											<strong>$id</strong>
 										</button>
 										</label>
-										<div id='collapse-$id_lower' class='accordion-collapse collapse' aria-labelledby='headingOne' data-bs-parent='#accordionExample'>
+										<div id='collapse-$id_lower' class='accordion-collapse collapse' aria-labelledby='headingOne'>
 										<div class='accordion-body'>
 											$input
 										</div>
@@ -246,11 +227,14 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 	}
 
 	($required === 'required') ? $label_required = "<span class='required'>*</span>" : $label_required = "";
+
+	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox' value='1'>": $checkbox = "";
 	
 	!empty($label) ?
 	$html = "
 		<div class='watersharing-row'>
-			<label for='$id' class='watersharing-form-label'>$label$label_required</label>
+			
+			<label for='$id' class='watersharing-form-label'>$checkbox<p>$label$label_required</p></label>
 			<div class='watersharing-input-col'>
 				$input
 			</div>
@@ -268,8 +252,9 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 function qdBuilder($names = []){
 	$qd = "";
 	foreach($names as $name){
-		$qd_array[] = ["id" => "limit", "label" => "", "type" => "select", "required" => "required", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["min", "max"]];
-		$qd_array[] = ["id" => "value", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Value", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+		$name_lower = strtolower(str_replace(' ', '', $name));
+		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["min", "max"]];
+		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
 		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', 'two-col', '', $qd_array);
 		$qd_array = [];
 	}
@@ -280,62 +265,62 @@ function qdBuilder($names = []){
 function buildRequestForm($type = "", $title = "") {
 	$html = "";
 
-	// setup the fields for the form
+	// Set up the fields for the form
 	$well_pad = buildFormField( 'well_pad', 'Well Pads', 'pads', '', 'Create A New Pad' );
 	$well_name = buildFormField('well_name', 'Pad Name', 'text', 'required', 'Pad Name');
-	// $latlong = buildFormField('Coordinates', 'Coordinates', 'latlong', 'required');
 
 	$input_array = [];	
-
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "acf_key" => "", "class" => "", "readonly" => ""];
 	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "acf_key" => "", "class" => "", "readonly" => ""];
-
 	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "", "", "", "two-col", "", 
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
 
-	($type === 'share_supply' || $type === 'trade_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+	$supply = ($type === 'share_supply' || $type === 'trade_supply');
+	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+
 
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
 	$trade ? $site_compatibility = buildFormField('radio', 'Site Compatibility', 'radio','required', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
 	 
-	$bid_type = buildFormField('radio', 'Bid Type', 'radio', 'required', '', '', '', '', ['Up to', 'At least']);
+	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
 
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Bid Amount", "acf_key" => "", "class" => "", "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "placeholder" => "Bid Units", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => $bid_units];
-
 	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "", "", "", "two-col", "", $bid_array): $bid_info = "";
 
+	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "0", "", "", "readonly"): $bid_total = "";
+	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "0", "", "", "readonly"): $bid_specific_total = "";
+
 	//Trucks
-	$trucks_array[] = ["id" => "trucks_checkbox", "label" => "", "type" => "checkbox", "required" => "required", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	
-	$trucks_array[] = ["id" => "radius", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trucks_array[] = ["id" => "bid", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trucks_array[] = ["id" => "capacity", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trade ? $trucks = buildFormField('trucks', 'Trucks', 'multi_column', '', '', '', 'three-col', '', $trucks_array ): $trucks = "";
+	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks = buildFormField('trucks', 'Trucks', 'multi_column', '', '', '', 'three-col toggle', '', $trucks_array);
 
 	//Layflats
-	$layflats_array[] = ["id" => "radius", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$layflats_array[] = ["id" => "bid", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$layflats_array[] = ["id" => "capacity", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trade ? $layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', 'three-col', '', $layflats_array ): $layflats = "";
+	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', 'three-col toggle', '', $layflats_array );
 
 	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', '', [$trucks,$layflats]): $delivery = '';
 
 	//Quality Disclosures
-	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'Norm']): $tss = "";
+	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'Norm']): $qd = "";
 	$qd_array = [$qd];
 	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', '', $qd_array): $quality_disclosures = "";
 	
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
 	$action = esc_url( admin_url('admin-post.php') );
+	error_log("Form action URL: $action");
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
@@ -350,8 +335,9 @@ function buildRequestForm($type = "", $title = "") {
 		$rate
 		$transport
 		$bid_type
-
 		$bid_info
+		$bid_total
+		$bid_specific_total
 		$quality_disclosures
 
 		<div class='watersharing-section-break'>
@@ -506,7 +492,7 @@ function buildRequestTable( $type = '' ) {
 					#Trade Conditions
 					if($type === 'trade_supply') {
 						$match_type = 'consumption_trade';
-						$match_post_type = 'trade_demand';
+						$match_post_type = 'trade_supply';
 					}
 					elseif($type === 'trade_demand') {
 						$match_type = 'producer_trade'; 
