@@ -367,7 +367,7 @@ function watertrading_match_fields( $post ) {
 		}
 	}
 
-	buildMetaField('select', 'consumption_trade_request', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade_request', true), $trade_consumerlookup);
+	buildMetaField('select', 'consumption_trade', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade', true), $trade_consumerlookup);
 	buildMetaField('select', 'consumption_trade_approval', 'Consumption Trade Request Approval Status', get_post_meta($post->ID, 'consumption_trade_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
 	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
@@ -543,9 +543,8 @@ $custom_metafields = array(
 
 	'matched_trades' => array(
 		'producer_trade'        => 'sanitize_text_field',
-		'producer_request' 		=> 'sanitize_text_field',
 		'producer_trade_approval' 	=> 'sanitize_text_field',
-		'consumption_trade_request'	=> 'santitize_text_field',
+		'consumption_trade'	=> 'santitize_text_field',
 		'consumption_trade_approval' 	=> 'santitize_text_field',
 		'matched_distance' 		=> 'santitize_text_field',
 		'matched_rate' 			=> 'sanitize_text_field',

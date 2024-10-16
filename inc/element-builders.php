@@ -272,7 +272,7 @@ function buildRequestForm($type = "", $title = "") {
 	$input_array = [];	
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "acf_key" => "", "class" => "", "readonly" => ""];
 	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "acf_key" => "", "class" => "", "readonly" => ""];
-	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "", "", "", "two-col", "", 
+	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "two-col", "", 
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
@@ -293,7 +293,7 @@ function buildRequestForm($type = "", $title = "") {
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Bid Amount", "acf_key" => "", "class" => "", "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "placeholder" => "Bid Units", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => $bid_units];
-	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "", "", "", "two-col", "", $bid_array): $bid_info = "";
+	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array): $bid_info = "";
 
 	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "0", "", "", "readonly"): $bid_total = "";
 	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "0", "", "", "readonly"): $bid_specific_total = "";
@@ -338,12 +338,12 @@ function buildRequestForm($type = "", $title = "") {
 		$bid_info
 		$bid_total
 		$bid_specific_total
-		$quality_disclosures
 
 		<div class='watersharing-section-break'>
 			<div class='watersharing-info-text'>Optional fields:</div>
 		</div>
 		$water_quality
+		$quality_disclosures
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>
 			<label class='watersharing-form-label'></label>
@@ -375,7 +375,6 @@ function buildRequestForm($type = "", $title = "") {
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {
-
 	if($post_type === 'share_supply'){
 		$post_type = 'producer_request';
 	}
@@ -389,13 +388,12 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 		$post_type = 'consumption_trade';
 	}
 
-	// query for the matches
 	$query = new WP_Query(
 		array(
 			'no_found_rows'				=> false,
 			'update_post_meta_cache'	=> false,
 			'update_post_term_cache'	=> false,
-			'post_type' => (strpos($post_type, 'share') !== false) ? 'matched_shares' : 'matched_trades',
+			'post_type' => (strpos($post_type, 'request') !== false) ? 'matched_shares' : 'matched_trades',
 			'posts_per_page'			=> -1,
 			'fields'					=> 'ids',
 			'meta_query'				=> array(
@@ -472,7 +470,19 @@ function buildRequestTable( $type = '' ) {
 				foreach( $lookups as $lookup ) {
 					$count++;
 
-					( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
+					// ( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
+					if($type === 'share_supply'){
+						$user_interaction = 'producer_approval';
+					}
+					elseif($type === 'share_demand'){
+						$user_interaction = 'consumption_approval';
+					}
+					elseif($type === 'trade_supply'){
+						$user_interaction = 'producer_trade_approval';
+					}
+					elseif($type === 'trade_demand'){
+						$user_interaction = 'consumption_trade_approval';
+					}
 					$user_action = get_post_meta( $lookup, $user_interaction, true );
 					$avoided = get_post_meta( $lookup, 'disposal_avoided', true );
 					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
