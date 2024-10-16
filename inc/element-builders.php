@@ -3,48 +3,84 @@
 //dynamic function to create the form fields
 function buildMetaField( $type = "", $name = "", $label = "", $value = "", $options = "" )
 {
+    $html = "<div class='custom-meta-field'>";
+    if( !empty( $label ) ) {
+        $label = esc_html($label) . ':';
+        $html .= "<label class='input-label' for='$name'>$label</label>";
+    }
 
-	$html = "<div class='custom-meta-field'>";
-	if( !empty( $label ) ) {
-		$label = esc_html($label) . ':';
-		$html .= "<label class='input-label' for='$name'>$label</label>";
-	}
+    ( !empty( $name ) ) ? $name = esc_html( $name ) : "";
 
-	( !empty( $name ) ) ? $name = esc_html( $name ) : "";
+    switch( $type ) {
+        case 'input':
+            if ($options === 'checkbox') {
+                $checked = $value ? 'checked' : '';
+                $html .= "
+                <div class='meta-box-checkbox'> 
+                    <input type='checkbox' name='$name' id='$name' class='meta-box-input' value='1' $checked>
+                </div>";
+            } elseif (is_array($options) && !empty($options)) {
+				$html .= "<div class=meta-box-radio>";
+				foreach ($options as $option_value => $option_label) {
+                    $checked = checked($value, $option_value, false);
+                    $html .= "
+                    <div class='meta-radio-select'>
+                        <label>
+                            <input type='radio' name='$name' id='$name-$option_value' value='$option_value' $checked> $option_label
+                        </label>
+                    </div>";
+                }
+				$html .= "</div>";
+            } else {
+                $html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
+            }
+            break;
 
-	switch( $type ) {
-		case 'input':
-			$html .= "<input type='$options' name='$name' id='$name' class='meta-box-input' value='$value'>";
-			break;
+        case 'select':
+            $html .= "<select name='$name' id='$name' class='meta-box-select'>";
 
-		case 'select':
-			$html .= "<select name='$name' id='$name' class='meta-box-select'>";
+            if( !empty ( $options ) && is_array( $options ) ) {
+                $html .= "<option value=''>-- Please select --</option>";
+                foreach( $options as $option_value => $label ) {
+                    $selected = selected( $value, $option_value, false );
+                    $html .= "<option value='$option_value' $selected>$label</option>";
+                }
+            }
 
-			if( !empty ( $options ) && is_array( $options ) ) {
-				$html .= "<option value=''>-- Please select --</option>";
-				foreach( $options as $option_value => $label ) {
-					$selected = selected( $value, $option_value, false );
-					$html .= "<option value='$option_value' $selected>$label</option>";
-				}
-			}
+            $html .= "</select>";
+            break;
 
-			$html .= "</select>";
-			break;
+        case 'textarea':
+            $html .= "<textarea name='$name' id='$name' class='meta-box-textarea'>$value</textarea>";
+            break;
 
-		case 'textarea':
-			$html .= "<textarea name='$name' id='$name' class='meta-box-textarea'>$value</textarea>";
-			break;
+        default:
+            break;
+    }
 
-		default:
-			break;
-	}
+    $html .= "</div>";
 
-	$html .= "</div>";
-
-	echo $html;
-
+    echo $html;
 }
 
+// Function for saving checkbox data
+function save_watertrading_requests_fields( $post_id ) {
+    if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ) 
+        return;
+
+	if (!current_user_can('edit_page', $post_id)) {
+		return;
+	}
+
+    $checkbox_fields = ['can_accept_trucks', 'can_accept_pipelines','can_deliver', 'truck', 'layflats', 'quality_disclosures'];
+    
+    foreach ($checkbox_fields as $field) {
+        $value = isset($_POST[$field]) ? 1 : 0;
+        update_post_meta($post_id, $field, $value);
+    }
+}
+
+add_action( 'save_post', 'save_watertrading_requests_fields' );
 
 // function to build out request form fields
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $placeholder = "", $acf_key = "", $class = "", $readOnly = '' ) {
@@ -131,7 +167,9 @@ function buildRequestForm($type = "", $title = "") {
 	$longitude = buildFormField('longitude', 'Longitude', 'text', 'required', 'Longitude', '', ' geoentry',);
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
-	($type === 'water_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+
+	($type === 'share_supply' || $type === 'trade_supply') ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
 	$action = esc_url( admin_url('admin-post.php') );
@@ -182,7 +220,19 @@ function buildRequestForm($type = "", $title = "") {
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {
-	( $post_type === 'water_supply' ) ? $post_type = 'producer_request' : $post_type = 'consumption_request';
+
+	if($post_type === 'share_supply'){
+		$post_type = 'producer_request';
+	}
+	elseif($post_type === 'share_demand'){
+		$post_type = 'consumption_request';
+	}
+	elseif($post_type === 'trade_supply'){
+		$post_type = 'producer_trade';
+	}
+	elseif($post_type === 'trade_demand'){
+		$post_type = 'consumption_trade';
+	}
 
 	// query for the matches
 	$query = new WP_Query(
@@ -190,7 +240,7 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 			'no_found_rows'				=> false,
 			'update_post_meta_cache'	=> false,
 			'update_post_term_cache'	=> false,
-			'post_type'					=> 'matched_requests',
+			'post_type' => (strpos($post_type, 'share') !== false) ? 'matched_shares' : 'matched_trades',
 			'posts_per_page'			=> -1,
 			'fields'					=> 'ids',
 			'meta_query'				=> array(
@@ -267,14 +317,18 @@ function buildRequestTable( $type = '' ) {
 				foreach( $lookups as $lookup ) {
 					$count++;
 
-					( $type === 'water_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
+					( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
 					$user_action = get_post_meta( $lookup, $user_interaction, true );
 					$avoided = get_post_meta( $lookup, 'disposal_avoided', true );
 					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
 					$lookup_distance = get_post_meta( $lookup, 'matched_distance', true );
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
-					( $type === 'water_supply' ) ? $match_type = 'consumption_request' : $match_type = 'producer_request';
-					( $type === 'water_supply' ) ? $match_post_type = 'water_demand' : $match_post_type = 'water_supply';
+
+					if($type === 'share_supply') { $match_type = 'consumption_request'; }
+					elseif($type === 'share_demand') {$match_type = 'producer_request'; }
+
+					if($type === 'trade_supply') { $match_type = 'consumption_trade'; }
+					elseif($type === 'trade_demand') {$match_type = 'producer_trade'; }
 
 					$match_record = get_post_meta( $lookup, $match_type, true );
 					$match_id = $match_record;
@@ -332,7 +386,8 @@ function buildRequestTable( $type = '' ) {
 							";
 					}
 
-					( $type === 'water_demand' ) ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
+					//Added logic for trading
+					( $type === 'share_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
 
 					$match_rows .= "
 							<div>
