@@ -248,7 +248,6 @@ function export_to_pareto( $post_id ) {
                         'Bid Type'              => $bid_type,
                         'Bid Amount'            => $bid_amount,
                         'Bid Units'             => $bid_units,
-                        'Bid Info'              => $bid_info,
                         'Truck Transport Radius'=> $truck_transport_radius,
                         'Truck Transport Bid'   => $truck_transport_bid,
                         'Truck Capacity'        => $truck_capacity,
