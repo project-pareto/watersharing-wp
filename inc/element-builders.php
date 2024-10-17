@@ -154,7 +154,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					}
 				}
 				$input = "
-					<select name='bid_units' id='$id' class='user-select $class'>
+					<select name='$id' id='$id' class='user-select $class'>
 						<option value='' selected hidden disabled>--Select--</option>
 						$input
 					</select>
@@ -489,6 +489,9 @@ function buildRequestTable( $type = '' ) {
 					$lookup_distance = get_post_meta( $lookup, 'matched_distance', true );
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
 
+					$total_value = get_post_meta( $lookup, 'total_value', true);
+					$total_volume = get_post_meta( $lookup, 'total_volume', true);
+
 					#Share Conditions
 					if($type === 'share_supply') { 
 						$match_type = 'consumption_request'; 
@@ -568,10 +571,27 @@ function buildRequestTable( $type = '' ) {
 					//Added logic for trading
 					( $type === 'share_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
 
+					(strpos($type,'share') !== false) ? $field1 = "<strong>Dates:</strong> $match_range": $field1 = "<strong>Total Value:</strong> $total_value USD";
+					(strpos($type,'share') !== false) ? $field2 = "<strong>Rate (bpd):</strong> $fullfilled": $field2 = "<strong>Total Volume:</strong> $total_volume bbl";
+					(strpos($type,'share') !== false) ? $field3 = "
+					<div class='watersharing-col-half watersharing-match-col'>
+						<strong>Distance (miles):</strong> $lookup_distance: 
+					</div>":
+					$field3 = "
+					<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>
+					";
+					
+					(strpos($type,'share') !== false) ? $avoid_field = 
+					"<div class='watersharing-col-half watersharing-match-col'>
+						<strong>$avoid_label:</strong> $avoided
+					</div>"
+					: $avoid_field = "";
+					
+
 					$match_rows .= "
 							<div>
 								<div class='watersharing-row watersharing-match-block'>
-									<div class='watersharing-match-detail'>
+									<div class='watersharing-match-detail' style = 'padding-right: 8px;'>
 										<div class='watersharing-row'>
 											<div class='watersharing-col watersharing-match-col'>
 												<div class='watersharing-row'>
@@ -584,17 +604,13 @@ function buildRequestTable( $type = '' ) {
 												</div>
 											</div>
 											<div class='watersharing-col-half watersharing-match-col'>
-												<strong>Dates:</strong> $match_range
+												$field1
 											</div>
 											<div class='watersharing-col-half watersharing-match-col'>
-												<strong>Distance (miles):</strong> $lookup_distance
+												$field2
 											</div>
-											<div class='watersharing-col-half watersharing-match-col'>
-												<strong>Rate (bpd):</strong> $fullfilled
-											</div>
-											<div class='watersharing-col-half watersharing-match-col'>
-												<strong>$avoid_label:</strong> $avoided
-											</div>
+											$field3
+											$avoid_field
 										</div>
 									</div>
 									$contact

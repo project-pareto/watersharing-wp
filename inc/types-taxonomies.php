@@ -360,7 +360,7 @@ function watertrading_match_fields( $post ) {
 	buildMetaField( 'select', 'producer_trade_approval', 'Production Trade Request Approval Status', get_post_meta( $post->ID, 'producer_trade_approval', true ), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline' ) );
 
 	$trade_consumerlookup = [];
-	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'share_demand', 'post_status' => 'publish', 'fields' => 'ids'));
+	$consumers = get_posts(array('numberposts' => -1, 'post_type' => 'trade_demand', 'post_status' => 'publish', 'fields' => 'ids'));
 	if ($consumers) {
 		foreach ($consumers as $consumer) {
 			$trade_consumerlookup[$consumer] = get_the_title($consumer);
@@ -373,6 +373,8 @@ function watertrading_match_fields( $post ) {
 	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
 	buildMetaField('input', 'matched_rate', 'Matched Rate', get_post_meta($post->ID, 'matched_rate', true), 'text');
 	buildMetaField( 'input', 'disposal_avoided', 'Disposal Avoided', get_post_meta( $post->ID, 'disposal_avoided', true ), 'text' );
+	buildMetaField('input', 'total_volume', 'Total Volume', get_post_meta($post->ID, 'total_volume', true), 'text');
+	buildMetaField('input', 'total_value', 'Total Value', get_post_meta($post->ID, 'total_value', true), 'text');
 	buildMetaField( 'select', 'match_status', 'Match Status', get_post_meta( $post->ID, 'match_status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'approved' => 'Approved', 'decline' => 'Decline' ) );
 }
 
@@ -412,6 +414,7 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
+		'site_compatibility' => 'sanitize_text_field',
 		'can_accept_trucks' => 'sanitize_text_field',
 		'can_accept_pipes'  => 'sanitize_text_field',
  		'trade_request' 	=> 'sanitize_text_field',
@@ -420,7 +423,6 @@ $custom_metafields = array(
 		'bid_amount' 		=> 'sanitize_text_field',
 		'bid_units' 		=> 'sanitize_text_field',
 		'can_deliver' 		=> 'sanitize_text_field',
-		'truck' 		    => 'sanitize_text_field',
 		'truck_transport_radius' 	=> 'sanitize_text_field',
 		'truck_transport_bid' 		=> 'sanitize_text_field',
 		'truck_capacity' 	=> 'sanitize_text_field',
@@ -479,6 +481,7 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
+		'site_compatibility' => 'sanitize_text_field',
 		'can_accept_trucks' => 'sanitize_text_field',
 		'can_accept_pipes' 	=> 'sanitize_text_field',
  		'trade_request' 	=> 'sanitize_text_field',
@@ -487,7 +490,6 @@ $custom_metafields = array(
 		'bid_amount' 		=> 'sanitize_text_field',
 		'bid_units' 		=> 'sanitize_text_field',
 		'can_deliver' 		=> 'sanitize_text_field',
-		'truck' 		    => 'sanitize_text_field',
 		'truck_transport_radius' 	=> 'sanitize_text_field',
 		'truck_transport_bid' 		=> 'sanitize_text_field',
 		'truck_capacity' 	=> 'sanitize_text_field',
@@ -538,6 +540,8 @@ $custom_metafields = array(
 		'matched_distance' 		=> 'santitize_text_field',
 		'matched_rate' 			=> 'sanitize_text_field',
 		'disposal_avoided' 		=> 'santize_text_field',
+		'total_value'			=> 'sanitize_text_field',
+		'total_volume'			=> 'sanitize_text_field',
 		'match_status' 			=> 'sanitize_text_field',
 	),
 
@@ -549,6 +553,8 @@ $custom_metafields = array(
 		'matched_distance' 		=> 'santitize_text_field',
 		'matched_rate' 			=> 'sanitize_text_field',
 		'disposal_avoided' 		=> 'santize_text_field',
+		'total_value'			=> 'sanitize_text_field',
+		'total_volume'			=> 'sanitize_text_field',
 		'match_status' 			=> 'sanitize_text_field',
 	)
 );
