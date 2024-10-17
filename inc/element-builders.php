@@ -119,7 +119,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				if(!empty($dataset)){
 					$id_lower = strtolower(str_replace(' ', '_', $id));
 					foreach($dataset as $set){
-						$set_lower = strtolower(str_replace(' ', '_', $id));
+						$set_lower = strtolower(str_replace(' ', '_', $set));
 						$input .= "
 							<div class='meta-radio-select'>
 								<input type='radio' name='$id_lower' id='$set_lower' value='$set_lower' ''>
@@ -285,7 +285,7 @@ function buildRequestForm($type = "", $title = "") {
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
-	$trade ? $site_compatibility = buildFormField('radio', 'Site Compatibility', 'radio','required', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
+	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'radio','required', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
 	 
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
 
@@ -575,7 +575,7 @@ function buildRequestTable( $type = '' ) {
 					(strpos($type,'share') !== false) ? $field2 = "<strong>Rate (bpd):</strong> $fullfilled": $field2 = "<strong>Total Volume:</strong> $total_volume bbl";
 					(strpos($type,'share') !== false) ? $field3 = "
 					<div class='watersharing-col-half watersharing-match-col'>
-						<strong>Distance (miles):</strong> $lookup_distance: 
+						<strong>Distance (miles):</strong> $lookup_distance
 					</div>":
 					$field3 = "
 					<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>
