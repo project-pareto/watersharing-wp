@@ -90,7 +90,7 @@ add_action('init', 'import_json_data');
 function export_to_pareto( $post_id ) {
     //check for water request post_types
     $post_type = get_post_type($post_id);
-    if($post_type != 'water_supply' && $post_type != 'water_demand') {
+    if($post_type != 'share_supply' && $post_type != 'share_demand') {
         return;
     }
 
@@ -99,7 +99,7 @@ function export_to_pareto( $post_id ) {
         return;
     }
 
-    $posttypes = array(array('key' => 'Producers', 'posts' => 'water_supply'), array('key' => 'Consumers', 'posts' => 'water_demand'));
+    $posttypes = array(array('key' => 'Producers', 'posts' => 'share_supply'), array('key' => 'Consumers', 'posts' => 'share_demand'));
     $data = [];
 
     foreach($posttypes as $posts) {
@@ -166,7 +166,7 @@ function export_to_pareto( $post_id ) {
         'no_found_rows'                => false,
         'update_post_meta_cache'    => false,
         'update_post_term_cache'    => false,
-        'post_type'                    => 'water_supply',
+        'post_type'                    => 'share_supply',
         'post_status'                => 'publish',
         'meta_query'                => array(
             'relation'        => 'AND',
@@ -209,14 +209,14 @@ function export_to_pareto( $post_id ) {
     $file_saved = file_put_contents( $file_path, $json_data );
 
 }
-add_action( 'export_water_supply_records', 'export_to_pareto', 20 );
+add_action( 'export_share_supply_records', 'export_to_pareto', 20 );
 
-// create the 'export_water_supply_records' cron to trigger the export script
-function schedule_export_water_supply_records( $post_id ) {
+// create the 'export_share_supply_records' cron to trigger the export script
+function schedule_export_share_supply_records( $post_id ) {
     $post = get_post( $post_id );
-    if( $post->post_type === 'water_supply' || $post->post_type === 'water_demand' ) {
+    if( $post->post_type === 'share_supply' || $post->post_type === 'share_demand' ) {
         // Schedule the export function to run after a delay
-        wp_schedule_single_event( time() + 3, 'export_water_supply_records', array( $post_id ) );
+        wp_schedule_single_event( time() + 3, 'export_share_supply_records', array( $post_id ) );
     }
 }
-add_action( 'save_post', 'schedule_export_water_supply_records' );
+add_action( 'save_post', 'schedule_export_share_supply_records' );

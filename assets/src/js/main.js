@@ -216,4 +216,119 @@
 		sortTables();
 	})
 
+	//Code for accordion component
+	$(document).ready(function () {
+		// Function to show the collapse
+		function showCollapse($element, $button) {
+		  if (!$element.hasClass('collapsing') && !$element.hasClass('show')) {
+			$element
+			  .removeClass('collapse')
+			  .addClass('collapsing') // Start collapsing animation
+			  .css('height', 0); // Initial height is set to 0
+			
+			// Trigger a reflow to allow the height change to animate
+			$element[0].offsetHeight;
+	  
+			// Get the scroll height to animate to
+			var height = $element[0].scrollHeight;
+			$element
+			  .css('height', height + 'px') // Set the height for transition
+			  .one('transitionend', function () {
+				// Cleanup after transition ends
+				$element.removeClass('collapsing').addClass('collapse show').css('height', '');
+			  });
+			  $button.removeClass('collapsed').attr('aria-expanded', true); // Remove collapsed state
+		  }
+		}
+	  
+		// Function to hide the collapse
+		function hideCollapse($element, $button) {
+		  if (!$element.hasClass('collapsing') && $element.hasClass('show')) {
+			$element
+			  .css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
+			  .removeClass('collapse show')
+			  .addClass('collapsing'); // Start collapsing animation
+	  
+			// Trigger a reflow
+			$element[0].offsetHeight;
+	  
+			$element
+			  .css('height', 0) // Animate to height of 0
+			  .one('transitionend', function () {
+				// Cleanup after transition ends
+				$element.removeClass('collapsing').addClass('collapse').css('height', '');
+			  });
+			  $button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
+		  }
+		}
+	  
+		// Add event listeners for all accordion buttons
+		$('.accordion-button').on('click', function () {
+			var targetSelector = $(this).attr('data-bs-target');
+			var $target = $(targetSelector);
+			var $button = $(this); 
+		
+			if ($target.hasClass('show')) {
+				hideCollapse($target, $button); 
+			} else {
+				showCollapse($target, $button); 
+			}
+		});
+		
+
+		//Checkbox For disabling truck fields
+		$('#trucks-checkbox').change(function() {
+			// Check if the checkbox is checked
+			if ($(this).is(':checked')) {
+				// Enable the input fields if the checkbox is checked
+				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', false);
+			} else {
+				// Disable the input fields if the checkbox is unchecked
+				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+			}
+		});
+	
+		// Initially disable the inputs when the page loads
+		$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+
+		//Checkbox For disabling layflat fields
+		$('#layflats-checkbox').change(function() {
+			// Check if the checkbox is checked
+			if ($(this).is(':checked')) {
+				// Enable the input fields if the checkbox is checked
+				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', false);
+			} else {
+				// Disable the input fields if the checkbox is unchecked
+				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+			}
+		});
+	
+		// Initially disable the inputs when the page loads
+		$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+
+		//Calculating total / specific bid value
+		$("input[name='bid_amount'], input[name='rate_bpd'], #bid_units").change(function(){
+			var $bid = $("input[name='bid_amount']");
+			var $rate = $("input[name='rate_bpd']");
+			var $units = $("#bid_units");
+			
+			var bid = parseInt($bid.val(), 10);
+			var rate = parseInt($rate.val(), 10);
+			var unitsValue = $units.val();
+			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
+				if(unitsValue == "USD/bbl.day"){
+					$("#bid_total").val(bid * rate);
+					$("#bid_specific_total").val(bid);
+				}
+				else{
+					$("#bid_total").val(bid);
+					$("#bid_specific_total").val(bid / rate);
+				}
+			} else {
+				$("#bid_total").val('');
+				$("#bid_specific_total").val('');
+			}
+		});
+			
+	});
 })(jQuery);

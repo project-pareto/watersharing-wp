@@ -6,9 +6,9 @@ function ajax_request_approval() {
 	// assign passed variables from the ajax script
 	$data = $_POST;
 
-	( $data['action_type'] === 'water_demand' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
-	( $data['action_type'] === 'water_demand' ) ? $matched_nonaction = 'consumption_approval' : $matched_nonaction = 'producer_approval';
-	( $data['action_type'] === 'water_demand' ) ? $table = 'water_supply' : $table = 'water_demand';
+	( $data['action_type'] === 'share_demand' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
+	( $data['action_type'] === 'share_demand' ) ? $matched_nonaction = 'consumption_approval' : $matched_nonaction = 'producer_approval';
+	( $data['action_type'] === 'share_demand' ) ? $table = 'share_supply' : $table = 'share_demand';
 
 	if( $data['action_status'] === 'approve' ) {
 
@@ -56,8 +56,8 @@ function ajax_request_approval() {
 
 		// add to decline to the 'do not match' set on the production record
 		/*
-		( $data['action_type'] === 'water_demand' ) ? $set_post = $data['parent_record'] : $set_post = $data['match_record'];
-		( $data['action_type'] === 'water_demand' ) ? $decline_post = $data['match_record'] : $decline_post = $data['parent_record'];
+		( $data['action_type'] === 'share_demand' ) ? $set_post = $data['parent_record'] : $set_post = $data['match_record'];
+		( $data['action_type'] === 'share_demand' ) ? $decline_post = $data['match_record'] : $decline_post = $data['parent_record'];
 
 		$declines = get_post_meta( $set_post, 'decline_set', true );
 		$declines[] = $decline_post;

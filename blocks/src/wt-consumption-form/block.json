@@ -1,0 +1,19 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "watertrading/consumption-form",
+	"version": "0.1.0",
+	"title": "Consumption Form (Need Water Request)",
+	"category": "watertrading",
+	"description": "Creates a 'need water' request submission form for the watertrading project.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "consumption-form",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php",
+	"viewScript": "file:./view.js"
+}
