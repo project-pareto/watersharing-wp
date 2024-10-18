@@ -331,4 +331,27 @@
 		});
 			
 	});
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const ctx = document.getElementById('stat-chart').getContext('2d');
+	  
+		new Chart(ctx, {
+		  type: 'line',
+		  data: {
+			labels: ['1/1/2024', '2/1/2024', '3/1/2024', '4/1/2024', '5/1/2024', '6/1/2024'],
+			datasets: [{
+			  label: 'Ongoing trades',
+			  data: [12, 19, 3, 5, 2, 3],
+			  borderWidth: 1
+			}]
+		  },
+		  options: {
+			scales: {
+			  y: {
+				beginAtZero: true
+			  }
+			}
+		  }
+		});
+	});
 })(jQuery);

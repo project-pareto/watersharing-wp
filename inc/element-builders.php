@@ -372,6 +372,72 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
+function buildKpiTable($type = "", $title = ""){
+	$html = "";
+
+	$kpi_stats = "
+	<div class = 'watersharing-row' style = 'justify-content: center'>
+		<div class='watersharing-kpi-block'>
+			<div class='watersharing-col watersharing-match-col'>
+				<div class='watersharing-row'>
+					<div>
+						<strong>Total trades proposed</strong>
+					</div>
+				</div>
+			</div>
+			<div class='watersharing-col-third watersharing-contact'>
+				<span class='heading'>Contact Information</span>
+			</div>
+		</div>
+		<div class='watersharing-kpi-block'>
+			<div class='watersharing-col watersharing-match-col'>
+				<div class='watersharing-row'>
+					<div>
+						<strong>Total trades to date</strong>
+					</div>
+				</div>
+			</div>
+			<div class='watersharing-col-third watersharing-contact'>
+				<span class='heading'>Contact Information</span>
+			</div>
+		</div>
+		<div class='watersharing-kpi-block'>
+			<div class='watersharing-col watersharing-match-col'>
+				<div class='watersharing-row'>
+					<div>
+						<strong>Total volume traded to date</strong>
+					</div>
+				</div>
+			</div>
+			<div class='watersharing-col-third watersharing-contact'>
+				<span class='heading'>Contact Information</span>
+			</div>
+		</div>
+		<div class = 'chart-container'>
+			<canvas class = 'chart' id='stat-chart'></canvas>
+			<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+		</div>
+		<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download My Stats</button>
+	</div>";
+
+
+	
+
+	$html = 
+	"<div class='watersharing-card-wrap'>
+		<div class='watersharing-card-inner'>
+			<div class='watersharing-card-header'>
+				<span class='watersharing-card-title'>$title</span>
+			</div>
+			<div class='watersharing-card-body'>
+				$kpi_stats
+			</div>
+		</div>
+	</div>";
+
+	return $html;
+}
+
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {
