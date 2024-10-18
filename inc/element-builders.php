@@ -576,10 +576,8 @@ function buildRequestTable( $type = '' ) {
 					(strpos($type,'share') !== false) ? $field3 = "
 					<div class='watersharing-col-half watersharing-match-col'>
 						<strong>Distance (miles):</strong> $lookup_distance
-					</div>":
-					$field3 = "
-					<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>
-					";
+					</div>"
+					:$field3 = "<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='watersharing-col-half watersharing-match-col'>
@@ -591,7 +589,7 @@ function buildRequestTable( $type = '' ) {
 					$match_rows .= "
 							<div>
 								<div class='watersharing-row watersharing-match-block'>
-									<div class='watersharing-match-detail' style = 'padding-right: 8px;'>
+									<div class='watersharing-match-detail' style = 'padding-right: 10px;'>
 										<div class='watersharing-row'>
 											<div class='watersharing-col watersharing-match-col'>
 												<div class='watersharing-row'>
