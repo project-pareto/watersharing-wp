@@ -373,6 +373,74 @@ function buildRequestForm($type = "", $title = "") {
 }
 
 function buildKpiTable($type = "", $title = ""){
+	$query = new WP_Query(
+		array(
+			'no_found_rows'				=> false,
+			'update_post_meta_cache'	=> false,
+			'update_post_term_cache'	=> false,
+			'post_type' =>  'matched_trades',
+			'posts_per_page'			=> -1,
+			'fields'					=> 'ids',
+			'meta_query'				=> array(
+				'relation'		=> 'AND',
+				array(
+					'key'		=> $post_type,
+					'value'		=> $post_id,
+					'compare'	=> 'LIKE'
+				),
+				array(
+					'key'		=> 'match_status',
+					'value'		=> 'decline',
+					'compare'	=> 'NOT IN'
+				)
+			)
+		)
+	);
+
+	$data = $query->get_posts();
+
+	$trades_proposed = 0;
+	$total_matches = 0;
+	$volume_proposed = 0;
+	$total_volume = 0;
+
+	// iterate through each row
+	if( !empty( $data ) ) {
+		$number = 1;
+		foreach( $data as $post_id ) {
+			// You can get the post object if needed
+			$post = get_post($post_id);
+			$post_date = $post->post_date;
+			
+			$trade_volume = get_post_meta( $post_id, 'total_volume', true );
+			$total_value = get_post_meta( $post_id, 'total_value', true );
+			$consumption_trade_approval = get_post_meta( $post_id, 'consumption_trade_approval', true);
+			$producer_trade_approval = get_post_meta( $post_id, 'producer_trade_approval', true);
+
+			if($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve'){
+				$total_matches++;
+				$total_volume += (float) $trade_volume;
+			}
+			
+			$volume_proposed += (float) $trade_volume;
+			$trades_proposed++;
+
+			$chart_data[] = array(
+				'volume' => (float) $trade_volume,
+				'date'   => date('Y-m-d', strtotime($post_date))
+			);
+		}
+		
+		wp_localize_script( 'chart-script', 'tradesChartData', array(
+			'trades' => $chart_data
+		));
+
+		$chart_data_json = json_encode($chart_data);
+
+	} else {
+
+	}
+
 	$html = "";
 
 	$kpi_stats = "
@@ -386,7 +454,7 @@ function buildKpiTable($type = "", $title = ""){
 				</div>
 			</div>
 			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>Contact Information</span>
+				<span class='heading'>$trades_proposed trades</span>
 			</div>
 		</div>
 		<div class='watersharing-kpi-block'>
@@ -398,7 +466,7 @@ function buildKpiTable($type = "", $title = ""){
 				</div>
 			</div>
 			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>Contact Information</span>
+				<span class='heading'>$total_matches trades</span>
 			</div>
 		</div>
 		<div class='watersharing-kpi-block'>
@@ -410,18 +478,18 @@ function buildKpiTable($type = "", $title = ""){
 				</div>
 			</div>
 			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>Contact Information</span>
+				<span class='heading'>$total_volume Mbbl</span>
 			</div>
 		</div>
 		<div class = 'chart-container'>
 			<canvas class = 'chart' id='stat-chart'></canvas>
+			<script>
+				const chartData = $chart_data_json;
+			</script>
 			<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
 		</div>
 		<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download My Stats</button>
-	</div>";
-
-
-	
+	</div>";	
 
 	$html = 
 	"<div class='watersharing-card-wrap'>

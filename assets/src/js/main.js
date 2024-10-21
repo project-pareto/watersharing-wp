@@ -334,21 +334,29 @@
 
 	document.addEventListener('DOMContentLoaded', function() {
 		const ctx = document.getElementById('stat-chart').getContext('2d');
+
+		const volumes = chartData.map(trade => trade.volume); // Extract volume
+		console.log(volumes);
+    	const dates = chartData.map(trade => trade.date);     // Extract date
 	  
 		new Chart(ctx, {
 		  type: 'line',
 		  data: {
-			labels: ['1/1/2024', '2/1/2024', '3/1/2024', '4/1/2024', '5/1/2024', '6/1/2024'],
+			labels: dates,
 			datasets: [{
 			  label: 'Ongoing trades',
-			  data: [12, 19, 3, 5, 2, 3],
+			  data: volumes,
 			  borderWidth: 1
 			}]
 		  },
 		  options: {
 			scales: {
 			  y: {
-				beginAtZero: true
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Volume(bbl)'
+				}
 			  }
 			}
 		  }
