@@ -372,6 +372,28 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
+function getTwoWeekIntervalsYTD() {
+    // Set the date format
+    $dateFormat = 'Y-m-d';
+    $today = new DateTime();
+    $dates = [];
+    
+    // Start from today and go back 1 year in 2 week intervals
+    for ($i = 0; $i < 26; $i++) {
+        // Calculate the Monday for this iteration
+        $date = clone $today;
+        $date->modify('-' . ($i * 14) . ' days'); // Go back 14 days (2 weeks) for each iteration
+        
+        // Isolating mondays
+        $date->modify('last monday');
+
+        $dates[] = $date->format($dateFormat);
+    }
+
+    // Reverse the array so the most recent Monday is last
+    return array_reverse($dates);
+}
+
 function buildKpiTable($type = "", $title = ""){
 	$query = new WP_Query(
 		array(
@@ -425,15 +447,43 @@ function buildKpiTable($type = "", $title = ""){
 			$volume_proposed += (float) $trade_volume;
 			$trades_proposed++;
 
-			$chart_data[] = array(
+			$volume_data[] = array(
 				'volume' => (float) $trade_volume,
 				'date'   => date('Y-m-d', strtotime($post_date))
 			);
 		}
+		$volume = [];
+		$datesList = getTwoWeekIntervalsYTD();
+		$chart_data= [];
+
+		//Fill in volumes for dates running YTD
+		foreach ($datesList as $index => $date) {
+			// Determine the next date in the list (or set an end date if it's the last element)
+			$next_date = (isset($datesList[$index + 1])) ? $datesList[$index + 1] : date('Y-m-d', strtotime($date . ' + 14 days'));
 		
-		wp_localize_script( 'chart-script', 'tradesChartData', array(
-			'trades' => $chart_data
-		));
+			// Initialize the sum for the current interval
+			$sumVolume = 0;
+		
+			// Iterate through $volume_data to sum volumes that fall within the current interval
+			foreach ($volume_data as $data) {
+				if ($data['date'] >= $date && $data['date'] < $next_date) {
+					$sumVolume += $data['volume'];
+				}
+			}
+		
+			// Store the sum in the $volume array with the current interval date
+			$volume[$date] = $sumVolume;
+		
+			// Add the sum and the current date to the chart data array
+			$chart_data[] = array(
+				'volume' => (float) $sumVolume, 
+				'date'   => $date
+			);
+		}
+		$chart_data[] = array(
+			'volume' => (float) $volume,
+			'date'   => $datesList
+		);
 
 		$chart_data_json = json_encode($chart_data);
 

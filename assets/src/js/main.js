@@ -335,9 +335,8 @@
 	document.addEventListener('DOMContentLoaded', function() {
 		const ctx = document.getElementById('stat-chart').getContext('2d');
 
-		const volumes = chartData.map(trade => trade.volume); // Extract volume
-		console.log(volumes);
-    	const dates = chartData.map(trade => trade.date);     // Extract date
+		const volumes = chartData.map(trade => trade.volume); 
+    	const dates = chartData.map(trade => trade.date);     
 	  
 		new Chart(ctx, {
 		  type: 'line',
@@ -358,7 +357,16 @@
 					text: 'Volume(bbl)'
 				}
 			  }
-			}
+			},
+			plugins: {
+				legend: {
+				  display: false
+				},
+				title:{
+					display:true,
+					text: "Ongoing Trades"
+				}
+			  }
 		  }
 		});
 	});
