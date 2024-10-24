@@ -28,7 +28,7 @@ function create_new_post() {
 	$post_type = $_POST['post_type'];
 
 	// set the title
-	$post_type_prefix = ($post_type === 'water_supply') ? 'PRD' : 'CSM';
+	$post_type_prefix = ($post_type === 'share_supply') ? 'PRD' : 'CSM';
 	$author_name = wp_get_current_user()->display_name;
 	(isset($_POST['well_name'])) ? $pad = $_POST['well_name'] : $pad = 'UNKWN';
 	(isset($_POST['start_date'])) ? $date = $_POST['start_date'] : $date = current_time('mdY');
@@ -62,7 +62,7 @@ function create_new_post() {
 		update_post_meta( $post_id, 'status', 'open' );
 	}
 
-	if( $post_type === 'water_supply' ) {
+	if( $post_type === 'share_supply' ) {
 		$production_dashboard_page_id = get_option('production_dashboard_page');
 
 		if ($production_dashboard_page_id) {
@@ -71,20 +71,38 @@ function create_new_post() {
 		    $redirect_url = home_url();
 		}
 	}
-	else {
+	elseif($post_type === 'share_demand'){
 		$consumption_dashboard_page_id = get_option('consumption_dashboard_page');
 
-		// Get the permalink of the page using its ID
 		if ($consumption_dashboard_page_id) {
 		    $redirect_url = get_permalink($consumption_dashboard_page_id);
 		} else {
 		    $redirect_url = home_url();
 		}
 	}
+	elseif( $post_type === 'trade_supply' ) {
+		$wt_production_dashboard_page_id = get_option('wt_production_dashboard_page');
 
+		if ($wt_production_dashboard_page_id) {
+		    $redirect_url = get_permalink($wt_production_dashboard_page_id);
+		} else {
+		    $redirect_url = home_url();
+		}
+	}
+	elseif($post_type === 'trade_demand'){
+		$wt_consumption_dashboard_page_id = get_option('wt_consumption_dashboard_page');
+
+		if ($wt_consumption_dashboard_page_id) {
+		    $redirect_url = get_permalink($wt_consumption_dashboard_page_id);
+		} else {
+		    $redirect_url = home_url();
+		}
+	}
+	
     wp_redirect( $redirect_url );
     exit;
 }
 add_action('admin_post_create_water_request', 'create_new_post');
+// add_action('admin_post_nopriv_create_water_request', 'create_new_post');
 
 ?>

@@ -3,42 +3,70 @@
 // import JSON match file to update Match Lookup and Request records
 function import_json_data() {
 
-    $import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/import/';
-    $json_files = glob($import_folder_path . '*.json');
+    $share_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/import/';
+    $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/import/';
+    $ws_json_files = glob($share_import_folder_path . '*.json');
+    $wt_json_files = glob($trade_import_folder_path . '*.json');
 
     // Check if there are any JSON files
-    if(empty($json_files)) {
+    if(empty($ws_json_files) && empty($wt_json_files)) {
         // No JSON files found
         return;
     }
 
-    // Sort the JSON files by modified time (newest to oldest)
-    usort($json_files, function ($a, $b) {
-        return filemtime($b) - filemtime($a);
-    });
-
-    // Get the path to the most recent JSON file
-    $json_file_path = $json_files[0];
-
-    // Get the JSON data
-    $json_data = file_get_contents($json_file_path);
-
-    // Decode the JSON data into an associative array
-    $data = json_decode($json_data, true);
-
-    // Check if the decoding was successful
-    if($data === null) {
-        // Failed to decode JSON
-        return;
+    // Sort the water sharing files if available
+    if(!empty($ws_json_files)) {
+        usort($ws_json_files, function ($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        // Get the path to the most recent water sharing JSON file
+        $ws_json_file_path = $ws_json_files[0];
+        // Get the JSON data for water sharing
+        $ws_json_data = file_get_contents($ws_json_file_path);
+        // Decode the water sharing JSON data into an associative array
+        $ws_data = json_decode($ws_json_data, true);
+        // Check if decoding was successful for water sharing
+        if ($ws_data !== null) {
+            process_water_management_data($ws_data, 'share');
+            // Delete the water sharing JSON file after processing
+            unlink($ws_json_file_path);
+        }
     }
 
+    // Sort the water trading files if available
+    if(!empty($wt_json_files)) {
+        usort($wt_json_files, function ($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        // Get the path to the most recent water trading JSON file
+        $wt_json_file_path = $wt_json_files[0];
+        // Get the JSON data for water trading
+        $wt_json_data = file_get_contents($wt_json_file_path);
+        // Decode the water trading JSON data into an associative array
+        $wt_data = json_decode($wt_json_data, true);
+        // Check if decoding was successful for water trading
+        if ($wt_data !== null) {
+            process_water_management_data($wt_data, 'trade');
+            // Delete the water trading JSON file after processing
+            unlink($wt_json_file_path);
+        }
+    }
+
+    // Delete the JSON file after processing
+    unlink($ws_json_file_path);
+    unlink($wt_json_file_path);
+}
+
+function process_water_management_data($data, $type) {
     foreach($data as $item) {
         $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+
+        ($type == 'share') ? $post_type = 'matched_requests': $post_type = 'matchec_trades';
 
         // Check if a post with the same title already exists
         $existing_post = new WP_Query(
             array(
-                'post_type' => 'matched_requests',
+                'post_type' => $post_type,
                 'post_status' => 'any',
                 'posts_per_page' => 1,
                 'fields' => 'ids',
@@ -50,39 +78,41 @@ function import_json_data() {
             continue;
         }
 
-        // create new post
+        // Create new post
         $new_post = array(
-            'post_type' => 'matched_requests',
+            'post_type' => $post_type,
             'post_status' => 'publish',
             'post_title' => $title,
         );
         $post_id = wp_insert_post($new_post);
 
         if($post_id) {
-            // set status to 'open'
             update_post_meta($post_id, 'match_status', 'open');
             update_post_meta($post_id, 'matched_rate', $item['value']);
             update_post_meta($post_id, 'producer_request', $item['From index']);
             update_post_meta($post_id, 'consumption_request', $item['To index']);
         }
 
-        // email notifications
-        $prod_post = get_post($item['From index']);
-        $prod_email = get_the_author_meta('user_email', $prod_post->post_author);
-        $prod_subject = 'Your' . $prod_post->post_title . ' request has a match!';
-        $prod_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
-        wp_mail($prod_email, $prod_subject, $prod_message);
-
-        $cons_post = get_post($item['To index']);
-        $cons_email = get_the_author_meta('user_email', $cons_post->post_author);
-        $cons_subject = 'Your' . $cons_post->post_title . ' request has a match!';
-        $cons_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
-        wp_mail($cons_email, $cons_subject, $cons_message);
+        // Send email notifications
+        send_match_email($item['From index'], $item['To index']);
     }
-
-    // Delete the JSON file after processing
-    unlink($json_file_path);
 }
+
+// Email notification function
+function send_match_email($from_index, $to_index) {
+    $prod_post = get_post($from_index);
+    $prod_email = get_the_author_meta('user_email', $prod_post->post_author);
+    $prod_subject = 'Your ' . $prod_post->post_title . ' request has a match!';
+    $prod_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
+    wp_mail($prod_email, $prod_subject, $prod_message);
+
+    $cons_post = get_post($to_index);
+    $cons_email = get_the_author_meta('user_email', $cons_post->post_author);
+    $cons_subject = 'Your ' . $cons_post->post_title . ' request has a match!';
+    $cons_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
+    wp_mail($cons_email, $cons_subject, $cons_message);
+}
+
 add_action('init', 'import_json_data');
 
 
@@ -90,7 +120,7 @@ add_action('init', 'import_json_data');
 function export_to_pareto( $post_id ) {
     //check for water request post_types
     $post_type = get_post_type($post_id);
-    if($post_type != 'water_supply' && $post_type != 'water_demand') {
+    if($post_type != 'share_supply' && $post_type != 'share_demand'  && $post_type != 'trade_supply'  && $post_type != 'trade_demand') {
         return;
     }
 
@@ -99,7 +129,12 @@ function export_to_pareto( $post_id ) {
         return;
     }
 
-    $posttypes = array(array('key' => 'Producers', 'posts' => 'water_supply'), array('key' => 'Consumers', 'posts' => 'water_demand'));
+    if(strpos($post_type,'share') !== false) {
+        $posttypes = array(array('key' => 'Producers', 'posts' => 'share_supply'), array('key' => 'Consumers', 'posts' => 'share_demand'));
+    }
+    else{
+        $posttypes = array(array('key' => 'Producers', 'posts' => 'trade_supply'), array('key' => 'Consumers', 'posts' => 'trade_demand')); 
+    }
     $data = [];
 
     foreach($posttypes as $posts) {
@@ -142,17 +177,104 @@ function export_to_pareto( $post_id ) {
                 $max = get_post_meta($item, 'transport_radius', true);
                 $max = $max !== '' ? (int)$max : '';
 
-                $item_array = array(
-                    'Index'            => $item,
-                    'Operator'         => $author,
-                    'Wellpad'        => $well,
-                    'Longitude'        => $long,
-                    'Latitude'        => $lat,
-                    'Start Date'    => $start,
-                    'End Date'        => $end,
-                    'Rate'            => $rate,
-                    'Max Transport'    => $max,
-                );
+                //get trade record details
+                $site_compatibility = get_post_meta($item, 'site_compatibility', true);
+               
+                $bid_type = get_post_meta($item, 'bid_type', true);
+                $bid_amount = get_post_meta($item, 'bid_amount', true);
+                $bid_units = get_post_meta($item, 'bid_units', true);
+                $bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
+
+                $truck_transport_radius = get_post_meta($item, 'truck_transport_radius', true);
+                $truck_transport_bid = get_post_meta($item, 'truck_transport_bid', true);
+                $truck_capacity = get_post_meta($item, 'truck_capacity', true);
+
+                $layflats_transport_radius = get_post_meta($item, 'layflats_transport_radius', true);
+                $layflats_transport_bid = get_post_meta($item, 'layflats_transport_bid', true);
+                $layflats_capacity = get_post_meta($item, 'layflats_capacity', true);
+
+                $tss_limit = get_post_meta($item, 'tss_limit', true);
+                $tss_measure_value = get_post_meta($item, 'tss_measure_value', true);
+
+                $tds_limit = get_post_meta($item, 'tds_limit', true);
+                $tds_measure_value = get_post_meta($item, 'tds_measure_value', true);
+
+                $chloride_limit = get_post_meta($item, 'chloride_limit', true);
+                $chloride_measure_value = get_post_meta($item, 'chloride_measure_value', true);
+
+                $barium_limit = get_post_meta($item, 'barium_limit', true);
+                $barium_measure_value = get_post_meta($item, 'barium_measure_value', true);
+
+                $calcium_carbonate_limit = get_post_meta($item, 'calcium_carbonate_limit', true);
+                $calcium_carbonate_measure_value = get_post_meta($item, 'calcium_carbonate_measure_value', true);
+
+                $iron_limit = get_post_meta($item, 'iron_limit', true);
+                $iron_measure_value = get_post_meta($item, 'iron_measure_value', true);
+
+                $boron_limit = get_post_meta($item, 'boron_limit', true);
+                $boron_measure_value = get_post_meta($item, 'boron_measure_value', true);
+
+                $hydrogen_sulfide_limit = get_post_meta($item, 'hydrogen_sulfide_limit', true);
+                $hydrogen_sulfide_measure_value = get_post_meta($item, 'hydrogen_sulfide_measure_value', true);
+
+                $norm_limit = get_post_meta($item, 'norm_limit', true);
+                $norm_measure_value = get_post_meta($item, 'norm_measure_value', true);
+                
+                if(strpos($post_type,'share') !== false){
+                    $item_array = array(
+                        'Index'            => $item,
+                        'Operator'         => $author,
+                        'Wellpad'        => $well,
+                        'Longitude'        => $long,
+                        'Latitude'        => $lat,
+                        'Start Date'    => $start,
+                        'End Date'        => $end,
+                        'Rate'            => $rate,
+                        'Max Transport'    => $max,
+                    );
+                }
+                else{
+                    $item_array = array(
+                        'Index'            => $item,
+                        'Operator'         => $author,
+                        'Wellpad'        => $well,
+                        'Longitude'        => $long,
+                        'Latitude'        => $lat,
+                        'Start Date'    => $start,
+                        'End Date'        => $end,
+                        'Rate'            => $rate,
+                        'Max Transport'    => $max,
+                        'Site Compatibility'    => $site_compatibility,
+                        'Bid Type'              => $bid_type,
+                        'Bid Amount'            => $bid_amount,
+                        'Bid Units'             => $bid_units,
+                        'Truck Transport Radius'=> $truck_transport_radius,
+                        'Truck Transport Bid'   => $truck_transport_bid,
+                        'Truck Capacity'        => $truck_capacity,
+                        'Layflats Transport Radius' => $layflats_transport_radius,
+                        'Layflats Transport Bid'=> $layflats_transport_bid,
+                        'Layflats Capacity'     => $layflats_capacity,
+                        'TSS Limit'             => $tss_limit,
+                        'TSS Measure Value'     => $tss_measure_value,
+                        'TDS Limit'             => $tds_limit,
+                        'TDS Measure Value'     => $tds_measure_value,
+                        'Chloride Limit'        => $chloride_limit,
+                        'Chloride Measure Value'=> $chloride_measure_value,
+                        'Barium Limit'          => $barium_limit,
+                        'Barium Measure Value'  => $barium_measure_value,
+                        'Calcium Carbonate Limit'=> $calcium_carbonate_limit,
+                        'Calcium Carbonate Measure Value' => $calcium_carbonate_measure_value,
+                        'Iron Limit'            => $iron_limit,
+                        'Iron Measure Value'    => $iron_measure_value,
+                        'Boron Limit'           => $boron_limit,
+                        'Boron Measure Value'   => $boron_measure_value,
+                        'Hydrogen Sulfide Limit'=> $hydrogen_sulfide_limit,
+                        'Hydrogen Sulfide Measure Value' => $hydrogen_sulfide_measure_value,
+                        'NORM Limit'            => $norm_limit,
+                        'NORM Measure Value'    => $norm_measure_value
+
+                    );
+                }
                 array_push($data[$posts['key']], $item_array);
             }
         }
@@ -166,7 +288,7 @@ function export_to_pareto( $post_id ) {
         'no_found_rows'                => false,
         'update_post_meta_cache'    => false,
         'update_post_term_cache'    => false,
-        'post_type'                    => 'water_supply',
+        'post_type'                    => array('share_supply', 'trade_supply'),
         'post_status'                => 'publish',
         'meta_query'                => array(
             'relation'        => 'AND',
@@ -204,19 +326,25 @@ function export_to_pareto( $post_id ) {
 
     $json_data = json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
 
-    $file_name = 'pareto_matching_' . date('c') . '.json';
-    $file_path = WATERSHARING_PLUGIN_PATH . 'io/export/' . $file_name;
+    if(strpos($post_type,'share') !== false){
+        $file_name = 'pareto_sharing_' . date('c') . '.json';
+        $file_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/export/' . $file_name;
+    }
+    else{
+        $file_name = 'pareto_trading_' . date('c') . '.json';
+        $file_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/export/' . $file_name;
+    }
     $file_saved = file_put_contents( $file_path, $json_data );
 
 }
-add_action( 'export_water_supply_records', 'export_to_pareto', 20 );
+add_action( 'export_share_supply_records', 'export_to_pareto', 20 );
 
-// create the 'export_water_supply_records' cron to trigger the export script
-function schedule_export_water_supply_records( $post_id ) {
+// create the 'export_share_supply_records' cron to trigger the export script
+function schedule_export_share_supply_records( $post_id ) {
     $post = get_post( $post_id );
-    if( $post->post_type === 'water_supply' || $post->post_type === 'water_demand' ) {
+    if( $post->post_type === 'share_supply' || $post->post_type === 'share_demand' || $post->post_type === 'trade_supply' || $post->post_type === 'trade_demand') {
         // Schedule the export function to run after a delay
-        wp_schedule_single_event( time() + 3, 'export_water_supply_records', array( $post_id ) );
+        wp_schedule_single_event( time() + 3, 'export_share_supply_records', array( $post_id ) );
     }
 }
-add_action( 'save_post', 'schedule_export_water_supply_records' );
+add_action( 'save_post', 'schedule_export_share_supply_records' );
