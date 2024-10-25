@@ -395,29 +395,36 @@ function getTwoWeekIntervalsYTD() {
 }
 
 function buildKpiTable($type = "", $title = ""){
-	$query = new WP_Query(
-		array(
-			'no_found_rows'				=> false,
-			'update_post_meta_cache'	=> false,
-			'update_post_term_cache'	=> false,
-			'post_type' =>  'matched_trades',
-			'posts_per_page'			=> -1,
-			'fields'					=> 'ids',
-			'meta_query'				=> array(
-				'relation'		=> 'AND',
-				array(
-					'key'		=> $post_type,
-					'value'		=> $post_id,
-					'compare'	=> 'LIKE'
-				),
-				array(
-					'key'		=> 'match_status',
-					'value'		=> 'decline',
-					'compare'	=> 'NOT IN'
-				)
+	$current_user_id = get_current_user_id();
+	$author_check = strpos($type, 'personal') == true;
+
+	$query_args = array(
+		'no_found_rows'				=> false,
+		'update_post_meta_cache'	=> false,
+		'update_post_term_cache'	=> false,
+		'post_type' =>  'matched_trades',
+		'posts_per_page'			=> -1,
+		'fields'					=> 'ids',
+		'meta_query'				=> array(
+			'relation'		=> 'AND',
+			array(
+				'key'		=> $post_type,
+				'value'		=> $post_id,
+				'compare'	=> 'LIKE'
+			),
+			array(
+				'key'		=> 'match_status',
+				'value'		=> 'decline',
+				'compare'	=> 'NOT IN'
 			)
 		)
 	);
+
+	if ($author_check) {
+		$query_args['author'] = $current_user_id;
+	}
+
+	$query = new WP_Query($query_args);
 
 	$data = $query->get_posts();
 
@@ -449,7 +456,8 @@ function buildKpiTable($type = "", $title = ""){
 
 			$volume_data[] = array(
 				'volume' => (float) $trade_volume,
-				'date'   => date('Y-m-d', strtotime($post_date))
+				'date'   => date('Y-m-d', strtotime($post_date)),
+				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
 			);
 		}
 		$volume = [];
@@ -485,6 +493,9 @@ function buildKpiTable($type = "", $title = ""){
 			'date'   => $datesList
 		);
 
+		$csv_data[] = $volume_data;
+		set_transient('csv_data_transient', $volume_data, 100);
+
 		$chart_data_json = json_encode($chart_data);
 
 	} else {
@@ -493,65 +504,138 @@ function buildKpiTable($type = "", $title = ""){
 
 	$html = "";
 
-	$kpi_stats = "
-	<div class = 'watersharing-row' style = 'justify-content: center'>
-		<div class='watersharing-kpi-block'>
-			<div class='watersharing-col watersharing-match-col'>
-				<div class='watersharing-row'>
-					<div>
-						<strong>Total trades proposed</strong>
+	if(strpos($type, 'kpi_proposed') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades proposed</strong>
+						</div>
 					</div>
 				</div>
-			</div>
-			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>$trades_proposed trades</span>
-			</div>
-		</div>
-		<div class='watersharing-kpi-block'>
-			<div class='watersharing-col watersharing-match-col'>
-				<div class='watersharing-row'>
-					<div>
-						<strong>Total trades to date</strong>
-					</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$trades_proposed trades</span>
 				</div>
 			</div>
-			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>$total_matches trades</span>
-			</div>
-		</div>
-		<div class='watersharing-kpi-block'>
-			<div class='watersharing-col watersharing-match-col'>
-				<div class='watersharing-row'>
-					<div>
-						<strong>Total volume traded to date</strong>
-					</div>
-				</div>
-			</div>
-			<div class='watersharing-col-third watersharing-contact'>
-				<span class='heading'>$total_volume Mbbl</span>
-			</div>
-		</div>
-		<div class = 'chart-container'>
-			<canvas class = 'chart' id='stat-chart'></canvas>
-			<script>
-				const chartData = $chart_data_json;
-			</script>
-			<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
-		</div>
-		<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download My Stats</button>
-	</div>";	
+		";
+	}
 
-	$html = 
-	"<div class='watersharing-card-wrap'>
-		<div class='watersharing-card-inner'>
-			<div class='watersharing-card-header'>
-				<span class='watersharing-card-title'>$title</span>
+	else if(strpos($type, 'kpi_volume') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total volume traded to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_volume Mbbl</span>
+				</div>
 			</div>
-			<div class='watersharing-card-body'>
-				$kpi_stats
+		";
+	}
+
+	else if(strpos($type, 'kpi_totalTrade') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_matches trades</span>
+				</div>
 			</div>
-		</div>
-	</div>";
+		";
+	}
+
+	else if(strpos($type, 'kpi_statChart') !== false){
+		$kpi_stats = "
+			<div class = 'chart-container'>
+				<canvas class = 'chart' id='stat-chart'></canvas>
+				<script>
+					const chartData = $chart_data_json;
+				</script>
+				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+			</div>
+			<button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv()'>Download My Stats</button>
+			<script>
+				function downloadCsv() {
+					window.location.href = '" . admin_url('admin-ajax.php?action=download_csv') . "';
+				}
+			</script>
+		";
+	}
+
+	// else{
+	// 	$kpi_stats = "
+	// 		<div class = 'watersharing-row' style = 'justify-content: center'>
+	// 			<div class='watersharing-kpi-block'>
+	// 				<div class='watersharing-col watersharing-match-col'>
+	// 					<div class='watersharing-row'>
+	// 						<div>
+	// 							<strong>Total trades proposed</strong>
+	// 						</div>
+	// 					</div>
+	// 				</div>
+	// 				<div class='watersharing-col-third watersharing-contact'>
+	// 					<span class='heading'>$trades_proposed trades</span>
+	// 				</div>
+	// 			</div>
+	// 			<div class='watersharing-kpi-block'>
+	// 				<div class='watersharing-col watersharing-match-col'>
+	// 					<div class='watersharing-row'>
+	// 						<div>
+	// 							<strong>Total trades to date</strong>
+	// 						</div>
+	// 					</div>
+	// 				</div>
+	// 				<div class='watersharing-col-third watersharing-contact'>
+	// 					<span class='heading'>$total_matches trades</span>
+	// 				</div>
+	// 			</div>
+	// 			<div class='watersharing-kpi-block'>
+	// 				<div class='watersharing-col watersharing-match-col'>
+	// 					<div class='watersharing-row'>
+	// 						<div>
+	// 							<strong>Total volume traded to date</strong>
+	// 						</div>
+	// 					</div>
+	// 				</div>
+	// 				<div class='watersharing-col-third watersharing-contact'>
+	// 					<span class='heading'>$total_volume Mbbl</span>
+	// 				</div>
+	// 			</div>
+	// 			<div class = 'chart-container'>
+	// 				<canvas class = 'chart' id='stat-chart'></canvas>
+	// 				<script>
+	// 					const chartData = $chart_data_json;
+	// 				</script>
+	// 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+	// 			</div>
+	// 			<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download My Stats</button>
+	// 		</div>";	
+
+	// }
+
+	// $html = 
+	// "<div class='watersharing-card-wrap'>
+	// 	<div class='watersharing-card-inner'>
+	// 		<div class='watersharing-card-header'>
+	// 			<span class='watersharing-card-title'>$title</span>
+	// 		</div>
+	// 		<div class='watersharing-card-body'>
+	// 			$kpi_stats
+	// 		</div>
+	// 	</div>
+	// </div>";
+	$html = "$kpi_stats";
 
 	return $html;
 }
