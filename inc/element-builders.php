@@ -493,7 +493,9 @@ function buildKpiTable($type = "", $title = ""){
 			'date'   => $datesList
 		);
 
-		$csv_data[] = $volume_data;
+		usort($volume_data, function($a, $b) {
+			return strtotime($a['date']) - strtotime($b['date']);
+		});
 		set_transient('csv_data_transient', $volume_data, 100);
 
 		$chart_data_json = json_encode($chart_data);
@@ -501,6 +503,16 @@ function buildKpiTable($type = "", $title = ""){
 	} else {
 
 	}
+
+	$author_check ? $stat_button = "
+		<button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv()'>Download My Stats</button>
+				<script>
+					function downloadCsv() {
+						window.location.href = '" . admin_url('admin-ajax.php?action=download_csv') . "';
+					}
+				</script>
+	":
+	$stat_button = "";
 
 	$html = "";
 
@@ -564,12 +576,7 @@ function buildKpiTable($type = "", $title = ""){
 				</script>
 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
 			</div>
-			<button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv()'>Download My Stats</button>
-			<script>
-				function downloadCsv() {
-					window.location.href = '" . admin_url('admin-ajax.php?action=download_csv') . "';
-				}
-			</script>
+			$stat_button
 		";
 	}
 
