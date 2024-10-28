@@ -105,9 +105,9 @@ function create_new_post() {
 add_action('admin_post_create_water_request', 'create_new_post');
 // add_action('admin_post_nopriv_create_water_request', 'create_new_post');
 
-function createAndDownloadCsv($filename = "trades_data.csv") {
-    // Retrieve the CSV data from the transient
-    $csv_data = get_transient('csv_data_transient');
+function createAndDownloadCsv() {
+    // Get CSV data from POST request
+    $csv_data = isset($_POST['csv_data']) ? json_decode(stripslashes($_POST['csv_data']), true) : [];
 
     // Exit if no data is found
     if (empty($csv_data)) {
@@ -116,7 +116,7 @@ function createAndDownloadCsv($filename = "trades_data.csv") {
 
     // Set headers for CSV download
     header('Content-Type: text/csv');
-    header('Content-Disposition: attachment; filename="' . "trades_data.csv" . '"');
+    header('Content-Disposition: attachment; filename="trades_data.csv"');
     header('Pragma: no-cache');
     header('Expires: 0');
 
@@ -126,17 +126,14 @@ function createAndDownloadCsv($filename = "trades_data.csv") {
     // Add CSV headers
     fputcsv($output, ['Date', 'Volume Traded', 'Matched']);
 
-    // Write each row of csv_data if it has valid data
+    // Write each row of csv_data
     foreach ($csv_data as $data_row) {
-		$data_row['matched'] ? $matched = 'true': $matched = 'false';
-        if (!empty($data_row['date']) && isset($data_row['volume'])) {
-            fputcsv($output, [$data_row['date'], $data_row['volume'], $matched]);
-        }
+        $matched = $data_row['matched'] ? 'true' : 'false';
+        fputcsv($output, [$data_row['date'], $data_row['volume'], $matched]);
     }
 
-    // Close output stream and delete transient
+    // Close output stream
     fclose($output);
-    delete_transient('csv_data_transient');
     exit;
 }
 

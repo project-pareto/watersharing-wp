@@ -454,7 +454,7 @@ function buildKpiTable($type = "", $title = ""){
 			$volume_proposed += (float) $trade_volume;
 			$trades_proposed++;
 
-			$volume_data[] = array(
+			$request_data[] = array(
 				'volume' => (float) $trade_volume,
 				'date'   => date('Y-m-d', strtotime($post_date)),
 				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
@@ -464,55 +464,54 @@ function buildKpiTable($type = "", $title = ""){
 		$datesList = getTwoWeekIntervalsYTD();
 		$chart_data= [];
 
-		//Fill in volumes for dates running YTD
+		// Fill in volumes for dates running YTD
 		foreach ($datesList as $index => $date) {
 			// Determine the next date in the list (or set an end date if it's the last element)
-			$next_date = (isset($datesList[$index + 1])) ? $datesList[$index + 1] : date('Y-m-d', strtotime($date . ' + 14 days'));
-		
-			// Initialize the sum for the current interval
-			$sumVolume = 0;
-		
-			// Iterate through $volume_data to sum volumes that fall within the current interval
-			foreach ($volume_data as $data) {
-				if ($data['date'] >= $date && $data['date'] < $next_date) {
-					$sumVolume += $data['volume'];
-				}
-			}
-		
+			$next_date = isset($datesList[$index + 1]) 
+				? $datesList[$index + 1] 
+				: date('Y-m-d', strtotime("$date + 14 days"));
+
+			// Calculate the sum of volumes for the current interval
+			$sumVolume = array_reduce($request_data, function($carry, $data) use ($date, $next_date) {
+				return ($data['date'] >= $date && $data['date'] < $next_date) 
+					? $carry + $data['volume'] 
+					: $carry;
+			}, 0);
+
 			// Store the sum in the $volume array with the current interval date
 			$volume[$date] = $sumVolume;
-		
+
 			// Add the sum and the current date to the chart data array
-			$chart_data[] = array(
+			$chart_data[] = [
 				'volume' => (float) $sumVolume, 
 				'date'   => $date
-			);
+			];
 		}
-		$chart_data[] = array(
-			'volume' => (float) $volume,
-			'date'   => $datesList
-		);
 
-		usort($volume_data, function($a, $b) {
+		// Sort request_data by date
+		usort($request_data, function($a, $b) {
 			return strtotime($a['date']) - strtotime($b['date']);
 		});
-		set_transient('csv_data_transient', $volume_data, 100);
 
+		// Set the transient with the sorted request_data
+		// set_transient('csv_data_transient', $request_data, 100);
+		$request_data_json = json_encode($request_data);
+
+		// Encode the chart data as JSON
 		$chart_data_json = json_encode($chart_data);
+
 
 	} else {
 
 	}
 
-	$author_check ? $stat_button = "
-		<button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv()'>Download My Stats</button>
-				<script>
-					function downloadCsv() {
-						window.location.href = '" . admin_url('admin-ajax.php?action=download_csv') . "';
-					}
-				</script>
-	":
-	$stat_button = "";
+	$stat_button = $author_check ? "
+    <button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv(adminUrl, volumeData)'>Download My Stats</button>
+    <script>
+        const adminUrl = '" . admin_url('admin-ajax.php') . "';
+        const volumeData = $request_data_json;
+    </script>
+" : "";
 
 	$html = "";
 
@@ -580,68 +579,6 @@ function buildKpiTable($type = "", $title = ""){
 		";
 	}
 
-	// else{
-	// 	$kpi_stats = "
-	// 		<div class = 'watersharing-row' style = 'justify-content: center'>
-	// 			<div class='watersharing-kpi-block'>
-	// 				<div class='watersharing-col watersharing-match-col'>
-	// 					<div class='watersharing-row'>
-	// 						<div>
-	// 							<strong>Total trades proposed</strong>
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 				<div class='watersharing-col-third watersharing-contact'>
-	// 					<span class='heading'>$trades_proposed trades</span>
-	// 				</div>
-	// 			</div>
-	// 			<div class='watersharing-kpi-block'>
-	// 				<div class='watersharing-col watersharing-match-col'>
-	// 					<div class='watersharing-row'>
-	// 						<div>
-	// 							<strong>Total trades to date</strong>
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 				<div class='watersharing-col-third watersharing-contact'>
-	// 					<span class='heading'>$total_matches trades</span>
-	// 				</div>
-	// 			</div>
-	// 			<div class='watersharing-kpi-block'>
-	// 				<div class='watersharing-col watersharing-match-col'>
-	// 					<div class='watersharing-row'>
-	// 						<div>
-	// 							<strong>Total volume traded to date</strong>
-	// 						</div>
-	// 					</div>
-	// 				</div>
-	// 				<div class='watersharing-col-third watersharing-contact'>
-	// 					<span class='heading'>$total_volume Mbbl</span>
-	// 				</div>
-	// 			</div>
-	// 			<div class = 'chart-container'>
-	// 				<canvas class = 'chart' id='stat-chart'></canvas>
-	// 				<script>
-	// 					const chartData = $chart_data_json;
-	// 				</script>
-	// 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
-	// 			</div>
-	// 			<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download My Stats</button>
-	// 		</div>";	
-
-	// }
-
-	// $html = 
-	// "<div class='watersharing-card-wrap'>
-	// 	<div class='watersharing-card-inner'>
-	// 		<div class='watersharing-card-header'>
-	// 			<span class='watersharing-card-title'>$title</span>
-	// 		</div>
-	// 		<div class='watersharing-card-body'>
-	// 			$kpi_stats
-	// 		</div>
-	// 	</div>
-	// </div>";
 	$html = "$kpi_stats";
 
 	return $html;

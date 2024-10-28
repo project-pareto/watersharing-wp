@@ -370,4 +370,32 @@
 		  }
 		});
 	});
+
+	window.downloadCsv = function(adminUrl, volumeData) {
+		const formData = new FormData();
+		formData.append('action', 'download_csv');
+		formData.append('csv_data', JSON.stringify(volumeData));
+	
+		fetch(adminUrl, {
+			method: 'POST',
+			body: formData
+		})
+		.then(response => {
+			if (response.ok) {
+				return response.blob();
+			}
+			throw new Error('Network response was not ok.');
+		})
+		.then(blob => {
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = 'trades_data.csv';
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		})
+		.catch(error => console.error('There was an error with the download:', error));
+	};
 })(jQuery);
