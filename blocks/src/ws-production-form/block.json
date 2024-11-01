@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "watersharing/production-form",
 	"version": "0.1.0",
-	"title": "Production Form (Have Water Request)",
+	"title": "Share - Supply Water Form",
 	"category": "watersharing",
 	"description": "Creates a 'have water' request submission form for the watersharing project.",
 	"example": {},

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watertrading/production-dashboard",
   "version": "0.1.0",
-  "title": "Production Dashboard (Have Water Requests)",
+  "title": "Trade - Supply Water Dashboard",
   "category": "watertrading",
   "description": "Displays a dashboard of 'have water' request submissions by user for the watertrading project.",
   "example": {},

@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watersharing/consumption-dashboard",
   "version": "0.1.0",
-  "title": "Consumption Dashboard (Have Water Requests)",
+  "title": "Share - Demand Water Dashboard",
   "category": "watersharing",
   "description": "Displays a dashboard of 'need water' request submissions by user for the watersharing project.",
   "example": {},

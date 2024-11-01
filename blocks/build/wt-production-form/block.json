@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watertrading/production-form",
   "version": "0.1.0",
-  "title": "Production Form (Have Water Request)",
+  "title": "Trade - Supply Water Form",
   "category": "watertrading",
   "description": "Creates a 'have water' request submission form for the watertrading project.",
   "example": {},
