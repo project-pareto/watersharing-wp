@@ -372,6 +372,218 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
+function getTwoWeekIntervalsYTD() {
+    // Set the date format
+    $dateFormat = 'Y-m-d';
+    $today = new DateTime();
+    $dates = [];
+    
+    // Start from today and go back 1 year in 2 week intervals
+    for ($i = 0; $i < 26; $i++) {
+        // Calculate the Monday for this iteration
+        $date = clone $today;
+        $date->modify('-' . ($i * 14) . ' days'); // Go back 14 days (2 weeks) for each iteration
+        
+        // Isolating mondays
+        $date->modify('last monday');
+
+        $dates[] = $date->format($dateFormat);
+    }
+
+    // Reverse the array so the most recent Monday is last
+    return array_reverse($dates);
+}
+
+function buildKpiTable($type = "", $title = ""){
+	$current_user_id = get_current_user_id();
+	$author_check = strpos($type, 'personal') == true;
+
+	$query_args = array(
+		'no_found_rows'				=> false,
+		'update_post_meta_cache'	=> false,
+		'update_post_term_cache'	=> false,
+		'post_type' =>  'matched_trades',
+		'posts_per_page'			=> -1,
+		'fields'					=> 'ids',
+		'meta_query'				=> array(
+			'relation'		=> 'AND',
+			array(
+				'key'		=> $post_type,
+				'value'		=> $post_id,
+				'compare'	=> 'LIKE'
+			),
+			array(
+				'key'		=> 'match_status',
+				'value'		=> 'decline',
+				'compare'	=> 'NOT IN'
+			)
+		)
+	);
+
+	if ($author_check) {
+		$query_args['author'] = $current_user_id;
+	}
+
+	$query = new WP_Query($query_args);
+
+	$data = $query->get_posts();
+
+	$trades_proposed = 0;
+	$total_matches = 0;
+	$volume_proposed = 0;
+	$total_volume = 0;
+
+	// iterate through each row
+	if( !empty( $data ) ) {
+		$number = 1;
+		foreach( $data as $post_id ) {
+			// You can get the post object if needed
+			$post = get_post($post_id);
+			$post_date = $post->post_date;
+			
+			$trade_volume = get_post_meta( $post_id, 'total_volume', true );
+			$total_value = get_post_meta( $post_id, 'total_value', true );
+			$consumption_trade_approval = get_post_meta( $post_id, 'consumption_trade_approval', true);
+			$producer_trade_approval = get_post_meta( $post_id, 'producer_trade_approval', true);
+
+			if($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve'){
+				$total_matches++;
+				$total_volume += (float) $trade_volume;
+			}
+			
+			$volume_proposed += (float) $trade_volume;
+			$trades_proposed++;
+
+			$request_data[] = array(
+				'volume' => (float) $trade_volume,
+				'date'   => date('Y-m-d', strtotime($post_date)),
+				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
+			);
+		}
+		$volume = [];
+		$datesList = getTwoWeekIntervalsYTD();
+		$chart_data= [];
+
+		// Fill in volumes for dates running YTD
+		foreach ($datesList as $index => $date) {
+			// Determine the next date in the list (or set an end date if it's the last element)
+			$next_date = isset($datesList[$index + 1]) 
+				? $datesList[$index + 1] 
+				: date('Y-m-d', strtotime("$date + 14 days"));
+
+			// Calculate the sum of volumes for the current interval
+			$sumVolume = array_reduce($request_data, function($carry, $data) use ($date, $next_date) {
+				return ($data['date'] >= $date && $data['date'] < $next_date) 
+					? $carry + $data['volume'] 
+					: $carry;
+			}, 0);
+
+			// Store the sum in the $volume array with the current interval date
+			$volume[$date] = $sumVolume;
+
+			// Add the sum and the current date to the chart data array
+			$chart_data[] = [
+				'volume' => (float) $sumVolume, 
+				'date'   => $date
+			];
+		}
+
+		// Sort request_data by date
+		usort($request_data, function($a, $b) {
+			return strtotime($a['date']) - strtotime($b['date']);
+		});
+
+		// Set the transient with the sorted request_data
+		// set_transient('csv_data_transient', $request_data, 100);
+		$request_data_json = json_encode($request_data);
+
+		// Encode the chart data as JSON
+		$chart_data_json = json_encode($chart_data);
+
+
+	} else {
+
+	}
+
+	$stat_button = $author_check ? "
+    <button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv(adminUrl, volumeData)'>Download My Stats</button>
+    <script>
+        const adminUrl = '" . admin_url('admin-ajax.php') . "';
+        const volumeData = $request_data_json;
+    </script>
+" : "";
+
+	$html = "";
+
+	if(strpos($type, 'kpi_proposed') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades proposed</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$trades_proposed trades</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_volume') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total volume traded to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_volume Mbbl</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_totalTrade') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_matches trades</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_statChart') !== false){
+		$kpi_stats = "
+			<div class = 'chart-container'>
+				<canvas class = 'chart' id='stat-chart'></canvas>
+				<script>
+					const chartData = $chart_data_json;
+				</script>
+				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+			</div>
+			$stat_button
+		";
+	}
+
+	$html = "$kpi_stats";
+
+	return $html;
+}
+
 
 // function to lookup matches from the match_request record
 function lookupMatches( $post_id = '', $post_type = '' ) {

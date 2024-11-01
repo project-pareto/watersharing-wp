@@ -105,4 +105,40 @@ function create_new_post() {
 add_action('admin_post_create_water_request', 'create_new_post');
 // add_action('admin_post_nopriv_create_water_request', 'create_new_post');
 
+function createAndDownloadCsv() {
+    // Get CSV data from POST request
+    $csv_data = isset($_POST['csv_data']) ? json_decode(stripslashes($_POST['csv_data']), true) : [];
+
+    // Exit if no data is found
+    if (empty($csv_data)) {
+        exit('No data available');
+    }
+
+    // Set headers for CSV download
+    header('Content-Type: text/csv');
+    header('Content-Disposition: attachment; filename="trades_data.csv"');
+    header('Pragma: no-cache');
+    header('Expires: 0');
+
+    // Open output stream
+    $output = fopen('php://output', 'w');
+
+    // Add CSV headers
+    fputcsv($output, ['Date', 'Volume Traded', 'Matched']);
+
+    // Write each row of csv_data
+    foreach ($csv_data as $data_row) {
+        $matched = $data_row['matched'] ? 'true' : 'false';
+        fputcsv($output, [$data_row['date'], $data_row['volume'], $matched]);
+    }
+
+    // Close output stream
+    fclose($output);
+    exit;
+}
+
+add_action('wp_ajax_download_csv', 'createAndDownloadCsv');
+add_action('wp_ajax_nopriv_download_csv', 'createAndDownloadCsv');
+
+
 ?>

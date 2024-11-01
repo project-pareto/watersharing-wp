@@ -331,4 +331,73 @@
 		});
 			
 	});
+
+	document.addEventListener('DOMContentLoaded', function() {
+		const ctx = document.getElementById('stat-chart').getContext('2d');
+
+		const volumes = chartData.map(trade => trade.volume); 
+    	const dates = chartData.map(trade => trade.date);     
+	  
+		new Chart(ctx, {
+		  type: 'line',
+		  data: {
+			labels: dates,
+			datasets: [{
+			  label: 'Ongoing trades',
+			  data: volumes,
+			  borderWidth: 1
+			}]
+		  },
+		  options: {
+			scales: {
+			  y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Volume(bbl)'
+				}
+			  }
+			},
+			plugins: {
+				legend: {
+				  display: false
+				},
+				title:{
+					display:true,
+					text: "Ongoing Trades"
+				}
+			  }
+		  }
+		});
+	});
+
+	window.downloadCsv = function(adminUrl, volumeData) {
+		const formData = new FormData();
+		formData.append('action', 'download_csv');
+		formData.append('csv_data', JSON.stringify(volumeData));
+	
+		fetch(adminUrl, {
+			method: 'POST',
+			body: formData
+		})
+		.then(response => {
+			if (response.ok) {
+				return response.blob();
+			}
+			throw new Error('Network response was not ok.');
+		})
+		.then(blob => {
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = 'trades_data.csv';
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		})
+		.catch(error => console.error('There was an error with the download:', error));
+	};
 })(jQuery);
+
+
