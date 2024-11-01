@@ -314,7 +314,7 @@ function buildRequestForm($type = "", $title = "") {
 	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', '', '', [$trucks,$layflats]): $delivery = '';
 
 	//Quality Disclosures
-	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'Norm']): $qd = "";
+	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']): $qd = "";
 	$qd_array = [$qd];
 	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', '', '', $qd_array): $quality_disclosures = "";
 	
@@ -499,8 +499,10 @@ function buildKpiTable($type = "", $title = ""){
 		// set_transient('csv_data_transient', $request_data, 100);
 		$request_data_json = json_encode($request_data);
 
+		// echo($chart_data);
 		// Encode the chart data as JSON
 		$chart_data_json = json_encode($chart_data);
+		// echo($chart_data_json);
 
 
 	} else {
