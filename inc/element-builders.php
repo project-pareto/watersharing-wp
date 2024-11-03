@@ -435,9 +435,8 @@ function buildKpiTable($type = "", $title = ""){
 	$volume_proposed = 0;
 	$total_volume = 0;
 
-	// iterate through each row
+	// iterate through each row and get match data 
 	if( !empty( $data ) ) {
-		$number = 1;
 		foreach( $data as $post_id ) {
 			// You can get the post object if needed
 			$post = get_post($post_id);
@@ -462,52 +461,56 @@ function buildKpiTable($type = "", $title = ""){
 				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
 			);
 		}
-		$volume = [];
-		$datesList = getTwoWeekIntervalsYTD();
-		$chart_data= [];
+	} else {
+		$request_data[] = array(
+			'volume' => '',
+			'date'   => '',
+			'matched' => ''
+		);
+	}
+	$volume = [];
+	$datesList = getTwoWeekIntervalsYTD();
+	$chart_data= [];
 
-		// Fill in volumes for dates running YTD
-		foreach ($datesList as $index => $date) {
-			// Determine the next date in the list (or set an end date if it's the last element)
-			$next_date = isset($datesList[$index + 1]) 
-				? $datesList[$index + 1] 
-				: date('Y-m-d', strtotime("$date + 14 days"));
-
-			// Calculate the sum of volumes for the current interval
+	// Fill in volumes for dates running YTD
+	foreach ($datesList as $index => $date) {
+		// Determine the next date in the list (or set an end date if it's the last element)
+		$next_date = isset($datesList[$index + 1]) 
+			? $datesList[$index + 1] 
+			: date('Y-m-d', strtotime("$date + 14 days"));
+	
+		$sumVolume = 0;
+	
+		// Calculate the sum of volumes for the current interval if request_data is not empty
+		if (!empty($request_data)) {
 			$sumVolume = array_reduce($request_data, function($carry, $data) use ($date, $next_date) {
 				return ($data['date'] >= $date && $data['date'] < $next_date) 
 					? $carry + $data['volume'] 
 					: $carry;
 			}, 0);
-
-			// Store the sum in the $volume array with the current interval date
-			$volume[$date] = $sumVolume;
-
-			// Add the sum and the current date to the chart data array
-			$chart_data[] = [
-				'volume' => (float) $sumVolume, 
-				'date'   => $date
-			];
 		}
-
-		// Sort request_data by date
+	
+		// Assign volume 0 for each date if request_data is empty
+		$volume[$date] = $sumVolume;
+	
+		// Add the sum and the current date to the chart data array
+		$chart_data[] = [
+			'volume' => (float) $sumVolume, 
+			'date'   => $date
+		];
+	}
+	// Sort request_data by date, if it's not empty
+	if (!empty($request_data)) {
 		usort($request_data, function($a, $b) {
 			return strtotime($a['date']) - strtotime($b['date']);
 		});
-
-		// Set the transient with the sorted request_data
-		// set_transient('csv_data_transient', $request_data, 100);
-		$request_data_json = json_encode($request_data);
-
-		// echo($chart_data);
-		// Encode the chart data as JSON
-		$chart_data_json = json_encode($chart_data);
-		// echo($chart_data_json);
-
-
-	} else {
-
 	}
+
+	$request_data_json = json_encode($request_data);
+
+	// Encode the chart data as JSON
+	$chart_data_json = json_encode($chart_data);
+
 
 	$stat_button = $author_check ? "
     <button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv(adminUrl, volumeData)'>Download My Stats</button>
@@ -515,7 +518,7 @@ function buildKpiTable($type = "", $title = ""){
         const adminUrl = '" . admin_url('admin-ajax.php') . "';
         const volumeData = $request_data_json;
     </script>
-" : "";
+	" : "";
 
 	$html = "";
 
@@ -571,6 +574,7 @@ function buildKpiTable($type = "", $title = ""){
 	}
 
 	else if(strpos($type, 'kpi_statChart') !== false){
+		
 		$kpi_stats = "
 			<div class = 'chart-container'>
 				<canvas class = 'chart' id='stat-chart'></canvas>
@@ -582,7 +586,6 @@ function buildKpiTable($type = "", $title = ""){
 			$stat_button
 		";
 	}
-
 	$html = "$kpi_stats";
 
 	return $html;
