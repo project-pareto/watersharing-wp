@@ -333,49 +333,49 @@
 	});
 
 	document.addEventListener('DOMContentLoaded', function() {
-		// Check if the stat-chart element is present on the page
-		const chartElement = document.getElementById('stat-chart');
-	
-		if (chartElement) {
-			const ctx = chartElement.getContext('2d');
-	
-			const volumes = chartData.map(trade => trade.volume); 
-			const dates = chartData.map(trade => trade.date);     
-		  
-			new Chart(ctx, {
-			  type: 'line',
-			  data: {
-				labels: dates,
-				datasets: [{
-				  label: 'Ongoing trades',
-				  data: volumes,
-				  borderWidth: 1
-				}]
-			  },
-			  options: {
-				scales: {
-				  y: {
-					beginAtZero: true,
-					title: {
-						display: true,
-						text: 'Volume(bbl)'
-					}
-				  }
-				},
-				plugins: {
-					legend: {
-					  display: false
-					},
-					title:{
-						display: true,
-						text: "Ongoing Trades"
-					}
-				  }
+	// Check if the stat-chart element is present on the page
+	const chartElement = document.getElementById('stat-chart');
+
+	if (chartElement) {
+		const ctx = chartElement.getContext('2d');
+
+		const volumes = chartData.map(trade => trade.volume); 
+		const dates = chartData.map(trade => trade.date);     
+	  
+		new Chart(ctx, {
+		  type: 'line',
+		  data: {
+			labels: dates,
+			datasets: [{
+			  label: 'Ongoing trades',
+			  data: volumes,
+			  borderWidth: 1
+			}]
+		  },
+		  options: {
+			scales: {
+			  y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Volume(bbl)'
+				}
 			  }
-			});
-		}
-	});
-	
+			},
+			plugins: {
+				legend: {
+				  display: false
+				},
+				title:{
+					display: true,
+					text: "Ongoing Trades"
+				}
+			  }
+		  }
+		});
+	}
+});
+
 
 	window.downloadCsv = function(adminUrl, volumeData) {
 		const formData = new FormData();

@@ -4,6 +4,11 @@
 		max-width: 100%;
 	}
 
+	&.chart{
+		display: flex;
+		justify-content: center;
+	}
+
 	.watersharing-submit-button {
 		background: $blue;
 		border: none;
