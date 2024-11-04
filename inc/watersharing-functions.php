@@ -157,6 +157,8 @@ add_action('wp_enqueue_scripts', 'my_custom_scripts');
 
 
 function download_latest_summary_file() {
+	$user_id = get_current_user_id();
+	// $dir = __DIR__ . '/../io/watertrading/match-details/' . $user_id;
     $dir = __DIR__ . '/../io/watertrading/match-details';
     $files = glob($dir . '/*');
     $latestFile = '';

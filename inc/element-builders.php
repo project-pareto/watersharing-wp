@@ -151,6 +151,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
+						echo($optionValue);
 						$input .= "<option value='$set'>$set</option>";
 					}
 				}
@@ -254,7 +255,7 @@ function qdBuilder($names = []){
 	$qd = "";
 	foreach($names as $name){
 		$name_lower = strtolower(str_replace(' ', '', $name));
-		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["min", "max"]];
+		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["&lt;", "&gt;"]];
 		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
 		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', '', 'two-col', '', $qd_array);
 		$qd_array = [];
@@ -584,8 +585,8 @@ function buildKpiTable($type = "", $title = ""){
 					const chartData = $chart_data_json;
 				</script>
 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+				$stat_button
 			</div>
-			$stat_button
 		";
 	}
 	$html = "$kpi_stats";
