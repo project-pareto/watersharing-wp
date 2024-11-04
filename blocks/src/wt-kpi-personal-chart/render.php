@@ -5,6 +5,6 @@
 
 ?>
 
-<div class='watertrading-blocks full-width'>
+<div class='watertrading-blocks full-width chart'>
 	<?php echo buildKpiTable('kpi_statChart_personal', 'My Trade Statistics'); ?>
 </div>
