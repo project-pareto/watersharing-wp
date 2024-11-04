@@ -387,7 +387,9 @@ function getTwoWeekIntervalsYTD() {
         $date->modify('-' . ($i * 14) . ' days'); // Go back 14 days (2 weeks) for each iteration
         
         // Isolating mondays
-        $date->modify('last monday');
+		if ($i !== 0) {
+            $date->modify('last monday');
+        }
 
         $dates[] = $date->format($dateFormat);
     }
@@ -796,7 +798,7 @@ function buildRequestTable( $type = '' ) {
 					<div class='watersharing-col-half watersharing-match-col'>
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
-					:$field3 = "<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>";
+					:$field3 = "<button class='watersharing-submit-button download-summary-btn' style='margin-top: 8px;'>Download Detailed Summary</button>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='watersharing-col-half watersharing-match-col'>

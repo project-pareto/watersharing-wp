@@ -164,6 +164,7 @@ function export_to_pareto( $post_id ) {
                 $item_array = [];
                 $well = $lat = $long = $start = $end = $rate = $max = "";
                 $author = get_the_author_meta('display_name', get_post_field('post_author', $item));
+                $author_id = get_the_author_meta('ID', get_post_field('post_author', $item));
 
                 // get the record details
                 $well = get_post_meta($item, 'well_name', true);
@@ -237,6 +238,7 @@ function export_to_pareto( $post_id ) {
                     $item_array = array(
                         'Index'            => $item,
                         'Operator'         => $author,
+                        'UserID'        => $author_id,
                         'Wellpad'        => $well,
                         'Longitude'        => $long,
                         'Latitude'        => $lat,
@@ -247,32 +249,31 @@ function export_to_pareto( $post_id ) {
                         'Site Compatibility'    => $site_compatibility,
                         'Bid Type'              => $bid_type,
                         'Bid Amount'            => $bid_amount,
-                        'Bid Units'             => $bid_units,
-                        'Truck Transport Radius'=> $truck_transport_radius,
+                        // 'Bid Units'             => $bid_units,
+                        'Trucking Capacity'        => $truck_capacity,
                         'Truck Transport Bid'   => $truck_transport_bid,
-                        'Truck Capacity'        => $truck_capacity,
-                        'Layflats Transport Radius' => $layflats_transport_radius,
-                        'Layflats Transport Bid'=> $layflats_transport_bid,
-                        'Layflats Capacity'     => $layflats_capacity,
-                        'TSS Limit'             => $tss_limit,
-                        'TSS Measure Value'     => $tss_measure_value,
-                        'TDS Limit'             => $tds_limit,
-                        'TDS Measure Value'     => $tds_measure_value,
-                        'Chloride Limit'        => $chloride_limit,
-                        'Chloride Measure Value'=> $chloride_measure_value,
-                        'Barium Limit'          => $barium_limit,
-                        'Barium Measure Value'  => $barium_measure_value,
-                        'Calcium Carbonate Limit'=> $calcium_carbonate_limit,
-                        'Calcium Carbonate Measure Value' => $calcium_carbonate_measure_value,
-                        'Iron Limit'            => $iron_limit,
-                        'Iron Measure Value'    => $iron_measure_value,
-                        'Boron Limit'           => $boron_limit,
-                        'Boron Measure Value'   => $boron_measure_value,
-                        'Hydrogen Sulfide Limit'=> $hydrogen_sulfide_limit,
-                        'Hydrogen Sulfide Measure Value' => $hydrogen_sulfide_measure_value,
-                        'NORM Limit'            => $norm_limit,
-                        'NORM Measure Value'    => $norm_measure_value
-
+                        'Truck Max Dist'=> $truck_transport_radius,
+                        'Pipeline Capacity'     => $layflats_capacity,
+                        'Pipe Transport Bid'=> $layflats_transport_bid,
+                        'Pipe Max Dist' => $layflats_transport_radius,
+                        'TSS'     => $tss_measure_value,
+                        'TDS'     => $tds_measure_value,
+                        'Chloride'=> $chloride_measure_value,
+                        'Barium'  => $barium_measure_value,
+                        'Calcium Carbonate ' => $calcium_carbonate_measure_value,
+                        'Iron'    => $iron_measure_value,
+                        'Boron'   => $boron_measure_value,
+                        'Hydrogen Sulfide' => $hydrogen_sulfide_measure_value,
+                        'NORM'    => $norm_measure_value,
+                        'TSS Constraint'             => $tss_limit,          
+                        'TDS Constraint'             => $tds_limit,            
+                        'Chloride Constraint'        => $chloride_limit,       
+                        'Barium Constraint'          => $barium_limit,        
+                        'Calcium Carbonate Constraint'=> $calcium_carbonate_limit,
+                        'Iron Constraint'            => $iron_limit,          
+                        'Boron Constraint'           => $boron_limit,     
+                        'Hydrogen Sulfide Constraint'=> $hydrogen_sulfide_limit,
+                        'NORM Constraint'            => $norm_limit,
                     );
                 }
                 array_push($data[$posts['key']], $item_array);
