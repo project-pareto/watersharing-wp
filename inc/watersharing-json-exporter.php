@@ -184,44 +184,44 @@ function export_to_pareto( $post_id ) {
                 $can_accept_layflats = get_post_meta($item, 'can_accept_layflats', true);
 
                 $bid_type = get_post_meta($item, 'bid_type', true);
-                $bid_amount = get_post_meta($item, 'bid_amount', true);
+                $bid_amount = (float)get_post_meta($item, 'bid_amount', true);
                 $bid_units = get_post_meta($item, 'bid_units', true);
                 $bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
 
-                $truck_transport_radius = get_post_meta($item, 'truck_transport_radius', true);
-                $truck_transport_bid = get_post_meta($item, 'truck_transport_bid', true);
-                $truck_capacity = get_post_meta($item, 'truck_capacity', true);
+                $truck_transport_radius = (float)get_post_meta($item, 'truck_transport_radius', true);
+                $truck_transport_bid = (float)get_post_meta($item, 'truck_transport_bid', true);
+                $truck_capacity = (float)get_post_meta($item, 'truck_capacity', true);
 
-                $layflats_transport_radius = get_post_meta($item, 'layflats_transport_radius', true);
-                $layflats_transport_bid = get_post_meta($item, 'layflats_transport_bid', true);
-                $layflats_capacity = get_post_meta($item, 'layflats_capacity', true);
+                $layflats_transport_radius = (float)get_post_meta($item, 'layflats_transport_radius', true);
+                $layflats_transport_bid = (float)get_post_meta($item, 'layflats_transport_bid', true);
+                $layflats_capacity = (float)get_post_meta($item, 'layflats_capacity', true);
 
                 $tss_limit = get_post_meta($item, 'tss_limit', true);
-                $tss_measure_value = get_post_meta($item, 'tss_measure_value', true);
+                $tss_measure_value = (float)get_post_meta($item, 'tss_measure_value', true);
 
                 $tds_limit = get_post_meta($item, 'tds_limit', true);
-                $tds_measure_value = get_post_meta($item, 'tds_measure_value', true);
+                $tds_measure_value = (float)get_post_meta($item, 'tds_measure_value', true);
 
                 $chloride_limit = get_post_meta($item, 'chloride_limit', true);
-                $chloride_measure_value = get_post_meta($item, 'chloride_measure_value', true);
+                $chloride_measure_value = (float)get_post_meta($item, 'chloride_measure_value', true);
 
                 $barium_limit = get_post_meta($item, 'barium_limit', true);
-                $barium_measure_value = get_post_meta($item, 'barium_measure_value', true);
+                $barium_measure_value = (float)get_post_meta($item, 'barium_measure_value', true);
 
                 $calciumcarbonate_limit = get_post_meta($item, 'calciumcarbonate_limit', true);
-                $calciumcarbonate_measure_value = get_post_meta($item, 'calciumcarbonate_measure_value', true);
+                $calciumcarbonate_measure_value = (float)get_post_meta($item, 'calciumcarbonate_measure_value', true);
 
                 $iron_limit = get_post_meta($item, 'iron_limit', true);
-                $iron_measure_value = get_post_meta($item, 'iron_measure_value', true);
+                $iron_measure_value = (float)get_post_meta($item, 'iron_measure_value', true);
 
                 $boron_limit = get_post_meta($item, 'boron_limit', true);
-                $boron_measure_value = get_post_meta($item, 'boron_measure_value', true);
+                $boron_measure_value = (float)get_post_meta($item, 'boron_measure_value', true);
 
                 $hydrogensulfide_limit = get_post_meta($item, 'hydrogensulfide_limit', true);
-                $hydrogensulfide_measure_value = get_post_meta($item, 'hydrogensulfide_measure_value', true);
+                $hydrogensulfide_measure_value = (float)get_post_meta($item, 'hydrogensulfide_measure_value', true);
 
                 $norm_limit = get_post_meta($item, 'norm_limit', true);
-                $norm_measure_value = get_post_meta($item, 'norm_measure_value', true);
+                $norm_measure_value = (float)get_post_meta($item, 'norm_measure_value', true);
                 
                 if(strpos($post_type,'share') !== false){
                     $item_array = array(
