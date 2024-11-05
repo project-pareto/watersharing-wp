@@ -12,7 +12,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
     ( !empty( $name ) ) ? $name = esc_html( $name ) : "";
 
     switch( $type ) {
-        case 'input':
+		case 'input':
             if ($options === 'checkbox') {
                 $checked = $value ? 'checked' : '';
                 $html .= "
@@ -43,7 +43,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
                 $html .= "<option value=''>-- Please select --</option>";
                 foreach( $options as $option_value => $label ) {
                     $selected = selected( $value, $option_value, false );
-                    $html .= "<option value='$option_value' $selected>$label</option>";
+                    $html .= "<option value=$option_value $selected>$label</option>";
                 }
             }
 
@@ -141,10 +141,16 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			break;
 
 			case 'checkbox':
+				$id_spaced = ucfirst(strtolower(str_replace('_', ' ', $id)));
 				$input = "
 					<div class='meta-box-checkbox'> 
-						<input type='checkbox' name='$id' id='$id' class='meta-box-input' value='1'>
-					</div>";
+						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
+						<label>
+							$id_spaced
+						</label>	
+					</div>
+					";
+					
 				break;
 			
 			case 'select':
@@ -152,7 +158,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				if(!empty($dataset)){
 					foreach($dataset as $set){
 						echo($optionValue);
-						$input .= "<option value='$set'>$set</option>";
+						$input .= "<option value=$set>$set</option>";
 					}
 				}
 				$input = "
@@ -255,7 +261,7 @@ function qdBuilder($names = []){
 	$qd = "";
 	foreach($names as $name){
 		$name_lower = strtolower(str_replace(' ', '', $name));
-		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["&lt;", "&gt;"]];
+		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["gt", "lt"]];
 		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
 		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', '', 'two-col', '', $qd_array);
 		$qd_array = [];
@@ -287,7 +293,10 @@ function buildRequestForm($type = "", $title = "") {
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
-	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'radio','required', '', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
+	$sites_array = [];
+	$sites_array[] = ["id" => "can_accept_trucks", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$sites_array[] = ["id" => "can_accept_layflats", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array): $site_compatibility = "";
 	 
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
 

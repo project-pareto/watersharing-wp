@@ -121,6 +121,17 @@
 	}
 }
 
+.meta-box-checkbox {
+    display: flex;
+    align-items: center;
+
+    .meta-box-input.checkbox {
+        height: 15px;
+        width: 15px;
+		margin-right:15px;
+    }
+}
+
 .chart-container{
 	width:600px;
 }

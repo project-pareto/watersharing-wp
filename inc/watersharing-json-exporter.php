@@ -179,8 +179,10 @@ function export_to_pareto( $post_id ) {
                 $max = $max !== '' ? (int)$max : '';
 
                 //get trade record details
-                $site_compatibility = get_post_meta($item, 'site_compatibility', true);
-               
+                // $site_compatibility = get_post_meta($item, 'site_compatibility', true);
+                $can_accept_trucks = get_post_meta($item, 'can_accept_trucks', true);
+                $can_accept_layflats = get_post_meta($item, 'can_accept_layflats', true);
+
                 $bid_type = get_post_meta($item, 'bid_type', true);
                 $bid_amount = get_post_meta($item, 'bid_amount', true);
                 $bid_units = get_post_meta($item, 'bid_units', true);
@@ -206,8 +208,8 @@ function export_to_pareto( $post_id ) {
                 $barium_limit = get_post_meta($item, 'barium_limit', true);
                 $barium_measure_value = get_post_meta($item, 'barium_measure_value', true);
 
-                $calcium_carbonate_limit = get_post_meta($item, 'calcium_carbonate_limit', true);
-                $calcium_carbonate_measure_value = get_post_meta($item, 'calcium_carbonate_measure_value', true);
+                $calciumcarbonate_limit = get_post_meta($item, 'calciumcarbonate_limit', true);
+                $calciumcarbonate_measure_value = get_post_meta($item, 'calciumcarbonate_measure_value', true);
 
                 $iron_limit = get_post_meta($item, 'iron_limit', true);
                 $iron_measure_value = get_post_meta($item, 'iron_measure_value', true);
@@ -215,8 +217,8 @@ function export_to_pareto( $post_id ) {
                 $boron_limit = get_post_meta($item, 'boron_limit', true);
                 $boron_measure_value = get_post_meta($item, 'boron_measure_value', true);
 
-                $hydrogen_sulfide_limit = get_post_meta($item, 'hydrogen_sulfide_limit', true);
-                $hydrogen_sulfide_measure_value = get_post_meta($item, 'hydrogen_sulfide_measure_value', true);
+                $hydrogensulfide_limit = get_post_meta($item, 'hydrogensulfide_limit', true);
+                $hydrogensulfide_measure_value = get_post_meta($item, 'hydrogensulfide_measure_value', true);
 
                 $norm_limit = get_post_meta($item, 'norm_limit', true);
                 $norm_measure_value = get_post_meta($item, 'norm_measure_value', true);
@@ -246,33 +248,34 @@ function export_to_pareto( $post_id ) {
                         'End Date'        => $end,
                         'Rate'            => $rate,
                         'Max Transport'    => $max,
-                        'Site Compatibility'    => $site_compatibility,
+                        'Trucks Accepted'    => $can_accept_trucks,
+                        'Pipes Accepted'    => $can_accept_layflats,
                         'Bid Type'              => $bid_type,
-                        'Bid Amount'            => $bid_amount,
+                        'Bid Amount (USD/bbl)'  => $bid_amount,
                         // 'Bid Units'             => $bid_units,
                         'Trucking Capacity'        => $truck_capacity,
-                        'Truck Transport Bid'   => $truck_transport_bid,
+                        'Truck Transport Bid (USD/bbl)'   => $truck_transport_bid,
                         'Truck Max Dist'=> $truck_transport_radius,
                         'Pipeline Capacity'     => $layflats_capacity,
-                        'Pipe Transport Bid'=> $layflats_transport_bid,
+                        'Pipe Transport Bid (USD/bbl)'=> $layflats_transport_bid,
                         'Pipe Max Dist' => $layflats_transport_radius,
                         'TSS'     => $tss_measure_value,
                         'TDS'     => $tds_measure_value,
                         'Chloride'=> $chloride_measure_value,
                         'Barium'  => $barium_measure_value,
-                        'Calcium Carbonate ' => $calcium_carbonate_measure_value,
+                        'Calcium Carbonate ' => $calciumcarbonate_measure_value,
                         'Iron'    => $iron_measure_value,
                         'Boron'   => $boron_measure_value,
-                        'Hydrogen Sulfide' => $hydrogen_sulfide_measure_value,
+                        'Hydrogen Sulfide' => $hydrogensulfide_measure_value,
                         'NORM'    => $norm_measure_value,
                         'TSS Constraint'             => $tss_limit,          
                         'TDS Constraint'             => $tds_limit,            
                         'Chloride Constraint'        => $chloride_limit,       
                         'Barium Constraint'          => $barium_limit,        
-                        'Calcium Carbonate Constraint'=> $calcium_carbonate_limit,
+                        'Calcium Carbonate Constraint'=> $calciumcarbonate_limit,
                         'Iron Constraint'            => $iron_limit,          
                         'Boron Constraint'           => $boron_limit,     
-                        'Hydrogen Sulfide Constraint'=> $hydrogen_sulfide_limit,
+                        'Hydrogen Sulfide Constraint'=> $hydrogensulfide_limit,
                         'NORM Constraint'            => $norm_limit,
                     );
                 }
