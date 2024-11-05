@@ -69,23 +69,25 @@
 		}
 	});
 
-	//Location Select Validation
-	$(document).on('blur', 'input#longitude', function() {
-		var longitudeInput = $(this);
-		var latitudeInput = longitudeInput.closest('form').find('input#latitude');
-	
+	// Location Select Validation
+	$(document).on('blur', 'input#longitude, input#latitude', function() {
+		var form = $(this).closest('form');
+		var longitudeInput = form.find('input#longitude');
+		var latitudeInput = form.find('input#latitude');
+		
 		var longitudeValue = parseFloat(longitudeInput.val());
 		var latitudeValue = parseFloat(latitudeInput.val());
-	
+
+		// Check if both longitude and latitude values are valid numbers
 		if (!isNaN(longitudeValue) && !isNaN(latitudeValue)) {
-			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 
-				|| latitudeValue < 24.446667 || latitudeValue > 49.382812) {
+			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 ||
+				latitudeValue < 24.446667 || latitudeValue > 49.382812) {
 				alert('Coordinates must fall within continental USA');
 				longitudeInput.val('');
 				latitudeInput.val('');
 			}
 		}
-	});	
+	});
 
 	// toggle match details display
 	$(document).on('click', '.toggle-row', function() {

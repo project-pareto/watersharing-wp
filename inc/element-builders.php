@@ -157,8 +157,14 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
-						echo($optionValue);
-						$input .= "<option value=$set>$set</option>";
+						//Logic For < or > to make selections more readable
+						if($set == "lt" || $set == "gt"){
+							$constraint = ($set == "lt") ? "Less than": "Greater than";
+							$input .= "<option value=$set>$constraint</option>";
+						}
+						else{
+							$input .= "<option value=$set>$set</option>";
+						}
 					}
 				}
 				$input = "
