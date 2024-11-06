@@ -54,7 +54,7 @@ function register_watermanagement_posttypes() {
 	register_post_type('trade_supply', $wt_supargs);
 
 	// Consumption Recordes for Water Sharing Requests
-	$demlabels = array(
+	$ws_demlabels = array(
 		'name'			=> __('Consumption'),
 		'singular_name'	=> __('Share Water Consumption'),
 		'edit_item'		=> __('Edit Water Consumption Request'),
@@ -62,8 +62,8 @@ function register_watermanagement_posttypes() {
 		'add_new_item'	=> __('Add New Water Consumption Request')
 	);
 
-	$demargs = array(
-		'labels'		=> $demlabels,
+	$ws_demargs = array(
+		'labels'		=> $ws_demlabels,
 		'public'		=> true,
 		'show_in_menu'	=> false,
 		'has_archive'	=> false,
@@ -75,8 +75,29 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	register_post_type('share_demand', $demargs);
-	register_post_type('trade_demand', $demargs);
+	$wt_demlabels = array(
+		'name'			=> __('Consumption'),
+		'singular_name'	=> __('Share Water Consumption'),
+		'edit_item'		=> __('Edit Water Consumption Request'),
+		'update_item'	=> __('Update Water Consumption Request'),
+		'add_new_item'	=> __('Add New Water Consumption Request')
+	);
+
+	$wt_demargs = array(
+		'labels'		=> $wt_demlabels,
+		'public'		=> true,
+		'show_in_menu'	=> false,
+		'has_archive'	=> false,
+		'menu_icon'		=> 'dashicons-location',
+		'menu_position'	=> 6,
+		'hierarchical'	=> true,
+		'supports'		=> array('title'),
+		'rewrites'		=> array('slug' => 'consumption', 'with_front' => true),
+		'publicly_queryable' => false
+	);
+
+	register_post_type('share_demand', $ws_demargs);
+	register_post_type('trade_demand', $wt_demargs);
 
 	// Match Lookup Records for Water Sharing
 	$mrelabels = array(

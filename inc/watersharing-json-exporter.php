@@ -61,7 +61,7 @@ function process_water_management_data($data, $type) {
     foreach($data as $item) {
         $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
 
-        ($type == 'share') ? $post_type = 'matched_requests': $post_type = 'matchec_trades';
+        ($type == 'share') ? $post_type = 'matched_requests': $post_type = 'matched_trades';
 
         // Check if a post with the same title already exists
         $existing_post = new WP_Query(
@@ -86,6 +86,7 @@ function process_water_management_data($data, $type) {
         );
         $post_id = wp_insert_post($new_post);
 
+        // UPDATE TO INCLUDE TRADE FIELDS
         if($post_id) {
             update_post_meta($post_id, 'match_status', 'open');
             update_post_meta($post_id, 'matched_rate', $item['value']);
@@ -161,6 +162,10 @@ function export_to_pareto( $post_id ) {
         $items = $query->get_posts();
         if(!empty($items)) {
             foreach($items as $item) {
+            $query_post_type = get_post_type($item);
+            $bpd_rate = ($query_post_type == 'trade_demand') ? "Supply Rate (bpd)": "Demand Rate (bpd)";
+            $bid = ($query_post_type == 'trade_demand') ? "Supplier Bid (USD/bbl)": "Consumer Bid (USD/bbl)";
+
                 $item_array = [];
                 $well = $lat = $long = $start = $end = $rate = $max = "";
                 $author = get_the_author_meta('display_name', get_post_field('post_author', $item));
@@ -246,19 +251,19 @@ function export_to_pareto( $post_id ) {
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        'Rate'            => $rate,
-                        'Max Transport'    => $max,
+                        $bpd_rate            => $rate,
+                        $bid             => $bid_amount,
+                        'Bid Type'              => $bid_type,
                         'Trucks Accepted'    => $can_accept_trucks,
                         'Pipes Accepted'    => $can_accept_layflats,
-                        'Bid Type'              => $bid_type,
-                        'Bid Amount (USD/bbl)'  => $bid_amount,
-                        // 'Bid Units'             => $bid_units,
-                        'Trucking Capacity'        => $truck_capacity,
+                        'Truck Max Dist (mi)'=> $truck_transport_radius,  
+                        'Trucking Capacity (bpd)'        => $truck_capacity,  
                         'Truck Transport Bid (USD/bbl)'   => $truck_transport_bid,
-                        'Truck Max Dist'=> $truck_transport_radius,
-                        'Pipeline Capacity'     => $layflats_capacity,
+                        // 'Max Transport'    => $max, 
+                        'Pipe Max Dist (mi)' => $layflats_transport_radius,
+                        'Pipeline Capacity (bpd)'     => $layflats_capacity,
                         'Pipe Transport Bid (USD/bbl)'=> $layflats_transport_bid,
-                        'Pipe Max Dist' => $layflats_transport_radius,
+                        // 'Bid Units'             => $bid_units,
                         'TSS'     => $tss_measure_value,
                         'TDS'     => $tds_measure_value,
                         'Chloride'=> $chloride_measure_value,
