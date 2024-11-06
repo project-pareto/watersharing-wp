@@ -141,17 +141,11 @@ add_action('wp_ajax_download_csv', 'createAndDownloadCsv');
 add_action('wp_ajax_nopriv_download_csv', 'createAndDownloadCsv');
 
 function my_custom_scripts() {
-    // Corrected path to point to the plugin directory
-    wp_enqueue_script(
-        'watersharing-script',
-        plugins_url('../assets/dist/js/watersharing.min.js', __FILE__), 
-        array('jquery'),
-        null,
-        true
-    );
-
-    // Pass ajaxurl to the script
-    wp_localize_script('watersharing-script', 'my_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+    // Ensure the script is already enqueued before localizing
+    if (wp_script_is('watersharing-scripts', 'enqueued')) {
+        // Localize the script with the AJAX URL
+        wp_localize_script('watersharing-scripts', 'my_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
 }
 add_action('wp_enqueue_scripts', 'my_custom_scripts');
 
