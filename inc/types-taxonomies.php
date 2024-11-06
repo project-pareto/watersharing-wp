@@ -100,7 +100,7 @@ function register_watermanagement_posttypes() {
 	register_post_type('trade_demand', $wt_demargs);
 
 	// Match Lookup Records for Water Sharing
-	$mrelabels = array(
+	$ws_mrelabels = array(
 		'name'			=> __('Match Lookup'),
 		'singular_name'	=> __('Match Lookup'),
 		'edit_item'		=> __('Edit Match Lookup'),
@@ -108,8 +108,16 @@ function register_watermanagement_posttypes() {
 		'add_new_item'	=> __('Add New Match Lookup')
 	);
 
-	$mreargs = array(
-		'labels'		=> $mrelabels,
+	$wt_mrelabels = array(
+		'name'			=> __('Match Lookup'),
+		'singular_name'	=> __('Match Lookup'),
+		'edit_item'		=> __('Edit Match Lookup'),
+		'update_item'	=> __('Update Match Lookup'),
+		'add_new_item'	=> __('Add New Match Lookup')
+	);
+
+	$ws_mreargs = array(
+		'labels'		=> $ws_mrelabels,
 		'public'		=> true,
 		'show_in_menu'	=> false,
 		'has_archive'	=> false,
@@ -121,8 +129,21 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	register_post_type('matched_shares', $mreargs); 
-	register_post_type('matched_trades', $mreargs);
+	$wt_mreargs = array(
+		'labels'		=> $wt_mrelabels,
+		'public'		=> true,
+		'show_in_menu'	=> false,
+		'has_archive'	=> false,
+		'menu_icon'		=> 'dashicons-location',
+		'menu_position'	=> 6,
+		'hierarchical'	=> true,
+		'supports'		=> array('title'),
+		'rewrites'		=> array('slug' => 'matches', 'with_front' => false),
+		'publicly_queryable' => false
+	);
+
+	register_post_type('matched_shares', $ws_mreargs); 
+	register_post_type('matched_trades', $wt_mreargs);
 
 
 	// Well pad records for Water Sharing

@@ -2,9 +2,10 @@
 
 // import JSON match file to update Match Lookup and Request records
 function import_json_data() {
+    echo("<script>console.log('IMPORTING JSON...')</script>");
 
-    $share_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/import/';
-    $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/import/';
+    $share_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watersharing/import/';
+    $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watertrading/import/';
     $ws_json_files = glob($share_import_folder_path . '*.json');
     $wt_json_files = glob($trade_import_folder_path . '*.json');
 
@@ -16,6 +17,7 @@ function import_json_data() {
 
     // Sort the water sharing files if available
     if(!empty($ws_json_files)) {
+        echo("<script>console.log('SHARE!')</script>");
         usort($ws_json_files, function ($a, $b) {
             return filemtime($b) - filemtime($a);
         });
@@ -27,6 +29,7 @@ function import_json_data() {
         $ws_data = json_decode($ws_json_data, true);
         // Check if decoding was successful for water sharing
         if ($ws_data !== null) {
+            echo("<script>console.log(" . json_encode($ws_data) . ")</script>");
             process_water_management_data($ws_data, 'share');
             // Delete the water sharing JSON file after processing
             unlink($ws_json_file_path);
@@ -58,10 +61,17 @@ function import_json_data() {
 }
 
 function process_water_management_data($data, $type) {
+    echo("<script>console.log('Processing type: $type')</script>");
     foreach($data as $item) {
+        echo("<script>console.log('PASSED!')</script>");
+        echo("<script>console.log(" . json_encode($item) . ")</script>");
+
         $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
 
-        ($type == 'share') ? $post_type = 'matched_requests': $post_type = 'matched_trades';
+        ($type == 'share') ? $post_type = 'matched_shares': $post_type = 'matched_trades';
+
+        echo("<script>console.log('PT: $post_type')</script>");
+
 
         // Check if a post with the same title already exists
         $existing_post = new WP_Query(
@@ -74,7 +84,19 @@ function process_water_management_data($data, $type) {
             )
         );
 
+        while ($existing_post->have_posts()) {
+            $existing_post->the_post(); // Set up post data
+            $post_id = get_the_ID();
+            $post_title = get_the_title($post_id);
+            
+            // Use json_encode for safe logging in JavaScript
+            echo("<script>console.log('Existing Post ID: " . json_encode($post_id) . ", Title: " . json_encode($post_title) . "')</script>");
+        }
+
+        echo("<script>console.log('Post Type: $post_type')</script>");
+
         if($existing_post->have_posts()) {
+            echo("<script>console.log('EXISTING!!!')</script>");
             continue;
         }
 
@@ -86,7 +108,6 @@ function process_water_management_data($data, $type) {
         );
         $post_id = wp_insert_post($new_post);
 
-        // UPDATE TO INCLUDE TRADE FIELDS
         if($post_id) {
             update_post_meta($post_id, 'match_status', 'open');
             update_post_meta($post_id, 'matched_rate', $item['value']);
