@@ -333,10 +333,14 @@
 	});
 
 	document.addEventListener('DOMContentLoaded', function() {
-		const ctx = document.getElementById('stat-chart').getContext('2d');
+	// Check if the stat-chart element is present on the page
+	const chartElement = document.getElementById('stat-chart');
+
+	if (chartElement) {
+		const ctx = chartElement.getContext('2d');
 
 		const volumes = chartData.map(trade => trade.volume); 
-    	const dates = chartData.map(trade => trade.date);     
+		const dates = chartData.map(trade => trade.date);     
 	  
 		new Chart(ctx, {
 		  type: 'line',
@@ -363,13 +367,15 @@
 				  display: false
 				},
 				title:{
-					display:true,
+					display: true,
 					text: "Ongoing Trades"
 				}
 			  }
 		  }
 		});
-	});
+	}
+});
+
 
 	window.downloadCsv = function(adminUrl, volumeData) {
 		const formData = new FormData();

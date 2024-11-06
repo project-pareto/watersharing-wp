@@ -4,6 +4,11 @@
 		max-width: 100%;
 	}
 
+	&.chart{
+		display: flex;
+		justify-content: center;
+	}
+
 	.watersharing-submit-button {
 		background: $blue;
 		border: none;
@@ -104,6 +109,10 @@
 		display: flex;
 		align-items: center;
 		// margin-bottom: 10px;
+	}
+
+	.radio-button{
+		margin-right:5px;
 	}
 
 	.meta-radio-select label {

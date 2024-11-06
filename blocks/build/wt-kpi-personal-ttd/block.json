@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watermanagement/kpi-ttd-personal",
   "version": "0.1.0",
-  "title": "My Total Trades To Date",
+  "title": "My Total Trades",
   "category": "watertrading",
   "description": "Displays the total volume traded using the watertrading platform.",
   "example": {},

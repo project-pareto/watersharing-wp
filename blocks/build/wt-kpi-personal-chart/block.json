@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watermanagement/kpi-chart-personal",
   "version": "0.1.0",
-  "title": "Personal Trade Statistics Chart",
+  "title": "My Trade Stats Chart",
   "category": "watertrading",
   "description": "Displays the total volume traded using the watertrading platform.",
   "example": {},
