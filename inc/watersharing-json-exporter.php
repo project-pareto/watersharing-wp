@@ -2,7 +2,6 @@
 
 // import JSON match file to update Match Lookup and Request records
 function import_json_data() {
-    echo("<script>console.log('IMPORTING JSON...')</script>");
 
     $share_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watersharing/import/';
     $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watertrading/import/';
@@ -17,7 +16,6 @@ function import_json_data() {
 
     // Sort the water sharing files if available
     if(!empty($ws_json_files)) {
-        echo("<script>console.log('SHARE!')</script>");
         usort($ws_json_files, function ($a, $b) {
             return filemtime($b) - filemtime($a);
         });
@@ -29,7 +27,6 @@ function import_json_data() {
         $ws_data = json_decode($ws_json_data, true);
         // Check if decoding was successful for water sharing
         if ($ws_data !== null) {
-            echo("<script>console.log(" . json_encode($ws_data) . ")</script>");
             process_water_management_data($ws_data, 'share');
             // Delete the water sharing JSON file after processing
             unlink($ws_json_file_path);
@@ -61,13 +58,11 @@ function import_json_data() {
 }
 
 function process_water_management_data($data, $type) {
-    echo("<script>console.log('Processing type: $type')</script>");
 
     // Check if we're dealing with 'share' or 'trade' type data
     if ($type == 'share') {
         // Iterate over each item in the array, assuming $data is a list of shares
         foreach ($data as $item) {
-            echo("<script>console.log('Processing share data')</script>");
             $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
             $post_type = 'matched_shares';
 
@@ -81,7 +76,6 @@ function process_water_management_data($data, $type) {
             ]);
 
             if ($existing_post->have_posts()) {
-                echo("<script>console.log('EXISTING SHARE POST FOUND')</script>");
                 continue;
             }
 
@@ -129,7 +123,6 @@ function process_water_management_data($data, $type) {
                         ]);
 
                         if ($existing_post->have_posts()) {
-                            echo("<script>console.log('EXISTING TRADE POST FOUND: " . json_encode($title) . "')</script>");
                             continue;
                         }
 
