@@ -370,7 +370,14 @@
 				},
 				title:{
 					display: true,
-					text: "Ongoing Trades"
+					text: "Ongoing Trades",
+					font: {
+						size: 20, 
+						weight: 'bold' 
+					}
+				},
+				tooltip: {
+					enabled: false 
 				}
 			  }
 		  }
