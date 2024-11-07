@@ -69,23 +69,25 @@
 		}
 	});
 
-	//Location Select Validation
-	$(document).on('blur', 'input#longitude', function() {
-		var longitudeInput = $(this);
-		var latitudeInput = longitudeInput.closest('form').find('input#latitude');
-	
+	// Location Select Validation
+	$(document).on('blur', 'input#longitude, input#latitude', function() {
+		var form = $(this).closest('form');
+		var longitudeInput = form.find('input#longitude');
+		var latitudeInput = form.find('input#latitude');
+		
 		var longitudeValue = parseFloat(longitudeInput.val());
 		var latitudeValue = parseFloat(latitudeInput.val());
-	
+
+		// Check if both longitude and latitude values are valid numbers
 		if (!isNaN(longitudeValue) && !isNaN(latitudeValue)) {
-			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 
-				|| latitudeValue < 24.446667 || latitudeValue > 49.382812) {
+			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 ||
+				latitudeValue < 24.446667 || latitudeValue > 49.382812) {
 				alert('Coordinates must fall within continental USA');
 				longitudeInput.val('');
 				latitudeInput.val('');
 			}
 		}
-	});	
+	});
 
 	// toggle match details display
 	$(document).on('click', '.toggle-row', function() {
@@ -368,12 +370,56 @@
 				},
 				title:{
 					display: true,
-					text: "Ongoing Trades"
+					text: "Ongoing Trades",
+					font: {
+						size: 20, 
+						weight: 'bold' 
+					}
+				},
+				tooltip: {
+					enabled: false 
 				}
 			  }
 		  }
 		});
 	}
+
+	(function($) {
+		$(document).on('click', '.download-summary-btn', function(e) {
+			e.preventDefault();
+	
+			$.ajax({
+				url: my_ajax_object.ajax_url,
+				method: 'POST',
+				data: {
+					action: 'download_latest_summary'
+				},
+				xhrFields: {
+					responseType: 'blob' // Ensure response is treated as binary blob
+				},
+				success: function(response) {
+					if (response && response.size) { // Check if response is a valid Blob
+						const url = window.URL.createObjectURL(response);
+						const a = document.createElement('a');
+						a.style.display = 'none';
+						a.href = url;
+						a.download = 'latest-summary.csv';
+						document.body.appendChild(a);
+						a.click();
+						window.URL.revokeObjectURL(url);
+					} else {
+						console.error("Invalid Blob response:", response);
+						alert("Could not download the file. Please try again.");
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.error("AJAX error:", textStatus, errorThrown);
+					alert("Could not download the file. Please try again.");
+				}
+			});
+		});
+	})
+	(jQuery);
 });
 
 

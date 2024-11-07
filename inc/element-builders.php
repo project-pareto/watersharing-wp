@@ -12,7 +12,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
     ( !empty( $name ) ) ? $name = esc_html( $name ) : "";
 
     switch( $type ) {
-        case 'input':
+		case 'input':
             if ($options === 'checkbox') {
                 $checked = $value ? 'checked' : '';
                 $html .= "
@@ -43,7 +43,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
                 $html .= "<option value=''>-- Please select --</option>";
                 foreach( $options as $option_value => $label ) {
                     $selected = selected( $value, $option_value, false );
-                    $html .= "<option value='$option_value' $selected>$label</option>";
+                    $html .= "<option value=$option_value $selected>$label</option>";
                 }
             }
 
@@ -141,17 +141,30 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			break;
 
 			case 'checkbox':
+				$id_spaced = ucfirst(strtolower(str_replace('_', ' ', $id)));
 				$input = "
 					<div class='meta-box-checkbox'> 
-						<input type='checkbox' name='$id' id='$id' class='meta-box-input' value='1'>
-					</div>";
+						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
+						<label>
+							$id_spaced
+						</label>	
+					</div>
+					";
+					
 				break;
 			
 			case 'select':
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
-						$input .= "<option value='$set'>$set</option>";
+						//Logic For < or > to make selections more readable
+						if($set == "lt" || $set == "gt"){
+							$constraint = ($set == "lt") ? "Less than": "Greater than";
+							$input .= "<option value=$set>$constraint</option>";
+						}
+						else{
+							$input .= "<option value=$set>$set</option>";
+						}
 					}
 				}
 				$input = "
@@ -254,7 +267,7 @@ function qdBuilder($names = []){
 	$qd = "";
 	foreach($names as $name){
 		$name_lower = strtolower(str_replace(' ', '', $name));
-		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["min", "max"]];
+		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["gt", "lt"]];
 		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
 		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', '', 'two-col', '', $qd_array);
 		$qd_array = [];
@@ -271,13 +284,13 @@ function buildRequestForm($type = "", $title = "") {
 	$well_name = buildFormField('well_name', 'Pad Name', 'text', 'required', '', 'Pad Name');
 
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
+	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day');
 
 	$supply = ($type === 'share_supply' || $type === 'trade_supply');
 	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
@@ -286,7 +299,10 @@ function buildRequestForm($type = "", $title = "") {
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
-	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'radio','required', '', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
+	$sites_array = [];
+	$sites_array[] = ["id" => "can_accept_trucks", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$sites_array[] = ["id" => "can_accept_layflats", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array): $site_compatibility = "";
 	 
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
 
@@ -387,7 +403,9 @@ function getTwoWeekIntervalsYTD() {
         $date->modify('-' . ($i * 14) . ' days'); // Go back 14 days (2 weeks) for each iteration
         
         // Isolating mondays
-        $date->modify('last monday');
+		if ($i !== 0) {
+            $date->modify('last monday');
+        }
 
         $dates[] = $date->format($dateFormat);
     }
@@ -582,8 +600,8 @@ function buildKpiTable($type = "", $title = ""){
 					const chartData = $chart_data_json;
 				</script>
 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+				$stat_button
 			</div>
-			$stat_button
 		";
 	}
 	$html = "$kpi_stats";
@@ -796,7 +814,7 @@ function buildRequestTable( $type = '' ) {
 					<div class='watersharing-col-half watersharing-match-col'>
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
-					:$field3 = "<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>";
+					:$field3 = "<button class='watersharing-submit-button download-summary-btn' style='margin-top: 8px;'>Download Detailed Summary</button>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='watersharing-col-half watersharing-match-col'>

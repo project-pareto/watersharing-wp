@@ -2,9 +2,10 @@
 
 // import JSON match file to update Match Lookup and Request records
 function import_json_data() {
+    echo("<script>console.log('IMPORTING JSON...')</script>");
 
-    $share_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/import/';
-    $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/import/';
+    $share_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watersharing/import/';
+    $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watertrading/import/';
     $ws_json_files = glob($share_import_folder_path . '*.json');
     $wt_json_files = glob($trade_import_folder_path . '*.json');
 
@@ -16,6 +17,7 @@ function import_json_data() {
 
     // Sort the water sharing files if available
     if(!empty($ws_json_files)) {
+        echo("<script>console.log('SHARE!')</script>");
         usort($ws_json_files, function ($a, $b) {
             return filemtime($b) - filemtime($a);
         });
@@ -27,6 +29,7 @@ function import_json_data() {
         $ws_data = json_decode($ws_json_data, true);
         // Check if decoding was successful for water sharing
         if ($ws_data !== null) {
+            echo("<script>console.log(" . json_encode($ws_data) . ")</script>");
             process_water_management_data($ws_data, 'share');
             // Delete the water sharing JSON file after processing
             unlink($ws_json_file_path);
@@ -58,43 +61,101 @@ function import_json_data() {
 }
 
 function process_water_management_data($data, $type) {
-    foreach($data as $item) {
-        $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+    echo("<script>console.log('Processing type: $type')</script>");
 
-        ($type == 'share') ? $post_type = 'matched_requests': $post_type = 'matchec_trades';
+    // Check if we're dealing with 'share' or 'trade' type data
+    if ($type == 'share') {
+        // Iterate over each item in the array, assuming $data is a list of shares
+        foreach ($data as $item) {
+            echo("<script>console.log('Processing share data')</script>");
+            $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+            $post_type = 'matched_shares';
 
-        // Check if a post with the same title already exists
-        $existing_post = new WP_Query(
-            array(
+            // Check if a post with the same title already exists
+            $existing_post = new WP_Query([
                 'post_type' => $post_type,
                 'post_status' => 'any',
                 'posts_per_page' => 1,
                 'fields' => 'ids',
                 'title' => $title
-            )
-        );
+            ]);
 
-        if($existing_post->have_posts()) {
-            continue;
+            if ($existing_post->have_posts()) {
+                echo("<script>console.log('EXISTING SHARE POST FOUND')</script>");
+                continue;
+            }
+
+            // Create new post
+            $new_post = [
+                'post_type' => $post_type,
+                'post_status' => 'publish',
+                'post_title' => $title,
+            ];
+            $post_id = wp_insert_post($new_post);
+
+            if ($post_id) {
+                update_post_meta($post_id, 'match_status', 'open');
+                update_post_meta($post_id, 'matched_rate', $item['Rate']);
+                update_post_meta($post_id, 'producer_request', $item['From index']);
+                update_post_meta($post_id, 'consumption_request', $item['To index']);
+            }
+
+            // Send email notifications
+            send_match_email($item['From index'], $item['To index']);
         }
 
-        // Create new post
-        $new_post = array(
-            'post_type' => $post_type,
-            'post_status' => 'publish',
-            'post_title' => $title,
-        );
-        $post_id = wp_insert_post($new_post);
+    } else if ($type == 'trade') {
+        // Process trade data (expecting $data['Supply'] and $data['Demand'] arrays)
+        foreach (['Demand'] as $trade_type) {
+            if (!isset($data[$trade_type])) continue;
 
-        if($post_id) {
-            update_post_meta($post_id, 'match_status', 'open');
-            update_post_meta($post_id, 'matched_rate', $item['value']);
-            update_post_meta($post_id, 'producer_request', $item['From index']);
-            update_post_meta($post_id, 'consumption_request', $item['To index']);
+            foreach ($data[$trade_type] as $item) {
+                if (isset($item['Matches']['Match Index'])) {
+                    foreach ($item['Matches']['Match Index'] as $index => $match_index) {
+                        // Extract 'from' and 'to' indexes from match index format: "<From>-<To>|..."
+                        list($from_to, $remainder) = explode("|", $match_index);
+                        list($from, $to) = explode("-", $from_to);
+
+                        $title = $match_index;  // Title is the entire match index string
+                        $post_type = 'matched_trades';
+
+                        // Check if a post with the same title already exists
+                        $existing_post = new WP_Query([
+                            'post_type' => $post_type,
+                            'post_status' => 'any',
+                            'posts_per_page' => 1,
+                            'fields' => 'ids',
+                            'title' => $title
+                        ]);
+
+                        if ($existing_post->have_posts()) {
+                            echo("<script>console.log('EXISTING TRADE POST FOUND: " . json_encode($title) . "')</script>");
+                            continue;
+                        }
+
+                        // Create new post
+                        $new_post = [
+                            'post_type' => $post_type,
+                            'post_status' => 'publish',
+                            'post_title' => $title,
+                        ];
+                        $post_id = wp_insert_post($new_post);
+
+                        if ($post_id) {
+                            // Save match metadata (using arrays as multiple matches may exist per post)
+                            update_post_meta($post_id, 'match_status', 'open');
+                            update_post_meta($post_id, 'total_volume', $item['Matches']['Match Volume'][$index]);
+                            update_post_meta($post_id, 'total_value', $item['Matches']['Match Value'][$index]);
+                            update_post_meta($post_id, 'producer_trade', $from);
+                            update_post_meta($post_id, 'consumption_trade', $to);
+                        }
+
+                        // Send email notifications for the match
+                        send_match_email($from, $to);
+                    }
+                }
+            }
         }
-
-        // Send email notifications
-        send_match_email($item['From index'], $item['To index']);
     }
 }
 
@@ -161,9 +222,14 @@ function export_to_pareto( $post_id ) {
         $items = $query->get_posts();
         if(!empty($items)) {
             foreach($items as $item) {
+            $query_post_type = get_post_type($item);
+            $bpd_rate = ($query_post_type == 'trade_demand') ? "Supply Rate (bpd)": "Demand Rate (bpd)";
+            $bid = ($query_post_type == 'trade_demand') ? "Supplier Bid (USD/bbl)": "Consumer Bid (USD/bbl)";
+
                 $item_array = [];
                 $well = $lat = $long = $start = $end = $rate = $max = "";
                 $author = get_the_author_meta('display_name', get_post_field('post_author', $item));
+                $author_id = get_the_author_meta('ID', get_post_field('post_author', $item));
 
                 // get the record details
                 $well = get_post_meta($item, 'well_name', true);
@@ -178,47 +244,49 @@ function export_to_pareto( $post_id ) {
                 $max = $max !== '' ? (int)$max : '';
 
                 //get trade record details
-                $site_compatibility = get_post_meta($item, 'site_compatibility', true);
-               
+                // $site_compatibility = get_post_meta($item, 'site_compatibility', true);
+                $can_accept_trucks = get_post_meta($item, 'can_accept_trucks', true);
+                $can_accept_layflats = get_post_meta($item, 'can_accept_layflats', true);
+
                 $bid_type = get_post_meta($item, 'bid_type', true);
-                $bid_amount = get_post_meta($item, 'bid_amount', true);
+                $bid_amount = (float)get_post_meta($item, 'bid_amount', true);
                 $bid_units = get_post_meta($item, 'bid_units', true);
                 $bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
 
-                $truck_transport_radius = get_post_meta($item, 'truck_transport_radius', true);
-                $truck_transport_bid = get_post_meta($item, 'truck_transport_bid', true);
-                $truck_capacity = get_post_meta($item, 'truck_capacity', true);
+                $truck_transport_radius = (float)get_post_meta($item, 'truck_transport_radius', true);
+                $truck_transport_bid = (float)get_post_meta($item, 'truck_transport_bid', true);
+                $truck_capacity = (float)get_post_meta($item, 'truck_capacity', true);
 
-                $layflats_transport_radius = get_post_meta($item, 'layflats_transport_radius', true);
-                $layflats_transport_bid = get_post_meta($item, 'layflats_transport_bid', true);
-                $layflats_capacity = get_post_meta($item, 'layflats_capacity', true);
+                $layflats_transport_radius = (float)get_post_meta($item, 'layflats_transport_radius', true);
+                $layflats_transport_bid = (float)get_post_meta($item, 'layflats_transport_bid', true);
+                $layflats_capacity = (float)get_post_meta($item, 'layflats_capacity', true);
 
                 $tss_limit = get_post_meta($item, 'tss_limit', true);
-                $tss_measure_value = get_post_meta($item, 'tss_measure_value', true);
+                $tss_measure_value = (float)get_post_meta($item, 'tss_measure_value', true);
 
                 $tds_limit = get_post_meta($item, 'tds_limit', true);
-                $tds_measure_value = get_post_meta($item, 'tds_measure_value', true);
+                $tds_measure_value = (float)get_post_meta($item, 'tds_measure_value', true);
 
                 $chloride_limit = get_post_meta($item, 'chloride_limit', true);
-                $chloride_measure_value = get_post_meta($item, 'chloride_measure_value', true);
+                $chloride_measure_value = (float)get_post_meta($item, 'chloride_measure_value', true);
 
                 $barium_limit = get_post_meta($item, 'barium_limit', true);
-                $barium_measure_value = get_post_meta($item, 'barium_measure_value', true);
+                $barium_measure_value = (float)get_post_meta($item, 'barium_measure_value', true);
 
-                $calcium_carbonate_limit = get_post_meta($item, 'calcium_carbonate_limit', true);
-                $calcium_carbonate_measure_value = get_post_meta($item, 'calcium_carbonate_measure_value', true);
+                $calciumcarbonate_limit = get_post_meta($item, 'calciumcarbonate_limit', true);
+                $calciumcarbonate_measure_value = (float)get_post_meta($item, 'calciumcarbonate_measure_value', true);
 
                 $iron_limit = get_post_meta($item, 'iron_limit', true);
-                $iron_measure_value = get_post_meta($item, 'iron_measure_value', true);
+                $iron_measure_value = (float)get_post_meta($item, 'iron_measure_value', true);
 
                 $boron_limit = get_post_meta($item, 'boron_limit', true);
-                $boron_measure_value = get_post_meta($item, 'boron_measure_value', true);
+                $boron_measure_value = (float)get_post_meta($item, 'boron_measure_value', true);
 
-                $hydrogen_sulfide_limit = get_post_meta($item, 'hydrogen_sulfide_limit', true);
-                $hydrogen_sulfide_measure_value = get_post_meta($item, 'hydrogen_sulfide_measure_value', true);
+                $hydrogensulfide_limit = get_post_meta($item, 'hydrogensulfide_limit', true);
+                $hydrogensulfide_measure_value = (float)get_post_meta($item, 'hydrogensulfide_measure_value', true);
 
                 $norm_limit = get_post_meta($item, 'norm_limit', true);
-                $norm_measure_value = get_post_meta($item, 'norm_measure_value', true);
+                $norm_measure_value = (float)get_post_meta($item, 'norm_measure_value', true);
                 
                 if(strpos($post_type,'share') !== false){
                     $item_array = array(
@@ -235,44 +303,45 @@ function export_to_pareto( $post_id ) {
                 }
                 else{
                     $item_array = array(
-                        'Index'            => $item,
+                        'Index'            => (string) $item,
                         'Operator'         => $author,
+                        'UserID'        => $author_id,
                         'Wellpad'        => $well,
                         'Longitude'        => $long,
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        'Rate'            => $rate,
-                        'Max Transport'    => $max,
-                        'Site Compatibility'    => $site_compatibility,
+                        $bpd_rate            => $rate,
+                        $bid             => $bid_amount,
                         'Bid Type'              => $bid_type,
-                        'Bid Amount'            => $bid_amount,
-                        'Bid Units'             => $bid_units,
-                        'Truck Transport Radius'=> $truck_transport_radius,
-                        'Truck Transport Bid'   => $truck_transport_bid,
-                        'Truck Capacity'        => $truck_capacity,
-                        'Layflats Transport Radius' => $layflats_transport_radius,
-                        'Layflats Transport Bid'=> $layflats_transport_bid,
-                        'Layflats Capacity'     => $layflats_capacity,
-                        'TSS Limit'             => $tss_limit,
-                        'TSS Measure Value'     => $tss_measure_value,
-                        'TDS Limit'             => $tds_limit,
-                        'TDS Measure Value'     => $tds_measure_value,
-                        'Chloride Limit'        => $chloride_limit,
-                        'Chloride Measure Value'=> $chloride_measure_value,
-                        'Barium Limit'          => $barium_limit,
-                        'Barium Measure Value'  => $barium_measure_value,
-                        'Calcium Carbonate Limit'=> $calcium_carbonate_limit,
-                        'Calcium Carbonate Measure Value' => $calcium_carbonate_measure_value,
-                        'Iron Limit'            => $iron_limit,
-                        'Iron Measure Value'    => $iron_measure_value,
-                        'Boron Limit'           => $boron_limit,
-                        'Boron Measure Value'   => $boron_measure_value,
-                        'Hydrogen Sulfide Limit'=> $hydrogen_sulfide_limit,
-                        'Hydrogen Sulfide Measure Value' => $hydrogen_sulfide_measure_value,
-                        'NORM Limit'            => $norm_limit,
-                        'NORM Measure Value'    => $norm_measure_value
-
+                        'Trucks Accepted'    => $can_accept_trucks,
+                        'Pipes Accepted'    => $can_accept_layflats,
+                        'Truck Max Dist (mi)'=> $truck_transport_radius,  
+                        'Trucking Capacity (bpd)'        => $truck_capacity,  
+                        'Truck Transport Bid (USD/bbl)'   => $truck_transport_bid,
+                        // 'Max Transport'    => $max, 
+                        'Pipe Max Dist (mi)' => $layflats_transport_radius,
+                        'Pipeline Capacity (bpd)'     => $layflats_capacity,
+                        'Pipe Transport Bid (USD/bbl)'=> $layflats_transport_bid,
+                        // 'Bid Units'             => $bid_units,
+                        'TSS'     => $tss_measure_value,
+                        'TDS'     => $tds_measure_value,
+                        'Chloride'=> $chloride_measure_value,
+                        'Barium'  => $barium_measure_value,
+                        'Calcium Carbonate ' => $calciumcarbonate_measure_value,
+                        'Iron'    => $iron_measure_value,
+                        'Boron'   => $boron_measure_value,
+                        'Hydrogen Sulfide' => $hydrogensulfide_measure_value,
+                        'NORM'    => $norm_measure_value,
+                        'TSS Constraint'             => $tss_limit,          
+                        'TDS Constraint'             => $tds_limit,            
+                        'Chloride Constraint'        => $chloride_limit,       
+                        'Barium Constraint'          => $barium_limit,        
+                        'Calcium Carbonate Constraint'=> $calciumcarbonate_limit,
+                        'Iron Constraint'            => $iron_limit,          
+                        'Boron Constraint'           => $boron_limit,     
+                        'Hydrogen Sulfide Constraint'=> $hydrogensulfide_limit,
+                        'NORM Constraint'            => $norm_limit,
                     );
                 }
                 array_push($data[$posts['key']], $item_array);

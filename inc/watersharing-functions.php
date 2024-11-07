@@ -140,5 +140,53 @@ function createAndDownloadCsv() {
 add_action('wp_ajax_download_csv', 'createAndDownloadCsv');
 add_action('wp_ajax_nopriv_download_csv', 'createAndDownloadCsv');
 
+function my_custom_scripts() {
+    // Ensure the script is already enqueued before localizing
+    if (wp_script_is('watersharing-scripts', 'enqueued')) {
+        // Localize the script with the AJAX URL
+        wp_localize_script('watersharing-scripts', 'my_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+    }
+}
+add_action('wp_enqueue_scripts', 'my_custom_scripts');
+
+
+function download_latest_summary_file() {
+	$user_id = get_current_user_id();
+	$dir = __DIR__ . '/../io/watertrading/import/match-detail/' . $user_id;
+    // $dir = __DIR__ . '/../io/watertrading/import/match-detail';
+    $files = glob($dir . '/*');
+    $latestFile = '';
+
+    if ($files) {
+        // Get the latest file based on modification time
+        usort($files, function ($a, $b) {
+            return filemtime($b) - filemtime($a);
+        });
+        $latestFile = $files[0];
+    }
+
+    if ($latestFile) {
+		// Set headers to force download
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream'); // Adjust to specific file type if needed
+		header('Content-Disposition: attachment; filename=' . basename($latestFile));
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header('Content-Length: ' . filesize($latestFile));
+		flush(); // Clear output buffer to prevent additional output
+		readfile($latestFile);
+		exit;
+	} else {
+		echo json_encode(["error" => "File not found"]);
+		wp_die();
+	}
+    
+    exit;
+}
+
+add_action('wp_ajax_download_latest_summary', 'download_latest_summary_file');
+add_action('wp_ajax_nopriv_download_latest_summary', 'download_latest_summary_file');
+
 
 ?>
