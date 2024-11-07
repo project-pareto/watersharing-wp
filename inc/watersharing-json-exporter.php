@@ -62,61 +62,100 @@ function import_json_data() {
 
 function process_water_management_data($data, $type) {
     echo("<script>console.log('Processing type: $type')</script>");
-    foreach($data as $item) {
-        echo("<script>console.log('PASSED!')</script>");
-        echo("<script>console.log(" . json_encode($item) . ")</script>");
 
-        $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+    // Check if we're dealing with 'share' or 'trade' type data
+    if ($type == 'share') {
+        // Iterate over each item in the array, assuming $data is a list of shares
+        foreach ($data as $item) {
+            echo("<script>console.log('Processing share data')</script>");
+            $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+            $post_type = 'matched_shares';
 
-        ($type == 'share') ? $post_type = 'matched_shares': $post_type = 'matched_trades';
-
-        echo("<script>console.log('PT: $post_type')</script>");
-
-
-        // Check if a post with the same title already exists
-        $existing_post = new WP_Query(
-            array(
+            // Check if a post with the same title already exists
+            $existing_post = new WP_Query([
                 'post_type' => $post_type,
                 'post_status' => 'any',
                 'posts_per_page' => 1,
                 'fields' => 'ids',
                 'title' => $title
-            )
-        );
+            ]);
 
-        while ($existing_post->have_posts()) {
-            $existing_post->the_post(); // Set up post data
-            $post_id = get_the_ID();
-            $post_title = get_the_title($post_id);
-            
-            // Use json_encode for safe logging in JavaScript
-            echo("<script>console.log('Existing Post ID: " . json_encode($post_id) . ", Title: " . json_encode($post_title) . "')</script>");
+            if ($existing_post->have_posts()) {
+                echo("<script>console.log('EXISTING SHARE POST FOUND')</script>");
+                continue;
+            }
+
+            // Create new post
+            $new_post = [
+                'post_type' => $post_type,
+                'post_status' => 'publish',
+                'post_title' => $title,
+            ];
+            $post_id = wp_insert_post($new_post);
+
+            if ($post_id) {
+                update_post_meta($post_id, 'match_status', 'open');
+                update_post_meta($post_id, 'matched_rate', $item['Rate']);
+                update_post_meta($post_id, 'producer_request', $item['From index']);
+                update_post_meta($post_id, 'consumption_request', $item['To index']);
+            }
+
+            // Send email notifications
+            send_match_email($item['From index'], $item['To index']);
         }
 
-        echo("<script>console.log('Post Type: $post_type')</script>");
+    } else if ($type == 'trade') {
+        // Process trade data (expecting $data['Supply'] and $data['Demand'] arrays)
+        foreach (['Demand'] as $trade_type) {
+            if (!isset($data[$trade_type])) continue;
 
-        if($existing_post->have_posts()) {
-            echo("<script>console.log('EXISTING!!!')</script>");
-            continue;
+            foreach ($data[$trade_type] as $item) {
+                if (isset($item['Matches']['Match Index'])) {
+                    foreach ($item['Matches']['Match Index'] as $index => $match_index) {
+                        // Extract 'from' and 'to' indexes from match index format: "<From>-<To>|..."
+                        list($from_to, $remainder) = explode("|", $match_index);
+                        list($from, $to) = explode("-", $from_to);
+
+                        $title = $match_index;  // Title is the entire match index string
+                        $post_type = 'matched_trades';
+
+                        // Check if a post with the same title already exists
+                        $existing_post = new WP_Query([
+                            'post_type' => $post_type,
+                            'post_status' => 'any',
+                            'posts_per_page' => 1,
+                            'fields' => 'ids',
+                            'title' => $title
+                        ]);
+
+                        if ($existing_post->have_posts()) {
+                            echo("<script>console.log('EXISTING TRADE POST FOUND: " . json_encode($title) . "')</script>");
+                            continue;
+                        }
+
+                        // Create new post
+                        $new_post = [
+                            'post_type' => $post_type,
+                            'post_status' => 'publish',
+                            'post_title' => $title,
+                        ];
+                        $post_id = wp_insert_post($new_post);
+
+                        if ($post_id) {
+                            // Save match metadata (using arrays as multiple matches may exist per post)
+                            update_post_meta($post_id, 'match_status', 'open');
+                            update_post_meta($post_id, 'total_volume', $item['Matches']['Match Volume'][$index]);
+                            update_post_meta($post_id, 'total_value', $item['Matches']['Match Value'][$index]);
+                            update_post_meta($post_id, 'producer_trade', $from);
+                            update_post_meta($post_id, 'consumption_trade', $to);
+                        }
+
+                        // Send email notifications for the match
+                        send_match_email($from, $to);
+                    }
+                }
+            }
         }
-
-        // Create new post
-        $new_post = array(
-            'post_type' => $post_type,
-            'post_status' => 'publish',
-            'post_title' => $title,
-        );
-        $post_id = wp_insert_post($new_post);
-
-        if($post_id) {
-            update_post_meta($post_id, 'match_status', 'open');
-            update_post_meta($post_id, 'matched_rate', $item['value']);
-            update_post_meta($post_id, 'producer_request', $item['From index']);
-            update_post_meta($post_id, 'consumption_request', $item['To index']);
-        }
-
-        // Send email notifications
-        send_match_email($item['From index'], $item['To index']);
     }
 }
 
@@ -264,7 +303,7 @@ function export_to_pareto( $post_id ) {
                 }
                 else{
                     $item_array = array(
-                        'Index'            => $item,
+                        'Index'            => (string) $item,
                         'Operator'         => $author,
                         'UserID'        => $author_id,
                         'Wellpad'        => $well,
