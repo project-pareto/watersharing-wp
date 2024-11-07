@@ -1,0 +1,18 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "watermanagement/kpi-tp-personal",
+  "version": "0.1.0",
+  "title": "My Proposed Trades",
+  "category": "watertrading",
+  "description": "Displays the total number of trades proposed for the watertrading plugin",
+  "example": {},
+  "supports": {
+    "html": false
+  },
+  "textdomain": "kpi-tp-personal",
+  "editorScript": "file:./index.js",
+  "editorStyle": "file:./index.css",
+  "style": "file:./style-index.css",
+  "render": "file:./render.php"
+}

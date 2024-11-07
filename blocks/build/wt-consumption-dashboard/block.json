@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watertrading/consumption-dashboard",
   "version": "0.1.0",
-  "title": "Consumption Dashboard (Have Water Requests)",
+  "title": "Trade - Demand Water Dashboard",
   "category": "watertrading",
   "description": "Displays a dashboard of 'need water' request submissions by user for the watertrading project.",
   "example": {},

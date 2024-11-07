@@ -12,7 +12,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
     ( !empty( $name ) ) ? $name = esc_html( $name ) : "";
 
     switch( $type ) {
-        case 'input':
+		case 'input':
             if ($options === 'checkbox') {
                 $checked = $value ? 'checked' : '';
                 $html .= "
@@ -43,7 +43,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
                 $html .= "<option value=''>-- Please select --</option>";
                 foreach( $options as $option_value => $label ) {
                     $selected = selected( $value, $option_value, false );
-                    $html .= "<option value='$option_value' $selected>$label</option>";
+                    $html .= "<option value=$option_value $selected>$label</option>";
                 }
             }
 
@@ -64,7 +64,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 }
 
 // function to build out request form fields
-function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $placeholder = "", $acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
+function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
 		switch ($type) {
 			case 'text':
@@ -72,7 +72,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 
 			case 'number':
-				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
+				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly $parameters>";
 				break;
 			
 			case 'date':
@@ -98,6 +98,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 							$set['label'],
 							$set['type'],
 							$set['required'],
+							$set['parameters'],
 							$set['placeholder'],
 							$set['acf_key'],
 							$set['class'],
@@ -122,7 +123,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 						$set_lower = strtolower(str_replace(' ', '_', $set));
 						$input .= "
 							<div class='meta-radio-select'>
-								<input type='radio' name='$id_lower' id='$set_lower' value='$set_lower' ''>
+								<input type='radio' name='$id_lower' id='$set_lower' value='$set_lower' class = 'radio-button'>
 									<label>
 										$set
 									</label>	
@@ -140,17 +141,30 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			break;
 
 			case 'checkbox':
+				$id_spaced = ucfirst(strtolower(str_replace('_', ' ', $id)));
 				$input = "
 					<div class='meta-box-checkbox'> 
-						<input type='checkbox' name='$id' id='$id' class='meta-box-input' value='1'>
-					</div>";
+						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
+						<label>
+							$id_spaced
+						</label>	
+					</div>
+					";
+					
 				break;
 			
 			case 'select':
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
-						$input .= "<option value='$set'>$set</option>";
+						//Logic For < or > to make selections more readable
+						if($set == "lt" || $set == "gt"){
+							$constraint = ($set == "lt") ? "Less than": "Greater than";
+							$input .= "<option value=$set>$constraint</option>";
+						}
+						else{
+							$input .= "<option value=$set>$set</option>";
+						}
 					}
 				}
 				$input = "
@@ -253,9 +267,9 @@ function qdBuilder($names = []){
 	$qd = "";
 	foreach($names as $name){
 		$name_lower = strtolower(str_replace(' ', '', $name));
-		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["min", "max"]];
-		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', 'two-col', '', $qd_array);
+		$qd_array[] = ["id" => $name_lower."_limit", "label" => "", "type" => "select", "required" => "", "parameters" => "","placeholder" => "", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => ["gt", "lt"]];
+		$qd_array[] = ["id" => $name_lower."_measure_value", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Value(ppm)", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+		$qd .= buildFormField('quality_disclosure', $name, 'multi_column', '', '', '', '', 'two-col', '', $qd_array);
 		$qd_array = [];
 	}
 	return $qd;
@@ -267,60 +281,64 @@ function buildRequestForm($type = "", $title = "") {
 
 	// Set up the fields for the form
 	$well_pad = buildFormField( 'well_pad', 'Well Pads', 'pads', '', 'Create A New Pad' );
-	$well_name = buildFormField('well_name', 'Pad Name', 'text', 'required', 'Pad Name');
+	$well_name = buildFormField('well_name', 'Pad Name', 'text', 'required', '', 'Pad Name');
 
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "acf_key" => "", "class" => "", "readonly" => ""];
-	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "two-col", "", 
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
+	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day');
 
 	$supply = ($type === 'share_supply' || $type === 'trade_supply');
-	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', 'Range in miles') : $transport = "";
+	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
 
 
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
-	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'radio','required', '', '', '', '', ['Trucks', 'Pipelines']): $site_compatibility = "";
+	$sites_array = [];
+	$sites_array[] = ["id" => "can_accept_trucks", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$sites_array[] = ["id" => "can_accept_layflats", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Site Compatibility', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array): $site_compatibility = "";
 	 
-	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
+	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Up to', 'At least']): $bid_type = "";
 
 	$bid_array = [];
-	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Bid Amount", "acf_key" => "", "class" => "", "readonly" => ""];
+	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "", "placeholder" => "Bid Amount", "acf_key" => "", "class" => "", "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
-	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "placeholder" => "Bid Units", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => $bid_units];
-	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array): $bid_info = "";
+	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => $bid_units];
+	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col", "", $bid_array): $bid_info = "";
 
-	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "0", "", "", "readonly"): $bid_total = "";
-	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "0", "", "", "readonly"): $bid_specific_total = "";
+	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "","0", "", "", "readonly"): $bid_total = "";
+	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "", "0", "", "", "readonly"): $bid_specific_total = "";
 
 	//Trucks
-	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$trucks = buildFormField('trucks', 'Trucks', 'multi_column', '', '', '', 'three-col toggle', '', $trucks_array);
+	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "","placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$trucks = buildFormField('trucks', 'Trucks', 'multi_column', '', '','', '', 'three-col toggle', '', $trucks_array);
 
 	//Layflats
-	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
-	$layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', 'three-col toggle', '', $layflats_array );
+	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
+	$layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', '', 'three-col toggle', '', $layflats_array );
 
-	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', '', [$trucks,$layflats]): $delivery = '';
+	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', '', '', [$trucks,$layflats]): $delivery = '';
 
 	//Quality Disclosures
-	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'Norm']): $qd = "";
+	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']): $qd = "";
 	$qd_array = [$qd];
-	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', '', $qd_array): $quality_disclosures = "";
+	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', '', '', $qd_array): $quality_disclosures = "";
 	
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
 	$action = esc_url( admin_url('admin-post.php') );
 	error_log("Form action URL: $action");
+	error_log("[POST Data] " . print_r($_POST, true));
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
@@ -368,6 +386,225 @@ function buildRequestForm($type = "", $title = "") {
 		</div>
 	";
 
+
+	return $html;
+}
+
+function getTwoWeekIntervalsYTD() {
+    // Set the date format
+    $dateFormat = 'Y-m-d';
+    $today = new DateTime();
+    $dates = [];
+    
+    // Start from today and go back 1 year in 2 week intervals
+    for ($i = 0; $i < 26; $i++) {
+        // Calculate the Monday for this iteration
+        $date = clone $today;
+        $date->modify('-' . ($i * 14) . ' days'); // Go back 14 days (2 weeks) for each iteration
+        
+        // Isolating mondays
+		if ($i !== 0) {
+            $date->modify('last monday');
+        }
+
+        $dates[] = $date->format($dateFormat);
+    }
+
+    // Reverse the array so the most recent Monday is last
+    return array_reverse($dates);
+}
+
+function buildKpiTable($type = "", $title = ""){
+	$current_user_id = get_current_user_id();
+	$author_check = strpos($type, 'personal') == true;
+
+	$query_args = array(
+		'no_found_rows'				=> false,
+		'update_post_meta_cache'	=> false,
+		'update_post_term_cache'	=> false,
+		'post_type' =>  'matched_trades',
+		'posts_per_page'			=> -1,
+		'fields'					=> 'ids',
+		'meta_query'				=> array(
+			'relation'		=> 'AND',
+			array(
+				'key'		=> $post_type,
+				'value'		=> $post_id,
+				'compare'	=> 'LIKE'
+			),
+			array(
+				'key'		=> 'match_status',
+				'value'		=> 'decline',
+				'compare'	=> 'NOT IN'
+			)
+		)
+	);
+
+	if ($author_check) {
+		$query_args['author'] = $current_user_id;
+	}
+
+	$query = new WP_Query($query_args);
+
+	$data = $query->get_posts();
+
+	$trades_proposed = 0;
+	$total_matches = 0;
+	$volume_proposed = 0;
+	$total_volume = 0;
+
+	// iterate through each row and get match data 
+	if( !empty( $data ) ) {
+		foreach( $data as $post_id ) {
+			// You can get the post object if needed
+			$post = get_post($post_id);
+			$post_date = $post->post_date;
+			
+			$trade_volume = get_post_meta( $post_id, 'total_volume', true );
+			$total_value = get_post_meta( $post_id, 'total_value', true );
+			$consumption_trade_approval = get_post_meta( $post_id, 'consumption_trade_approval', true);
+			$producer_trade_approval = get_post_meta( $post_id, 'producer_trade_approval', true);
+
+			if($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve'){
+				$total_matches++;
+				$total_volume += (float) $trade_volume;
+			}
+			
+			$volume_proposed += (float) $trade_volume;
+			$trades_proposed++;
+
+			$request_data[] = array(
+				'volume' => (float) $trade_volume,
+				'date'   => date('Y-m-d', strtotime($post_date)),
+				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
+			);
+		}
+	} else {
+		$request_data[] = array(
+			'volume' => '',
+			'date'   => '',
+			'matched' => ''
+		);
+	}
+	$volume = [];
+	$datesList = getTwoWeekIntervalsYTD();
+	$chart_data= [];
+
+	// Fill in volumes for dates running YTD
+	foreach ($datesList as $index => $date) {
+		// Determine the next date in the list (or set an end date if it's the last element)
+		$next_date = isset($datesList[$index + 1]) 
+			? $datesList[$index + 1] 
+			: date('Y-m-d', strtotime("$date + 14 days"));
+	
+		$sumVolume = 0;
+	
+		// Calculate the sum of volumes for the current interval if request_data is not empty
+		if (!empty($request_data)) {
+			$sumVolume = array_reduce($request_data, function($carry, $data) use ($date, $next_date) {
+				return ($data['date'] >= $date && $data['date'] < $next_date) 
+					? $carry + $data['volume'] 
+					: $carry;
+			}, 0);
+		}
+	
+		// Assign volume 0 for each date if request_data is empty
+		$volume[$date] = $sumVolume;
+	
+		// Add the sum and the current date to the chart data array
+		$chart_data[] = [
+			'volume' => (float) $sumVolume, 
+			'date'   => $date
+		];
+	}
+	// Sort request_data by date, if it's not empty
+	if (!empty($request_data)) {
+		usort($request_data, function($a, $b) {
+			return strtotime($a['date']) - strtotime($b['date']);
+		});
+	}
+
+	$request_data_json = json_encode($request_data);
+
+	// Encode the chart data as JSON
+	$chart_data_json = json_encode($chart_data);
+
+
+	$stat_button = $author_check ? "
+    <button class='watersharing-submit-button' style='margin-top: 8px;' onclick='downloadCsv(adminUrl, volumeData)'>Download My Stats</button>
+    <script>
+        const adminUrl = '" . admin_url('admin-ajax.php') . "';
+        const volumeData = $request_data_json;
+    </script>
+	" : "";
+
+	$html = "";
+
+	if(strpos($type, 'kpi_proposed') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades proposed</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$trades_proposed trades</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_volume') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total volume traded to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_volume Mbbl</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_totalTrade') !== false){
+		$kpi_stats = "
+			<div class='watersharing-kpi-block'>
+				<div class='watersharing-col watersharing-match-col'>
+					<div class='watersharing-row'>
+						<div>
+							<strong>Total trades to date</strong>
+						</div>
+					</div>
+				</div>
+				<div class='watersharing-col-third watersharing-contact'>
+					<span class='heading'>$total_matches trades</span>
+				</div>
+			</div>
+		";
+	}
+
+	else if(strpos($type, 'kpi_statChart') !== false){
+		
+		$kpi_stats = "
+			<div class = 'chart-container'>
+				<canvas class = 'chart' id='stat-chart'></canvas>
+				<script>
+					const chartData = $chart_data_json;
+				</script>
+				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
+				$stat_button
+			</div>
+		";
+	}
+	$html = "$kpi_stats";
 
 	return $html;
 }
@@ -577,7 +814,7 @@ function buildRequestTable( $type = '' ) {
 					<div class='watersharing-col-half watersharing-match-col'>
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
-					:$field3 = "<button class = 'watersharing-submit-button' style = 'margin-top: 8px;'>Download Detailed Summary</button>";
+					:$field3 = "<button class='watersharing-submit-button download-summary-btn' style='margin-top: 8px;'>Download Detailed Summary</button>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='watersharing-col-half watersharing-match-col'>

@@ -3,7 +3,7 @@
 	"apiVersion": 3,
 	"name": "watertrading/consumption-form",
 	"version": "0.1.0",
-	"title": "Consumption Form (Need Water Request)",
+	"title": "Trade - Demand Water Form",
 	"category": "watertrading",
 	"description": "Creates a 'need water' request submission form for the watertrading project.",
 	"example": {},

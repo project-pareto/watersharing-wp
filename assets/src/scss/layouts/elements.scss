@@ -54,6 +54,10 @@
 				gap:5px;
 			}
 
+			p{
+				margin:0px;
+			}
+
 			display:flex;
 			flex-shrink: 0;
 			font-weight: 700;
@@ -369,6 +373,19 @@ table.watersharing-table, table.watertrading-table{
 	}
 }
 
+.watersharing-kpi-block{
+	background: #fff;
+	box-shadow: 2px 2px 4px -2px rgba(0,0,0,.5);
+	position: relative;
+	width:100%;
+	margin-right:10px;
+	border:3px solid;
+	// border-width: 1px;
+	border-radius:8px;
+	border-color: $blue;
+}
+
 .d-none{
 	display: none !important;
 }
+

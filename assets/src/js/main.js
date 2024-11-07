@@ -69,23 +69,25 @@
 		}
 	});
 
-	//Location Select Validation
-	$(document).on('blur', 'input#longitude', function() {
-		var longitudeInput = $(this);
-		var latitudeInput = longitudeInput.closest('form').find('input#latitude');
-	
+	// Location Select Validation
+	$(document).on('blur', 'input#longitude, input#latitude', function() {
+		var form = $(this).closest('form');
+		var longitudeInput = form.find('input#longitude');
+		var latitudeInput = form.find('input#latitude');
+		
 		var longitudeValue = parseFloat(longitudeInput.val());
 		var latitudeValue = parseFloat(latitudeInput.val());
-	
+
+		// Check if both longitude and latitude values are valid numbers
 		if (!isNaN(longitudeValue) && !isNaN(latitudeValue)) {
-			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 
-				|| latitudeValue < 24.446667 || latitudeValue > 49.382812) {
+			if (longitudeValue < -124.785543 || longitudeValue > -66.945554 ||
+				latitudeValue < 24.446667 || latitudeValue > 49.382812) {
 				alert('Coordinates must fall within continental USA');
 				longitudeInput.val('');
 				latitudeInput.val('');
 			}
 		}
-	});	
+	});
 
 	// toggle match details display
 	$(document).on('click', '.toggle-row', function() {
@@ -331,4 +333,123 @@
 		});
 			
 	});
+
+	document.addEventListener('DOMContentLoaded', function() {
+	// Check if the stat-chart element is present on the page
+	const chartElement = document.getElementById('stat-chart');
+
+	if (chartElement) {
+		const ctx = chartElement.getContext('2d');
+
+		const volumes = chartData.map(trade => trade.volume); 
+		const dates = chartData.map(trade => trade.date);     
+	  
+		new Chart(ctx, {
+		  type: 'line',
+		  data: {
+			labels: dates,
+			datasets: [{
+			  label: 'Ongoing trades',
+			  data: volumes,
+			  borderWidth: 1
+			}]
+		  },
+		  options: {
+			scales: {
+			  y: {
+				beginAtZero: true,
+				title: {
+					display: true,
+					text: 'Volume(bbl)'
+				}
+			  }
+			},
+			plugins: {
+				legend: {
+				  display: false
+				},
+				title:{
+					display: true,
+					text: "Ongoing Trades",
+					font: {
+						size: 20, 
+						weight: 'bold' 
+					}
+				},
+				tooltip: {
+					enabled: false 
+				}
+			  }
+		  }
+		});
+	}
+
+	(function($) {
+		$(document).on('click', '.download-summary-btn', function(e) {
+			e.preventDefault();
+	
+			$.ajax({
+				url: my_ajax_object.ajax_url,
+				method: 'POST',
+				data: {
+					action: 'download_latest_summary'
+				},
+				xhrFields: {
+					responseType: 'blob' // Ensure response is treated as binary blob
+				},
+				success: function(response) {
+					if (response && response.size) { // Check if response is a valid Blob
+						const url = window.URL.createObjectURL(response);
+						const a = document.createElement('a');
+						a.style.display = 'none';
+						a.href = url;
+						a.download = 'latest-summary.csv';
+						document.body.appendChild(a);
+						a.click();
+						window.URL.revokeObjectURL(url);
+					} else {
+						console.error("Invalid Blob response:", response);
+						alert("Could not download the file. Please try again.");
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.error("AJAX error:", textStatus, errorThrown);
+					alert("Could not download the file. Please try again.");
+				}
+			});
+		});
+	})
+	(jQuery);
+});
+
+
+	window.downloadCsv = function(adminUrl, volumeData) {
+		const formData = new FormData();
+		formData.append('action', 'download_csv');
+		formData.append('csv_data', JSON.stringify(volumeData));
+	
+		fetch(adminUrl, {
+			method: 'POST',
+			body: formData
+		})
+		.then(response => {
+			if (response.ok) {
+				return response.blob();
+			}
+			throw new Error('Network response was not ok.');
+		})
+		.then(blob => {
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.style.display = 'none';
+			a.href = url;
+			a.download = 'trades_data.csv';
+			document.body.appendChild(a);
+			a.click();
+			window.URL.revokeObjectURL(url);
+		})
+		.catch(error => console.error('There was an error with the download:', error));
+	};
 })(jQuery);
+
+
