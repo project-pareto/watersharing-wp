@@ -3,7 +3,7 @@
   "apiVersion": 3,
   "name": "watersharing/consumption-form",
   "version": "0.1.0",
-  "title": "Consumption Form (Need Water Request)",
+  "title": "Share - Demand Water Form",
   "category": "watersharing",
   "description": "Creates a 'need water' request submission form for the watersharing project.",
   "example": {},

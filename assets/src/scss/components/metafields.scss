@@ -38,12 +38,18 @@
     padding: 8px;
     border: 1px solid #ccc;
     box-sizing: border-box;
+
+    &.checkbox{
+        height:15px;
+        width:15px;
+    }
 }
 
 .meta-box-checkbox{
     margin-bottom: 10px;
     padding: 8px;
     display:flex;
+    align-items: center;
 }
 
 .meta-box-radio{

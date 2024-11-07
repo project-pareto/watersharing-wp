@@ -182,6 +182,7 @@ function watermanagement_menu() {
 		'edit_posts',
 		'edit.php?post_type=well_pad',
 	);
+
 }
 $watersharing_toggle = get_option('watersharing_toggle');
 if($watersharing_toggle){
