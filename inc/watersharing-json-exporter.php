@@ -238,8 +238,8 @@ function export_to_pareto( $post_id ) {
 
                 //get trade record details
                 // $site_compatibility = get_post_meta($item, 'site_compatibility', true);
-                $can_accept_trucks = get_post_meta($item, 'can_accept_trucks', true);
-                $can_accept_layflats = get_post_meta($item, 'can_accept_layflats', true);
+                $can_accept_trucks= (get_post_meta($item, 'can_accept_trucks', true) == "0") ? false: true;
+                $can_accept_layflats = (get_post_meta($item, 'can_accept_layflats', true) == "0") ? false: true;
 
                 $bid_type = get_post_meta($item, 'bid_type', true);
                 $bid_amount = (float)get_post_meta($item, 'bid_amount', true);
