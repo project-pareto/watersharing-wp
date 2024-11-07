@@ -424,20 +424,7 @@ function buildKpiTable($type = "", $title = ""){
 		'update_post_term_cache'	=> false,
 		'post_type' =>  'matched_trades',
 		'posts_per_page'			=> -1,
-		'fields'					=> 'ids',
-		'meta_query'				=> array(
-			'relation'		=> 'AND',
-			array(
-				'key'		=> $post_type,
-				'value'		=> $post_id,
-				'compare'	=> 'LIKE'
-			),
-			array(
-				'key'		=> 'match_status',
-				'value'		=> 'decline',
-				'compare'	=> 'NOT IN'
-			)
-		)
+		'fields'					=> 'ids'
 	);
 
 	if ($author_check) {
