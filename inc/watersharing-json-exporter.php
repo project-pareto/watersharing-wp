@@ -138,7 +138,7 @@ function process_water_management_data($data, $type) {
                     // Save match metadata
                     update_post_meta($post_id, 'match_status', 'open');
                     update_post_meta($post_id, 'total_volume', $total_volume);
-                    update_post_meta($post_id, 'total_bid', $total_bid);
+                    update_post_meta($post_id, 'total_value', $total_bid);
                     update_post_meta($post_id, 'producer_trade', $from);
                     update_post_meta($post_id, 'consumption_trade', $to);
                 }
