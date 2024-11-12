@@ -413,7 +413,7 @@
 					responseType: 'blob' // Ensure response is treated as binary blob
 				},
 				success: function(response) {
-					if (response && response.size) { // Check if response is a valid Blob
+					if (response instanceof Blob && response.size) {
 						const url = window.URL.createObjectURL(response);
 						const a = document.createElement('a');
 						a.style.display = 'none';
@@ -423,15 +423,15 @@
 						a.click();
 						window.URL.revokeObjectURL(url);
 					} else {
-						console.error("Invalid Blob response:", response);
-						alert("Could not download the file. Please try again.");
+						console.error("Invalid or empty Blob response:", response);
+						alert("The file could not be downloaded.");
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.error("AJAX error:", textStatus, errorThrown);
-					alert("Could not download the file. Please try again.");
+					alert("Could not download the file. May be missing or empty, please try again.");
 				}
-			});
+			});	
 		});
 	})
 	(jQuery);

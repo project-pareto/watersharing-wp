@@ -151,14 +151,17 @@ add_action('wp_enqueue_scripts', 'my_custom_scripts');
 
 
 function download_latest_summary_file() {
-	$user_id = get_current_user_id();
-	$dir = __DIR__ . '/../io/watertrading/import/match-detail/' . $user_id;
-    // $dir = __DIR__ . '/../io/watertrading/import/match-detail';
+    //Clear output buffer
+	ob_end_clean(); 
+    flush();      
+    
+	$current_user = wp_get_current_user();
+	$username = $current_user->user_login;
+    $dir = __DIR__ . '/../io/watertrading/import/match-detail/' . $username; //Build path based on logged in user
     $files = glob($dir . '/*');
     $latestFile = '';
 
     if ($files) {
-        // Get the latest file based on modification time
         usort($files, function ($a, $b) {
             return filemtime($b) - filemtime($a);
         });
@@ -166,27 +169,25 @@ function download_latest_summary_file() {
     }
 
     if ($latestFile) {
-		// Set headers to force download
-		header('Content-Description: File Transfer');
-		header('Content-Type: application/octet-stream'); // Adjust to specific file type if needed
-		header('Content-Disposition: attachment; filename=' . basename($latestFile));
-		header('Expires: 0');
-		header('Cache-Control: must-revalidate');
-		header('Pragma: public');
-		header('Content-Length: ' . filesize($latestFile));
-		flush(); // Clear output buffer to prevent additional output
-		readfile($latestFile);
-		exit;
-	} else {
-		echo json_encode(["error" => "File not found"]);
-		wp_die();
-	}
-    
-    exit;
+        header('Content-Description: File Transfer');
+        header('Content-Type: application/octet-stream');
+        header('Content-Disposition: attachment; filename=' . basename($latestFile));
+        header('Expires: 0');
+        header('Cache-Control: must-revalidate');
+        header('Pragma: public');
+        header('Content-Length: ' . filesize($latestFile));
+        flush(); // Clear output buffer to prevent additional output
+        readfile($latestFile);
+        exit;
+    } else {
+        echo json_encode(["error" => "File not found"]);
+        wp_die();
+    }
 }
 
 add_action('wp_ajax_download_latest_summary', 'download_latest_summary_file');
 add_action('wp_ajax_nopriv_download_latest_summary', 'download_latest_summary_file');
+
 
 
 ?>
