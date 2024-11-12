@@ -290,7 +290,7 @@ function buildRequestForm($type = "", $title = "") {
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day');
+	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
 	$supply = ($type === 'share_supply' || $type === 'trade_supply');
 	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
@@ -307,13 +307,13 @@ function buildRequestForm($type = "", $title = "") {
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
-	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "", "placeholder" => "Bid Amount", "acf_key" => "", "class" => "", "readonly" => ""];
+	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
-	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => "", "readonly" => "", "dataset" => $bid_units];
+	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
 	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col", "", $bid_array): $bid_info = "";
 
-	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "","0", "", "", "readonly"): $bid_total = "";
-	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "", "0", "", "", "readonly"): $bid_specific_total = "";
+	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): $bid_total = "";
+	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): $bid_specific_total = "";
 
 	//Trucks
 	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
