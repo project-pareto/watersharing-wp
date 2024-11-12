@@ -5,8 +5,8 @@ function import_json_data() {
 
     $share_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watersharing/import/';
     $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watertrading/import/';
-    $ws_json_files = glob($share_import_folder_path . '*.json');
-    $wt_json_files = glob($trade_import_folder_path . '*.json');
+    $ws_json_files = glob($share_import_folder_path . '*_matches*');
+    $wt_json_files = glob($trade_import_folder_path . '*_matches*');
 
     // Check if there are any JSON files
     if(empty($ws_json_files) && empty($wt_json_files)) {
@@ -139,8 +139,8 @@ function process_water_management_data($data, $type) {
                     update_post_meta($post_id, 'match_status', 'open');
                     update_post_meta($post_id, 'total_volume', $total_volume);
                     update_post_meta($post_id, 'total_value', $total_bid);
-                    update_post_meta($post_id, 'producer_trade', $from);
-                    update_post_meta($post_id, 'consumption_trade', $to);
+                    update_post_meta($post_id, 'producer_trade', $to);
+                    update_post_meta($post_id, 'consumption_trade', $from);
                 }
 
                 // Send email notifications for the match
@@ -296,7 +296,7 @@ function export_to_pareto( $post_id ) {
                     $item_array = array(
                         'Index'            => (string) $item,
                         'Operator'         => $author,
-                        'UserID'        => $author_id,
+                        'UserID'        => (string)$author_id,
                         'Wellpad'        => $well,
                         'Longitude'        => $long,
                         'Latitude'        => $lat,

@@ -489,10 +489,12 @@ function buildKpiTable($type = "", $title = ""){
 		// Calculate the sum of volumes for the current interval if request_data is not empty
 		if (!empty($request_data)) {
 			$sumVolume = array_reduce($request_data, function($carry, $data) use ($date, $next_date) {
-				return ($data['date'] >= $date && $data['date'] < $next_date) 
-					? $carry + $data['volume'] 
-					: $carry;
-			}, 0);
+                // Only include volume if it falls within the date range and both parties approved the trade
+                if ($data['date'] >= $date && $data['date'] < $next_date && $data['matched']) {
+                    return $carry + $data['volume'];
+                }
+                return $carry;
+            }, 0);
 		}
 	
 		// Assign volume 0 for each date if request_data is empty
