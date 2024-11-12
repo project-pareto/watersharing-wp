@@ -218,7 +218,6 @@
 		sortTables();
 	})
 
-	//Code for accordion component
 	$(document).ready(function () {
 		// Function to show the collapse
 		function showCollapse($element, $button) {
@@ -279,58 +278,74 @@
 		
 
 		//Checkbox For disabling truck fields
-		$('#trucks-checkbox').change(function() {
+		$('.trucks-checkbox').change(function() {
 			// Check if the checkbox is checked
 			if ($(this).is(':checked')) {
-				// Enable the input fields if the checkbox is checked
-				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', false);
+				// Enable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
 			} else {
-				// Disable the input fields if the checkbox is unchecked
-				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+				// Disable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
 			}
 		});
-	
+		
 		// Initially disable the inputs when the page loads
-		$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+		$('.trucks-checkbox').each(function() {
+			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		});
+		
 
 		//Checkbox For disabling layflat fields
-		$('#layflats-checkbox').change(function() {
+		$('.layflats-checkbox').change(function() {
 			// Check if the checkbox is checked
 			if ($(this).is(':checked')) {
-				// Enable the input fields if the checkbox is checked
-				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', false);
+				// Enable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
 			} else {
-				// Disable the input fields if the checkbox is unchecked
-				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+				// Disable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
 			}
 		});
-	
+		
 		// Initially disable the inputs when the page loads
-		$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+		$('.layflats-checkbox').each(function() {
+			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		});		
 
 		//Calculating total / specific bid value
-		$("input[name='bid_amount'], input[name='rate_bpd'], #bid_units").change(function(){
-			var $bid = $("input[name='bid_amount']");
-			var $rate = $("input[name='rate_bpd']");
-			var $units = $("#bid_units");
+		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
+			// Determine the prefix based on the triggered element's class
+			var prefix = $(this).hasClass("trade_supply-bid_amount") || $(this).hasClass("trade_supply-rate_bpd") || $(this).hasClass("trade_supply-bid_units") ? "trade_supply-" : "trade_demand-";
 			
+			// Use the prefix to find the respective elements within the same group
+			var $bid = $("." + prefix + "bid_amount");
+			var $rate = $("." + prefix + "rate_bpd");
+			var $units = $("." + prefix + "bid_units");
+			var $total = $("." + prefix + "totalval");
+			var $specificTotal = $("." + prefix + "specval");
+		
+			// Parse input values
 			var bid = parseInt($bid.val(), 10);
+			console.log(bid);
 			var rate = parseInt($rate.val(), 10);
+			console.log(rate);
 			var unitsValue = $units.val();
+			console.log(unitsValue);
+		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
-				if(unitsValue == "USD/bbl.day"){
-					$("#bid_total").val(bid * rate);
-					$("#bid_specific_total").val(bid);
-				}
-				else{
-					$("#bid_total").val(bid);
-					$("#bid_specific_total").val(bid / rate);
+				if (unitsValue == "USD/bbl.day") {
+					console.log("YES!!!");
+					$total.val(bid * rate);
+					$specificTotal.val(bid);
+				} else {
+					$total.val(bid);
+					$specificTotal.val(bid / rate);
 				}
 			} else {
-				$("#bid_total").val('');
-				$("#bid_specific_total").val('');
+				$total.val('');
+				$specificTotal.val('');
 			}
-		});
+		});		
 			
 	});
 

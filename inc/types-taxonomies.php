@@ -100,7 +100,7 @@ function register_watermanagement_posttypes() {
 	register_post_type('trade_demand', $wt_demargs);
 
 	// Match Lookup Records for Water Sharing
-	$ws_mrelabels = array(
+	$mrelabels = array(
 		'name'			=> __('Match Lookup'),
 		'singular_name'	=> __('Match Lookup'),
 		'edit_item'		=> __('Edit Match Lookup'),
@@ -108,16 +108,8 @@ function register_watermanagement_posttypes() {
 		'add_new_item'	=> __('Add New Match Lookup')
 	);
 
-	$wt_mrelabels = array(
-		'name'			=> __('Match Lookup'),
-		'singular_name'	=> __('Match Lookup'),
-		'edit_item'		=> __('Edit Match Lookup'),
-		'update_item'	=> __('Update Match Lookup'),
-		'add_new_item'	=> __('Add New Match Lookup')
-	);
-
-	$ws_mreargs = array(
-		'labels'		=> $ws_mrelabels,
+	$mreargs = array(
+		'labels'		=> $mrelabels,
 		'public'		=> true,
 		'show_in_menu'	=> false,
 		'has_archive'	=> false,
@@ -129,21 +121,8 @@ function register_watermanagement_posttypes() {
 		'publicly_queryable' => false
 	);
 
-	$wt_mreargs = array(
-		'labels'		=> $wt_mrelabels,
-		'public'		=> true,
-		'show_in_menu'	=> false,
-		'has_archive'	=> false,
-		'menu_icon'		=> 'dashicons-location',
-		'menu_position'	=> 6,
-		'hierarchical'	=> true,
-		'supports'		=> array('title'),
-		'rewrites'		=> array('slug' => 'matches', 'with_front' => false),
-		'publicly_queryable' => false
-	);
-
-	register_post_type('matched_shares', $ws_mreargs); 
-	register_post_type('matched_trades', $wt_mreargs);
+	register_post_type('matched_shares', $mreargs); 
+	register_post_type('matched_trades', $mreargs);
 
 
 	// Well pad records for Water Sharing
@@ -259,7 +238,7 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'can_accept_layflats', 'I Can Accept pipes', get_post_meta($post->ID, "can_accept_layflats", true), 'checkbox');
 
 
-	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'up_to' => 'Willing to pay up to', 'at_least' => 'Paid at least') );
+	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'Willing to pay' => 'Willing to pay up to', 'Want to be paid' => 'Paid at least') );
 	buildMetaField( 'input', 'bid_amount', 'Bid Amount', get_post_meta( $post->ID, 'bid_amount', true), 'text');
 	buildMetaField( 'select', 'bid_units', 'Bid Units', get_post_meta( $post->ID, 'bid_units', true), array( 'USD/day' => 'USD/day', 'USD/bbl.day' => 'USD/bbl.day') );
 	
