@@ -190,11 +190,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
 										<label class='watersharing-form-label accordion'>
-										<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$id_lower' aria-expanded='false' aria-controls='collapse-$id_lower'>
+										<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='false' aria-controls='collapse-$class'>
 											<strong>$id</strong>
 										</button>
 										</label>
-										<div id='collapse-$id_lower' class='accordion-collapse collapse' aria-labelledby='headingOne'>
+										<div id='collapse-$class' class='accordion-collapse collapse' aria-labelledby='headingOne'>
 										<div class='accordion-body'>
 											$input
 										</div>
@@ -327,12 +327,12 @@ function buildRequestForm($type = "", $title = "") {
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input", "readonly" => ""];
 	$layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', '', 'three-col toggle layflats-checkbox', '', $layflats_array );
 
-	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', '', '', [$trucks,$layflats]): $delivery = '';
+	$trade ? $delivery = buildFormField('Delivery', '', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]): $delivery = '';
 
 	//Quality Disclosures
 	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']): $qd = "";
 	$qd_array = [$qd];
-	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', '', '', $qd_array): $quality_disclosures = "";
+	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
 	
 	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
