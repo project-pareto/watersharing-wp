@@ -279,34 +279,39 @@
 		
 
 		//Checkbox For disabling truck fields
-		$('#trucks-checkbox').change(function() {
+		$('.trucks-checkbox').change(function() {
 			// Check if the checkbox is checked
 			if ($(this).is(':checked')) {
-				// Enable the input fields if the checkbox is checked
-				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', false);
+				// Enable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
 			} else {
-				// Disable the input fields if the checkbox is unchecked
-				$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+				// Disable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
 			}
 		});
-	
+		
 		// Initially disable the inputs when the page loads
-		$('#truck_transport_radius, #truck_transport_bid, #truck_capacity').prop('disabled', true);
+		$('.trucks-checkbox').each(function() {
+			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		});
+		
 
 		//Checkbox For disabling layflat fields
-		$('#layflats-checkbox').change(function() {
+		$('.layflats-checkbox').change(function() {
 			// Check if the checkbox is checked
 			if ($(this).is(':checked')) {
-				// Enable the input fields if the checkbox is checked
-				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', false);
+				// Enable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
 			} else {
-				// Disable the input fields if the checkbox is unchecked
-				$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+				// Disable input fields within the same .watersharing-row as the checkbox
+				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
 			}
 		});
-	
+		
 		// Initially disable the inputs when the page loads
-		$('#layflats_transport_radius, #layflats_transport_bid, #layflats_capacity').prop('disabled', true);
+		$('.layflats-checkbox').each(function() {
+			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		});		
 
 		//Calculating total / specific bid value
 		$("input[name='bid_amount'], input[name='rate_bpd'], #bid_units").change(function(){
