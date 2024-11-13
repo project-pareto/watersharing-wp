@@ -582,12 +582,11 @@ function buildKpiTable($type = "", $title = ""){
 
 	else if(strpos($type, 'kpi_statChart') !== false){
 		
+		$block_id = uniqid('chart_' . $type);
+
 		$kpi_stats = "
-			<div class = 'chart-container'>
-				<canvas class = 'chart' id='stat-chart'></canvas>
-				<script>
-					const chartData = $chart_data_json;
-				</script>
+			<div class='chart-container' data-block-id='{$block_id}' data-chart-data='{$chart_data_json}'>
+				<canvas class='chart' id='stat-chart-{$block_id}'></canvas>
 				<script src='https://cdn.jsdelivr.net/npm/chart.js'></script>
 				$stat_button
 			</div>

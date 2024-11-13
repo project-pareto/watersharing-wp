@@ -335,54 +335,62 @@
 	});
 
 	document.addEventListener('DOMContentLoaded', function() {
-	// Check if the stat-chart element is present on the page
-	const chartElement = document.getElementById('stat-chart');
-
-	if (chartElement) {
-		const ctx = chartElement.getContext('2d');
-
-		const volumes = chartData.map(trade => trade.volume); 
-		const dates = chartData.map(trade => trade.date);     
-	  
-		new Chart(ctx, {
-		  type: 'line',
-		  data: {
-			labels: dates,
-			datasets: [{
-			  label: 'Ongoing trades',
-			  data: volumes,
-			  borderWidth: 1
-			}]
-		  },
-		  options: {
-			scales: {
-			  y: {
-				beginAtZero: true,
-				title: {
-					display: true,
-					text: 'Volume(bbl)'
-				}
-			  }
-			},
-			plugins: {
-				legend: {
-				  display: false
-				},
-				title:{
-					display: true,
-					text: "Ongoing Trades",
-					font: {
-						size: 20, 
-						weight: 'bold' 
+		// Loop through each chart container
+		document.querySelectorAll('.chart-container').forEach(container => {
+			// Get unique blockId and chart data from data attributes
+			const blockId = container.getAttribute('data-block-id');
+			const chartData = JSON.parse(container.getAttribute('data-chart-data'));  // Parse JSON string to object
+	
+			// Select the specific canvas for this block
+			const chartElement = document.getElementById(`stat-chart-${blockId}`);
+	
+			if (chartElement && chartData) {
+				const ctx = chartElement.getContext('2d');
+	
+				// Extract data for the chart
+				const volumes = chartData.map(trade => trade.volume);
+				const dates = chartData.map(trade => trade.date);
+	
+				new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: dates,
+						datasets: [{
+							label: 'Ongoing trades',
+							data: volumes,
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									display: true,
+									text: 'Volume(bbl)'
+								}
+							}
+						},
+						plugins: {
+							legend: {
+								display: false
+							},
+							title: {
+								display: true,
+								text: "Ongoing Trades",
+								font: {
+									size: 20,
+									weight: 'bold'
+								}
+							},
+							tooltip: {
+								enabled: false
+							}
+						}
 					}
-				},
-				tooltip: {
-					enabled: false 
-				}
-			  }
-		  }
+				});
+			}
 		});
-	}
 
 	(function($) {
 		$(document).on('click', '.download-summary-btn', function(e) {
