@@ -238,7 +238,7 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'can_accept_layflats', 'I Can Accept pipes', get_post_meta($post->ID, "can_accept_layflats", true), 'checkbox');
 
 
-	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'up_to' => 'Willing to pay up to', 'at_least' => 'Paid at least') );
+	buildMetaField( 'input', 'bid_type', 'Bid Type', get_post_meta($post->ID, 'bid_type', true), array( 'Willing to pay' => 'Willing to pay up to', 'Want to be paid' => 'Paid at least') );
 	buildMetaField( 'input', 'bid_amount', 'Bid Amount', get_post_meta( $post->ID, 'bid_amount', true), 'text');
 	buildMetaField( 'select', 'bid_units', 'Bid Units', get_post_meta( $post->ID, 'bid_units', true), array( 'USD/day' => 'USD/day', 'USD/bbl.day' => 'USD/bbl.day') );
 	
