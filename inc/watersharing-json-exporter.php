@@ -5,8 +5,8 @@ function import_json_data() {
 
     $share_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watersharing/import/';
     $trade_import_folder_path = WATERSHARING_PLUGIN_PATH . '/io/watertrading/import/';
-    $ws_json_files = glob($share_import_folder_path . '*.json');
-    $wt_json_files = glob($trade_import_folder_path . '*.json');
+    $ws_json_files = glob($share_import_folder_path . '*_matches*');
+    $wt_json_files = glob($trade_import_folder_path . '*_matches*');
 
     // Check if there are any JSON files
     if(empty($ws_json_files) && empty($wt_json_files)) {
@@ -99,54 +99,52 @@ function process_water_management_data($data, $type) {
         }
 
     } else if ($type == 'trade') {
-        // Process trade data (expecting $data['Supply'] and $data['Demand'] arrays)
         foreach (['Demand'] as $trade_type) {
             if (!isset($data[$trade_type])) continue;
 
             foreach ($data[$trade_type] as $item) {
-                if (isset($item['Matches']['Match Index'])) {
-                    foreach ($item['Matches']['Match Index'] as $index => $match_index) {
-                        // Extract 'from' and 'to' indexes from match index format: "<From>-<To>|..."
-                        list($from_to, $remainder) = explode("|", $match_index);
-                        list($from, $to) = explode("-", $from_to);
+                // Extract 'from' and 'to' indexes from 'Pair Index' format: "<From>-<To>"
+                list($from, $to) = explode("-", $item['Pair Index']);
 
-                        $title = $match_index;  // Title is the entire match index string
-                        $post_type = 'matched_trades';
+                $title = $item['Pair Index'];  // Title is now the entire Pair Index string
+                $post_type = 'matched_trades';
 
-                        // Check if a post with the same title already exists
-                        $existing_post = new WP_Query([
-                            'post_type' => $post_type,
-                            'post_status' => 'any',
-                            'posts_per_page' => 1,
-                            'fields' => 'ids',
-                            'title' => $title
-                        ]);
+                // Check if a post with the same title already exists
+                $existing_post = new WP_Query([
+                    'post_type' => $post_type,
+                    'post_status' => 'any',
+                    'posts_per_page' => 1,
+                    'fields' => 'ids',
+                    'title' => $title
+                ]);
 
-                        if ($existing_post->have_posts()) {
-                            continue;
-                        }
-
-                        // Create new post
-                        $new_post = [
-                            'post_type' => $post_type,
-                            'post_status' => 'publish',
-                            'post_title' => $title,
-                        ];
-                        $post_id = wp_insert_post($new_post);
-
-                        if ($post_id) {
-                            // Save match metadata (using arrays as multiple matches may exist per post)
-                            update_post_meta($post_id, 'match_status', 'open');
-                            update_post_meta($post_id, 'total_volume', $item['Matches']['Match Volume'][$index]);
-                            update_post_meta($post_id, 'total_value', $item['Matches']['Match Value'][$index]);
-                            update_post_meta($post_id, 'producer_trade', $from);
-                            update_post_meta($post_id, 'consumption_trade', $to);
-                        }
-
-                        // Send email notifications for the match
-                        send_match_email($from, $to);
-                    }
+                if ($existing_post->have_posts()) {
+                    continue;
                 }
+
+                // Calculate total volume and total bid based on trade type
+                $total_volume = $trade_type == 'Supply' ? $item['Supply Rate (bpd)'] : $item['Demand Rate (bpd)'];
+                $total_bid = $trade_type == 'Supply' ? $item['Supplier Bid (USD/bbl)'] : $item['Consumer Bid (USD/bbl)'];
+
+                // Create new post
+                $new_post = [
+                    'post_type' => $post_type,
+                    'post_status' => 'publish',
+                    'post_title' => $title,
+                ];
+                $post_id = wp_insert_post($new_post);
+
+                if ($post_id) {
+                    // Save match metadata
+                    update_post_meta($post_id, 'match_status', 'open');
+                    update_post_meta($post_id, 'total_volume', $total_volume);
+                    update_post_meta($post_id, 'total_value', $total_bid);
+                    update_post_meta($post_id, 'producer_trade', $to);
+                    update_post_meta($post_id, 'consumption_trade', $from);
+                }
+
+                // Send email notifications for the match
+                send_match_email($from, $to);
             }
         }
     }
@@ -216,13 +214,13 @@ function export_to_pareto( $post_id ) {
         if(!empty($items)) {
             foreach($items as $item) {
             $query_post_type = get_post_type($item);
-            $bpd_rate = ($query_post_type == 'trade_demand') ? "Supply Rate (bpd)": "Demand Rate (bpd)";
-            $bid = ($query_post_type == 'trade_demand') ? "Supplier Bid (USD/bbl)": "Consumer Bid (USD/bbl)";
+            $bpd_rate = ($query_post_type == 'trade_demand') ? "Demand Rate (bpd)":  "Supply Rate (bpd)";
+            $bid = ($query_post_type == 'trade_demand') ? "Consumer Bid (USD/bbl)": "Supplier Bid (USD/bbl)";
 
                 $item_array = [];
                 $well = $lat = $long = $start = $end = $rate = $max = "";
                 $author = get_the_author_meta('display_name', get_post_field('post_author', $item));
-                $author_id = get_the_author_meta('ID', get_post_field('post_author', $item));
+                $author_id = (string)get_the_author_meta('ID', get_post_field('post_author', $item));
 
                 // get the record details
                 $well = get_post_meta($item, 'well_name', true);
@@ -298,7 +296,7 @@ function export_to_pareto( $post_id ) {
                     $item_array = array(
                         'Index'            => (string) $item,
                         'Operator'         => $author,
-                        'UserID'        => $author_id,
+                        'UserID'        => (string)$author_id,
                         'Wellpad'        => $well,
                         'Longitude'        => $long,
                         'Latitude'        => $lat,
@@ -321,7 +319,7 @@ function export_to_pareto( $post_id ) {
                         'TDS'     => $tds_measure_value,
                         'Chloride'=> $chloride_measure_value,
                         'Barium'  => $barium_measure_value,
-                        'Calcium Carbonate ' => $calciumcarbonate_measure_value,
+                        'Calcium carbonates' => $calciumcarbonate_measure_value,
                         'Iron'    => $iron_measure_value,
                         'Boron'   => $boron_measure_value,
                         'Hydrogen Sulfide' => $hydrogensulfide_measure_value,
@@ -330,7 +328,7 @@ function export_to_pareto( $post_id ) {
                         'TDS Constraint'             => $tds_limit,            
                         'Chloride Constraint'        => $chloride_limit,       
                         'Barium Constraint'          => $barium_limit,        
-                        'Calcium Carbonate Constraint'=> $calciumcarbonate_limit,
+                        'Calcium carbonates Constraint'=> $calciumcarbonate_limit,
                         'Iron Constraint'            => $iron_limit,          
                         'Boron Constraint'           => $boron_limit,     
                         'Hydrogen Sulfide Constraint'=> $hydrogensulfide_limit,
