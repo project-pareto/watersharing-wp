@@ -276,41 +276,26 @@
 			}
 		});
 		
+		// Checkbox for disabling fields by class and proximity
+		$('.checkbox').change(function() {
+			const isChecked = $(this).is(':checked');
+			
+			// Find related input fields within the same container as the checkbox
+			$(this).closest('.watersharing-row')
+				.find('input[type="number"]')
+				.prop('disabled', !isChecked);
+		});
 
-		//Checkbox For disabling truck fields
-		$('.trucks-checkbox').change(function() {
-			// Check if the checkbox is checked
-			if ($(this).is(':checked')) {
-				// Enable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
-			} else {
-				// Disable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		// Initially disable specific inputs on page load
+		$('.checkbox').each(function() {
+			const relatedInputPrefix = $(this).attr('class').split(' ').find(cls => cls.includes('trade_supply') || cls.includes('trade_demand'));
+
+			if (relatedInputPrefix) {
+				$(this).closest('.watersharing-row')
+					.find(`input[type="number"][class*="${relatedInputPrefix.split('-')[0]}"]`)
+					.prop('disabled', true);
 			}
 		});
-		
-		// Initially disable the inputs when the page loads
-		$('.trucks-checkbox').each(function() {
-			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-		});
-		
-
-		//Checkbox For disabling layflat fields
-		$('.layflats-checkbox').change(function() {
-			// Check if the checkbox is checked
-			if ($(this).is(':checked')) {
-				// Enable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
-			} else {
-				// Disable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-			}
-		});
-		
-		// Initially disable the inputs when the page loads
-		$('.layflats-checkbox').each(function() {
-			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-		});		
 
 		//Calculating total / specific bid value
 		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
