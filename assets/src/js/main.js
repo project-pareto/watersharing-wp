@@ -276,41 +276,26 @@
 			}
 		});
 		
+		// Checkbox for disabling fields by class and proximity
+		$('.checkbox').change(function() {
+			const isChecked = $(this).is(':checked');
+			
+			// Find related input fields within the same container as the checkbox
+			$(this).closest('.watersharing-row')
+				.find('input[type="number"]')
+				.prop('disabled', !isChecked);
+		});
 
-		//Checkbox For disabling truck fields
-		$('.trucks-checkbox').change(function() {
-			// Check if the checkbox is checked
-			if ($(this).is(':checked')) {
-				// Enable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
-			} else {
-				// Disable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
+		// Initially disable specific inputs on page load
+		$('.checkbox').each(function() {
+			const relatedInputPrefix = $(this).attr('class').split(' ').find(cls => cls.includes('trade_supply') || cls.includes('trade_demand'));
+
+			if (relatedInputPrefix) {
+				$(this).closest('.watersharing-row')
+					.find(`input[type="number"][class*="${relatedInputPrefix.split('-')[0]}"]`)
+					.prop('disabled', true);
 			}
 		});
-		
-		// Initially disable the inputs when the page loads
-		$('.trucks-checkbox').each(function() {
-			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-		});
-		
-
-		//Checkbox For disabling layflat fields
-		$('.layflats-checkbox').change(function() {
-			// Check if the checkbox is checked
-			if ($(this).is(':checked')) {
-				// Enable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', false);
-			} else {
-				// Disable input fields within the same .watersharing-row as the checkbox
-				$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-			}
-		});
-		
-		// Initially disable the inputs when the page loads
-		$('.layflats-checkbox').each(function() {
-			$(this).closest('.watersharing-row').find('input[type="number"]').prop('disabled', true);
-		});		
 
 		//Calculating total / specific bid value
 		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
@@ -350,54 +335,62 @@
 	});
 
 	document.addEventListener('DOMContentLoaded', function() {
-	// Check if the stat-chart element is present on the page
-	const chartElement = document.getElementById('stat-chart');
-
-	if (chartElement) {
-		const ctx = chartElement.getContext('2d');
-
-		const volumes = chartData.map(trade => trade.volume); 
-		const dates = chartData.map(trade => trade.date);     
-	  
-		new Chart(ctx, {
-		  type: 'line',
-		  data: {
-			labels: dates,
-			datasets: [{
-			  label: 'Ongoing trades',
-			  data: volumes,
-			  borderWidth: 1
-			}]
-		  },
-		  options: {
-			scales: {
-			  y: {
-				beginAtZero: true,
-				title: {
-					display: true,
-					text: 'Volume(bbl)'
-				}
-			  }
-			},
-			plugins: {
-				legend: {
-				  display: false
-				},
-				title:{
-					display: true,
-					text: "Ongoing Trades",
-					font: {
-						size: 20, 
-						weight: 'bold' 
+		// Loop through each chart container
+		document.querySelectorAll('.chart-container').forEach(container => {
+			// Get unique blockId and chart data from data attributes
+			const blockId = container.getAttribute('data-block-id');
+			const chartData = JSON.parse(container.getAttribute('data-chart-data'));  // Parse JSON string to object
+	
+			// Select the specific canvas for this block
+			const chartElement = document.getElementById(`stat-chart-${blockId}`);
+	
+			if (chartElement && chartData) {
+				const ctx = chartElement.getContext('2d');
+	
+				// Extract data for the chart
+				const volumes = chartData.map(trade => trade.volume);
+				const dates = chartData.map(trade => trade.date);
+	
+				new Chart(ctx, {
+					type: 'line',
+					data: {
+						labels: dates,
+						datasets: [{
+							label: 'Ongoing trades',
+							data: volumes,
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							y: {
+								beginAtZero: true,
+								title: {
+									display: true,
+									text: 'Volume(bbl)'
+								}
+							}
+						},
+						plugins: {
+							legend: {
+								display: false
+							},
+							title: {
+								display: true,
+								text: "Ongoing Trades",
+								font: {
+									size: 20,
+									weight: 'bold'
+								}
+							},
+							tooltip: {
+								enabled: false
+							}
+						}
 					}
-				},
-				tooltip: {
-					enabled: false 
-				}
-			  }
-		  }
+				});
+			}
 		});
-	}
 
 	(function($) {
 		$(document).on('click', '.download-summary-btn', function(e) {
@@ -413,7 +406,7 @@
 					responseType: 'blob' // Ensure response is treated as binary blob
 				},
 				success: function(response) {
-					if (response && response.size) { // Check if response is a valid Blob
+					if (response instanceof Blob && response.size) {
 						const url = window.URL.createObjectURL(response);
 						const a = document.createElement('a');
 						a.style.display = 'none';
@@ -423,15 +416,15 @@
 						a.click();
 						window.URL.revokeObjectURL(url);
 					} else {
-						console.error("Invalid Blob response:", response);
-						alert("Could not download the file. Please try again.");
+						console.error("Invalid or empty Blob response:", response);
+						alert("The file could not be downloaded.");
 					}
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.error("AJAX error:", textStatus, errorThrown);
-					alert("Could not download the file. Please try again.");
+					alert("Could not download the file. May be missing or empty, please try again.");
 				}
-			});
+			});	
 		});
 	})
 	(jQuery);
