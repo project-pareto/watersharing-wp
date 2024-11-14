@@ -743,8 +743,11 @@ function buildRequestTable( $type = '' ) {
 					//Get the author ID for the post
 					$author_id = get_post_field( 'post_author', $match_record );
 
-					//Get the company name from the author's user meta
-					$match_op = get_the_author_meta( 'company_name', $author_id );
+					//Get the company name or email from the author's user meta
+					$match_op = get_the_author_meta( 'company_name', $author_id ) 
+					? get_the_author_meta( 'company_name', $author_id ) 
+					: get_the_author_meta( 'user_email', $author_id );
+
 
 					$match_start = get_post_meta( $match_record, 'start_date', true );
 					( $match_start ) ? $match_start = DateTime::createFromFormat('Y-m-d', $match_start)->format('m/d/Y') : "";
