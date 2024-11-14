@@ -739,7 +739,12 @@ function buildRequestTable( $type = '' ) {
 
 					$match_record = get_post_meta( $lookup, $match_type, true );
 					$match_id = $match_record;
-					$match_op = get_the_author_meta( $match_record, 'company_name', true );
+
+					//Get the author ID for the post
+					$author_id = get_post_field( 'post_author', $match_record );
+
+					//Get the company name from the author's user meta
+					$match_op = get_the_author_meta( 'company_name', $author_id );
 
 					$match_start = get_post_meta( $match_record, 'start_date', true );
 					( $match_start ) ? $match_start = DateTime::createFromFormat('Y-m-d', $match_start)->format('m/d/Y') : "";
