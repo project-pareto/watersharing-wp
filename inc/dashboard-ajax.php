@@ -7,38 +7,38 @@ function ajax_request_approval() {
 	$data = $_POST;
 
 	if($data['action_type'] === 'share_demand'){
-		$user_interaction = 'producer_approval';
-		$matched_nonaction = 'consumption_approval';
+		$user_interaction = 'consumption_approval';  
+		$matched_nonaction = 'producer_approval';   
 		$table = 'share_demand';
 	}
 	else if($data['action_type'] === 'share_supply'){
-		$user_interaction = 'consumption_approval';
-		$matched_nonaction = 'producer_approval';
+		$user_interaction = 'producer_approval';    
+		$matched_nonaction = 'consumption_approval';  
 		$table = 'share_supply';
 	}
 	else if($data['action_type'] === 'trade_demand'){
-		$user_interaction = 'producer_trade_approval';
-		$matched_nonaction = 'consumption_trade_approval';
+		$user_interaction = 'consumption_trade_approval';  
+		$matched_nonaction = 'producer_trade_approval';   
 		$table = 'trade_demand';
 	}
 	else if($data['action_type'] === 'trade_supply'){
-		$user_interaction = 'consumption_trade_approval';
-		$matched_nonaction = 'producer_trade_approval';
+		$user_interaction = 'producer_trade_approval';   
+		$matched_nonaction = 'consumption_trade_approval';  
 		$table = 'trade_supply';
 	}
 
 
 	if( $data['action_status'] === 'approve' ) {
 		// check that the match did not 'decline'
-		if( get_post_meta( $data['lookup_record'], $matched_nonaction, true ) !== 'decline' ) {
+		if( get_post_meta( $data['lookup_record'], $user_interaction, true ) !== 'decline' ) {
 
 			// update the lookup record
-			if( get_post_meta( $data['lookup_record'], $matched_nonaction, true ) !== 'approve' ) {
-				update_post_meta( $data['lookup_record'], $matched_nonaction, 'approve');
+			if( get_post_meta( $data['lookup_record'], $user_interaction, true ) !== 'approve' ) {
+				update_post_meta( $data['lookup_record'], $user_interaction, 'approve');
 			}
 
 			// check if the other user has approved
-			if( get_post_meta( $data['lookup_record'], $user_interaction, true ) === 'approve' ) {
+			if( get_post_meta( $data['lookup_record'], $matched_nonaction, true ) === 'approve' ) {
 				// if matched update both records to matched status
 				update_post_meta( $data['parent_record'], 'status', 'matched' );
 				update_post_meta( $data['match_record'], 'status', 'matched' );
@@ -58,8 +58,8 @@ function ajax_request_approval() {
 	elseif( $data['action_status'] === 'decline' ) {
 
 		// update the lookup record
-		if( get_post_meta( $data['lookup_record'], $matched_nonaction, true ) !== 'decline' ) {
-			update_post_meta( $data['lookup_record'], $matched_nonaction, 'decline');
+		if( get_post_meta( $data['lookup_record'], $user_interaction, true ) !== 'decline' ) {
+			update_post_meta( $data['lookup_record'], $user_interaction, 'decline');
 		}
 
 		if( get_post_meta( $data['lookup_record'], 'match_status', true ) !== 'declined' ) {
