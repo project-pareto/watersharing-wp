@@ -157,7 +157,7 @@ function download_latest_summary_file() {
     
 	$current_user = wp_get_current_user();
 	$user_id = $current_user->ID;
-    $dir = __DIR__ . '/../io/watertrading/import/match-detail/' . $user_id; //Build path based on logged in user
+    $dir = __DIR__ . '/../io/watertrading/import/match-detail/' . $user_id . DIRECTORY_SEPARATOR; //Build path based on logged in user
     $files = glob($dir . '/*');
     $latestFile = '';
 
