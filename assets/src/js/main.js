@@ -200,6 +200,7 @@
 	}
 
 	function sortTables() {
+		console.log('SORT TABLES . . .');
 		$('table.tablesorter').each(function() {
 			var tableID = $(this).attr('id');
 
@@ -311,15 +312,15 @@
 		
 			// Parse input values
 			var bid = parseInt($bid.val(), 10);
-			console.log(bid);
+			// console.log(bid);
 			var rate = parseInt($rate.val(), 10);
-			console.log(rate);
+			// console.log(rate);
 			var unitsValue = $units.val();
-			console.log(unitsValue);
+			// console.log(unitsValue);
 		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
 				if (unitsValue == "USD/bbl.day") {
-					console.log("YES!!!");
+					// console.log("YES!!!");
 					$total.val(bid * rate);
 					$specificTotal.val(bid);
 				} else {
