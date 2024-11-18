@@ -242,7 +242,7 @@ function export_to_pareto( $post_id ) {
                 $bid_type = get_post_meta($item, 'bid_type', true);
                 $bid_amount = (float)get_post_meta($item, 'bid_amount', true);
                 $bid_units = get_post_meta($item, 'bid_units', true);
-                $bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
+                //$bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
 
                 $truck_transport_radius = (float)get_post_meta($item, 'truck_transport_radius', true);
                 $truck_transport_bid = (float)get_post_meta($item, 'truck_transport_bid', true);
@@ -397,14 +397,13 @@ function export_to_pareto( $post_id ) {
     $file_saved = file_put_contents( $file_path, $json_data );
 
 }
-add_action( 'export_share_supply_records', 'export_to_pareto', 20 );
+// add_action( 'export_share_supply_records', 'export_to_pareto', 20 );
 
-// create the 'export_share_supply_records' cron to trigger the export script
-function schedule_export_share_supply_records( $post_id ) {
-    $post = get_post( $post_id );
-    if( $post->post_type === 'share_supply' || $post->post_type === 'share_demand' || $post->post_type === 'trade_supply' || $post->post_type === 'trade_demand') {
-        // Schedule the export function to run after a delay
-        wp_schedule_single_event( time() + 3, 'export_share_supply_records', array( $post_id ) );
+function on_post_meta_added( $meta_id, $post_id, $meta_key, $meta_value ) {
+    // Check if the meta key corresponds to the data we're interested in (for example, 'status' or any relevant meta)
+    if ( in_array( get_post_type( $post_id ), ['share_supply', 'share_demand', 'trade_supply', 'trade_demand'] ) ) {
+        // Call the export function directly
+        export_to_pareto( $post_id );
     }
 }
-add_action( 'save_post', 'schedule_export_share_supply_records' );
+add_action( 'added_post_meta', 'on_post_meta_added', 10, 4 );
