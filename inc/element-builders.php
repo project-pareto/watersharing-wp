@@ -746,7 +746,7 @@ function buildRequestTable( $type = '' ) {
 					//Get the company name or email from the author's user meta
 					$match_op = get_the_author_meta( 'company_name', $author_id ) 
 					? get_the_author_meta( 'company_name', $author_id ) 
-					: get_the_author_meta( 'user_email', $author_id );
+					: get_the_author_meta( 'nickname', $author_id );
 
 
 					$match_start = get_post_meta( $match_record, 'start_date', true );
