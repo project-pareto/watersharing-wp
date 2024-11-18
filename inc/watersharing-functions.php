@@ -151,9 +151,11 @@ add_action('wp_enqueue_scripts', 'my_custom_scripts');
 
 
 function download_latest_summary_file() {
-    //Clear output buffer
-	ob_end_clean(); 
-    flush();      
+    // Ensure no output is sent
+	if (ob_get_length()) {
+        ob_end_clean();
+    }
+    header_remove(); // Clear any headers sent by other processes
     
 	$current_user = wp_get_current_user();
 	$user_id = $current_user->ID;
