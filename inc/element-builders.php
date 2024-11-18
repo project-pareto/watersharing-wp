@@ -414,6 +414,46 @@ function getTwoWeekIntervalsYTD() {
     return array_reverse($dates);
 }
 
+function get_related_post_ids($user_id) {
+    $related_post_ids = [];
+
+    // Query 'matched_trades' posts where the 'producer_trade' or 'consumption_trade' references a post by the current user
+    $args = array(
+        'post_type' => 'matched_trades',
+        'posts_per_page' => -1,
+        'meta_query' => array(
+            'relation' => 'OR',
+            array(
+                'key' => 'producer_trade',
+                'value' => '', 
+                'compare' => '!=', 
+            ),
+            array(
+                'key' => 'consumption_trade',
+                'value' => '', 
+                'compare' => '!=',
+            ),
+        ),
+        'fields' => 'ids' // Only return post IDs
+    );
+
+    // Perform the query to get all relevant 'matched_trades' posts
+    $query = new WP_Query($args);
+    if ($query->have_posts()) {
+        foreach ($query->posts as $post_id) {
+            $producer_trade_id = get_post_meta($post_id, 'producer_trade', true);
+            $consumption_trade_id = get_post_meta($post_id, 'consumption_trade', true);
+
+            // Check if the author of the referenced posts matches the current user
+            if (get_post_field('post_author', $producer_trade_id) == $user_id || get_post_field('post_author', $consumption_trade_id) == $user_id) {
+                $related_post_ids[] = $post_id;
+            }
+        }
+    }
+
+    return $related_post_ids;
+}
+
 function buildKpiTable($type = "", $title = ""){
 	$current_user_id = get_current_user_id();
 	$author_check = strpos($type, 'personal') == true;
@@ -428,8 +468,17 @@ function buildKpiTable($type = "", $title = ""){
 	);
 
 	if ($author_check) {
-		$query_args['author'] = $current_user_id;
-	}
+        // Get the posts that are referenced by 'producer_trade' and 'consumption_trade'
+        $related_post_ids = get_related_post_ids($current_user_id);
+
+        if (!empty($related_post_ids)) {
+            // Filter the 'matched_trades' posts based on the referenced post IDs
+            $query_args['post__in'] = $related_post_ids;
+        } else {
+            // If no related posts, return an empty array (no posts)
+            $query_args['post__in'] = array(0);
+        }
+    }
 
 	$query = new WP_Query($query_args);
 
