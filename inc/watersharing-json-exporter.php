@@ -242,7 +242,6 @@ function export_to_pareto( $post_id ) {
                 $bid_type = get_post_meta($item, 'bid_type', true);
                 $bid_amount = (float)get_post_meta($item, 'bid_amount', true);
                 $bid_units = get_post_meta($item, 'bid_units', true);
-                //$bid_info = buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "two-col", "", $bid_array);
 
                 $truck_transport_radius = (float)get_post_meta($item, 'truck_transport_radius', true);
                 $truck_transport_bid = (float)get_post_meta($item, 'truck_transport_bid', true);
@@ -384,26 +383,32 @@ function export_to_pareto( $post_id ) {
         wp_reset_postdata();
     }
 
-    $json_data = json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
+    // Check if both Producers and Consumers are populated
+    if (!empty($data['Producers']) && !empty($data['Consumers'])) {
+        $json_data = json_encode( $data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT );
 
-    if(strpos($post_type,'share') !== false){
-        $file_name = 'pareto_sharing_' . date('c') . '.json';
-        $file_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/export/' . $file_name;
+        // Determine file path based on post type
+        if(strpos($post_type,'share') !== false){
+            $file_name = 'pareto_sharing_' . date('c') . '.json';
+            $file_path = WATERSHARING_PLUGIN_PATH . 'io/watersharing/export/' . $file_name;
+        }
+        else{
+            $file_name = 'pareto_trading_' . date('c') . '.json';
+            $file_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/export/' . $file_name;
+        }
+        $file_saved = file_put_contents( $file_path, $json_data );
     }
-    else{
-        $file_name = 'pareto_trading_' . date('c') . '.json';
-        $file_path = WATERSHARING_PLUGIN_PATH . 'io/watertrading/export/' . $file_name;
-    }
-    $file_saved = file_put_contents( $file_path, $json_data );
-
 }
 // add_action( 'export_share_supply_records', 'export_to_pareto', 20 );
 
 function on_post_meta_added( $meta_id, $post_id, $meta_key, $meta_value ) {
-    // Check if the meta key corresponds to the data we're interested in (for example, 'status' or any relevant meta)
-    if ( in_array( get_post_type( $post_id ), ['share_supply', 'share_demand', 'trade_supply', 'trade_demand'] ) ) {
-        // Call the export function directly
-        export_to_pareto( $post_id );
+    // Ensure the post is published and the post type is one of the target types
+    $post_status = get_post_status($post_id);
+    $post_type = get_post_type($post_id);
+
+    if (in_array($post_type, ['share_supply', 'share_demand', 'trade_supply', 'trade_demand']) && $post_status == 'publish' && $meta_key == 'status') {
+        // Proceed with export, no need to check if meta value has changed unless necessary
+        export_to_pareto($post_id);
     }
 }
-add_action( 'added_post_meta', 'on_post_meta_added', 10, 4 );
+add_action('added_post_meta', 'on_post_meta_added', 10, 4);
