@@ -195,18 +195,6 @@ function download_latest_summary_file() {
         }
     }
 
-    // If no specific file was found, fall back to the latest .csv file in the user's directory
-    if (!$latestFile) {
-        error_log("Falling back to the latest .csv file in the directory: $base_dir");
-        $files = glob($base_dir . '*.csv'); // Get all .csv files
-
-        if ($files) {
-            usort($files, function ($a, $b) {
-                return filemtime($b) - filemtime($a); // Sort by last modified time
-            });
-            $latestFile = $files[0]; // Use the most recent file
-        }
-    }
 
     // Output the file or an error
     if ($latestFile) {
@@ -222,7 +210,7 @@ function download_latest_summary_file() {
         exit;
     } else {
         error_log("No file found in directory: $base_dir");
-        echo json_encode(["error" => "File not found"]);
+        echo ("Error: Data not found for this match");
         wp_die();
     }
 }
