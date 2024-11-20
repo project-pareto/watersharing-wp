@@ -6,14 +6,31 @@ function ajax_request_approval() {
 	// assign passed variables from the ajax script
 	$data = $_POST;
 
-	( $data['action_type'] === 'share_demand' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
-	( $data['action_type'] === 'share_demand' ) ? $matched_nonaction = 'consumption_approval' : $matched_nonaction = 'producer_approval';
-	( $data['action_type'] === 'share_demand' ) ? $table = 'share_supply' : $table = 'share_demand';
+	if($data['action_type'] === 'share_demand'){
+		$user_interaction = 'consumption_approval';  
+		$matched_nonaction = 'producer_approval';   
+		$table = 'share_demand';
+	}
+	else if($data['action_type'] === 'share_supply'){
+		$user_interaction = 'producer_approval';    
+		$matched_nonaction = 'consumption_approval';  
+		$table = 'share_supply';
+	}
+	else if($data['action_type'] === 'trade_demand'){
+		$user_interaction = 'consumption_trade_approval';  
+		$matched_nonaction = 'producer_trade_approval';   
+		$table = 'trade_demand';
+	}
+	else if($data['action_type'] === 'trade_supply'){
+		$user_interaction = 'producer_trade_approval';   
+		$matched_nonaction = 'consumption_trade_approval';  
+		$table = 'trade_supply';
+	}
+
 
 	if( $data['action_status'] === 'approve' ) {
-
 		// check that the match did not 'decline'
-		if( get_post_meta( $data['lookup_record'], $matched_nonaction, true ) !== 'decline' ) {
+		if( get_post_meta( $data['lookup_record'], $user_interaction, true ) !== 'decline' ) {
 
 			// update the lookup record
 			if( get_post_meta( $data['lookup_record'], $user_interaction, true ) !== 'approve' ) {
