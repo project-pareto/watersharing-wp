@@ -174,19 +174,18 @@ function download_latest_summary_file() {
         wp_die();
     }
 
-    // Attempt to find the specific file using trade_csv
+    // Attempt to find the match file
     $original_file = $base_dir . $trade_csv . '.csv';
     $latestFile = '';
 
     if (file_exists($original_file)) {
-        $latestFile = $original_file; // If the original file exists, use it
+        $latestFile = $original_file;
     } else {
-        // Reverse the trade_csv
+        // Reverse the trade_csv if the match was not initially found
         $parts = explode('-', $trade_csv);
         if (count($parts) === 2) { // Ensure it has the expected format
             $reversed_csv = $parts[1] . '-' . $parts[0];
 
-            // Build the reversed file path
             $reversed_file = $base_dir . $reversed_csv . '.csv';
 
             if (file_exists($reversed_file)) {
