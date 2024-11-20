@@ -406,7 +406,8 @@ function on_post_meta_added( $meta_id, $post_id, $meta_key, $meta_value ) {
     $post_status = get_post_status($post_id);
     $post_type = get_post_type($post_id);
 
-    if (in_array($post_type, ['share_supply', 'share_demand', 'trade_supply', 'trade_demand']) && $post_status == 'publish' && $meta_key == 'status') {
+    if (in_array($post_type, ['share_supply', 'share_demand', 'trade_supply', 'trade_demand']) 
+    && $post_status == 'publish' && $meta_key == 'status') {
         // Proceed with export, no need to check if meta value has changed unless necessary
         export_to_pareto($post_id);
     }

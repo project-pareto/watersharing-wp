@@ -388,15 +388,17 @@
 			}
 		});
 
-	(function($) {
 		$(document).on('click', '.download-summary-btn', function(e) {
 			e.preventDefault();
-	
+		
+			const tradeCsv = $(this).data('tradeCsv'); 
+		
 			$.ajax({
 				url: my_ajax_object.ajax_url,
 				method: 'POST',
 				data: {
-					action: 'download_latest_summary'
+					action: 'download_latest_summary',
+					trade_csv: tradeCsv // Pass the trade_csv value
 				},
 				xhrFields: {
 					responseType: 'blob' // Ensure response is treated as binary blob
@@ -420,9 +422,8 @@
 					console.error("AJAX error:", textStatus, errorThrown);
 					alert("Could not download the file. May be missing or empty, please try again.");
 				}
-			});	
+			});
 		});
-	})
 	(jQuery);
 });
 
