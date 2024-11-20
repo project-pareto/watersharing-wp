@@ -155,13 +155,13 @@ function send_match_email($from_index, $to_index) {
     $prod_post = get_post($from_index);
     $prod_email = get_the_author_meta('user_email', $prod_post->post_author);
     $prod_subject = 'Your ' . $prod_post->post_title . ' request has a match!';
-    $prod_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
+    $prod_message = 'A match has been found for your request. Please log back into http://share.producedwater.org/ to view your matches';
     wp_mail($prod_email, $prod_subject, $prod_message);
 
     $cons_post = get_post($to_index);
     $cons_email = get_the_author_meta('user_email', $cons_post->post_author);
     $cons_subject = 'Your ' . $cons_post->post_title . ' request has a match!';
-    $cons_message = 'A match has been found for your request. Please log back into the <a href="http://share.producedwater.org/" to view your matches';
+    $cons_message = 'A match has been found for your request. Please log back into http://share.producedwater.org/ to view your matches';
     wp_mail($cons_email, $cons_subject, $cons_message);
 }
 
