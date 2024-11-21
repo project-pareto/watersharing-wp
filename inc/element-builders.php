@@ -766,6 +766,12 @@ function buildRequestTable( $type = '' ) {
 					$total_value = get_post_meta( $lookup, 'total_value', true);
 					$total_volume = get_post_meta( $lookup, 'total_volume', true);
 
+					$consumer = get_post_meta( $lookup, 'consumption_trade', true);
+					$producer = get_post_meta( $lookup, 'producer_trade', true);
+					if($consumer && $producer){
+						$trade_csv = ($producer . '-' . $consumer);
+					}
+
 					#Share Conditions
 					if($type === 'share_supply') { 
 						$match_type = 'consumption_request'; 
@@ -859,7 +865,9 @@ function buildRequestTable( $type = '' ) {
 					<div class='watersharing-col-half watersharing-match-col'>
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
-					:$field3 = "<button class='watersharing-submit-button download-summary-btn' style='margin-top: 8px;'>Download Detailed Summary</button>";
+					:$field3 = "<button class='watersharing-submit-button download-summary-btn' 
+					data-trade-csv='" . esc_attr($trade_csv) . "' 
+					style='margin-top: 8px;'>Download Detailed Summary</button>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='watersharing-col-half watersharing-match-col'>
