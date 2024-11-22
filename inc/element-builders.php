@@ -307,7 +307,7 @@ function buildRequestForm($type = "", $title = "") {
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
-	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
+	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
 	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col", "", $bid_array): $bid_info = "";
@@ -317,13 +317,13 @@ function buildRequestForm($type = "", $title = "") {
 
 	//Trucks
 	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
-	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "","placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	$trucks = buildFormField('trucks', 'Trucks', 'multi_column', '', '','', '', "three-col toggle $type-trucks-checkbox", '', $trucks_array);
 
 	//Layflats
 	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Radius", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
-	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats = buildFormField('layflats', 'Layflats', 'multi_column', '', '', '', '', "three-col toggle $type-layflats-checkbox", '', $layflats_array );
 
