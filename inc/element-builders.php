@@ -292,7 +292,7 @@ function buildRequestForm($type = "", $title = "") {
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
-	$supply = ($type === 'share_supply' || $type === 'trade_supply');
+	$share = ($type === 'share_supply');
 	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
 
 

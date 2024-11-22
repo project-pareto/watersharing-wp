@@ -310,17 +310,17 @@
 			var $specificTotal = $("." + prefix + "specval");
 		
 			// Parse input values
-			var bid = parseInt($bid.val(), 10);
-			var rate = parseInt($rate.val(), 10);
+			var bid = parseFloat($bid.val());
+    		var rate = parseFloat($rate.val());
 			var unitsValue = $units.val();
 		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
 				if (unitsValue == "USD/bbl.day") {
-					$total.val(bid * rate);
-					$specificTotal.val(bid);
+					$total.val((bid * rate).toFixed(2)); 
+					$specificTotal.val(bid.toFixed(2)); 
 				} else {
-					$total.val(bid);
-					$specificTotal.val(bid / rate);
+					$total.val(bid.toFixed(2)); 
+					$specificTotal.val((bid / rate).toFixed(2)); 
 				}
 			} else {
 				$total.val('');
