@@ -292,8 +292,8 @@ function buildRequestForm($type = "", $title = "") {
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
-	$supply = ($type === 'share_supply' || $type === 'trade_supply');
-	$supply ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
+	$share = ($type === 'share_supply');
+	$share ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
 
 
 	#Trade Specific Fields
@@ -334,7 +334,7 @@ function buildRequestForm($type = "", $title = "") {
 	$qd_array = [$qd];
 	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
 	
-	$water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
+	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
 
 	$action = esc_url( admin_url('admin-post.php') );
 	error_log("Form action URL: $action");
