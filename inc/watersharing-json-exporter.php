@@ -122,9 +122,8 @@ function process_water_management_data($data, $type) {
                     continue;
                 }
 
-                // Calculate total volume and total bid based on trade type
-                $total_volume = $trade_type == 'Supply' ? $item['Supply Rate (bpd)'] : $item['Demand Rate (bpd)'];
-                $total_bid = $trade_type == 'Supply' ? $item['Supplier Bid (USD/bbl)'] : $item['Consumer Bid (USD/bbl)'];
+                $total_volume = $item['Match Total Volume (bbl)'];
+                $total_bid = $item['Match Total Value (USD)'];
 
                 // Create new post
                 $new_post = [
