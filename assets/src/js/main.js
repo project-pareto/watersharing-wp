@@ -177,12 +177,12 @@
 			url: '/wp-admin/admin-ajax.php',
 			type: 'POST',
 			data: {
-				action: 'ajax_approval',
-				lookup_record: params.lookupid,
-				parent_record: params.parentid,
-				match_record: params.matchid,
-				action_status: params.interaction,
-				action_type: params.interactiontype
+				action			: 'ajax_approval',
+				lookup_record	: params.lookupid,
+				parent_record	: params.parentid,
+				match_record	: params.matchid,
+				action_status	: params.interaction,
+				action_type		: params.interactiontype
 			},
 			dataType: 'json',
 
