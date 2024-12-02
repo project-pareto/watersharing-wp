@@ -169,34 +169,40 @@
 	})
 
 	function ajaxMatch(params) {
+		// Show the loading indicator based on the table type
+		var type = params.dataTable.find('table').attr('id').split('-')[0]; // Gets 'trade_supply' or 'trade_demand'
+		$('.' + type + '-loading-indicator').show();
+
 		$.ajax({
 			url: '/wp-admin/admin-ajax.php',
 			type: 'POST',
 			data: {
-				action			:	'ajax_approval',
-				lookup_record	:	params.lookupid,
-				parent_record	:	params.parentid,
-				match_record	:	params.matchid,
-				action_status	:	params.interaction,
-				action_type		:	params.interactiontype
+				action: 'ajax_approval',
+				lookup_record: params.lookupid,
+				parent_record: params.parentid,
+				match_record: params.matchid,
+				action_status: params.interaction,
+				action_type: params.interactiontype
 			},
 			dataType: 'json',
-
 
 			beforeSend: function(xhr) {
 				$(params.dataTable).html('');
 			},
 			success: function(output) {
-				console.log( output );
+				console.log(output);
 				$(params.dataTable).html(output);
 				sortTables();
 			},
 			complete: function(xhr) {
+				// Hide the loading indicator after the content loads
+				$('.' + type + '-loading-indicator').hide();
 			},
 			error: function(result) {
+				// Hide the loading indicator in case of error
+				$('.' + type + '-loading-indicator').hide();
 			}
-
-		})
+		});
 	}
 
 	function sortTables() {

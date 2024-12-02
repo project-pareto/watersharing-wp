@@ -950,6 +950,7 @@ function buildRequestTable( $type = '' ) {
 	$action = admin_url('admin-post.php');
 
 	$table = "
+		<div id='loading-indicator' class = '$type-loading-indicator'></div>
 		<form id='$type-status-form' method='post' action='$action?action=change_post_status'>
 			<table class='watersharing-table tablesorter' id='$type-RequestTable'>
 				<thead>
