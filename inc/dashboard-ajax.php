@@ -6,6 +6,7 @@ function ajax_request_approval() {
 	// assign passed variables from the ajax script
 	$data = $_POST;
 
+
 	if($data['action_type'] === 'share_demand'){
 		$user_interaction = 'consumption_approval';  
 		$matched_nonaction = 'producer_approval';   
