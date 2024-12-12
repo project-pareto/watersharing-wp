@@ -23,6 +23,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 				$html .= "<div class=meta-box-radio>";
 				foreach ($options as $option_value => $option_label) {
                     $checked = checked($value, $option_value, false);
+					$option_label = ucwords($option_label);
                     $html .= "
                     <div class='meta-radio-select'>
                         <label>
@@ -121,6 +122,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					$id_lower = strtolower(str_replace(' ', '_', $id));
 					foreach($dataset as $set){
 						$set_lower = strtolower(str_replace(' ', '_', $set));
+						$set = ucwords($set);
 						$input .= "
 							<div class='meta-radio-select'>
 								<input type='radio' name='$id_lower' id='$set_lower' value='$set' required = '$required' class = 'radio-button'>
@@ -146,7 +148,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					<div class='meta-box-checkbox'> 
 						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
 						<label>
-							$id_spaced
+							$label
 						</label>	
 					</div>
 					";
@@ -244,7 +246,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
 	
-	$add_label = (!empty($label) && $type != "accordion");
+	$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox");
 
 	($add_label) ?
 	$html = "
@@ -302,8 +304,8 @@ function buildRequestForm($type = "", $title = "") {
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
 	$sites_array = [];
-	$sites_array[] = ["id" => "can_accept_trucks", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$sites_array[] = ["id" => "can_accept_layflats", "label" => "", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
+	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array): $site_compatibility = "";
 	 
 	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
