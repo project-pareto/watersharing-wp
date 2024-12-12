@@ -189,7 +189,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 							<div class='qd-accordion'>
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
-										<label class='watersharing-form-label accordion'>
+										<label class='watersharing-form-label no-right-padding accordion'>
 										<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='false' aria-controls='collapse-$class'>
 											<strong>$label</strong>
 										</button>
