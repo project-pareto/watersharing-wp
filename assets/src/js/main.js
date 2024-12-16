@@ -322,18 +322,22 @@
 		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
 				if (unitsValue == "USD/bbl.day") {
-					$total.val((bid * rate).toFixed(2)); 
-					$specificTotal.val(bid.toFixed(2)); 
+					$total.val(formatNumber((bid * rate).toFixed(2))); 
+					$specificTotal.val(formatNumber(bid.toFixed(2))); 
 				} else {
-					$total.val(bid.toFixed(2)); 
-					$specificTotal.val((bid / rate).toFixed(2)); 
+					$total.val(formatNumber(bid.toFixed(2))); 
+					$specificTotal.val(formatNumber((bid / rate).toFixed(2))); 
 				}
 			} else {
 				$total.val('');
 				$specificTotal.val('');
 			}
 		});		
-			
+
+		// Function to format numbers with thousands separator
+		function formatNumber(num) {
+			return num.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+		}
 	});
 
 	document.addEventListener('DOMContentLoaded', function() {

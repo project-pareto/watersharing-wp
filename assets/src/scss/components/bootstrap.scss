@@ -28,7 +28,7 @@
 		display: flex;
 		align-items: center;
 		width: 100%;
-		padding: var(--bs-accordion-btn-padding-y) var(--bs-accordion-btn-padding-x);
+		padding: var(--bs-accordion-btn-padding-y) 0rem;
 		font-size: 1rem;
 		color: var(--bs-accordion-btn-color);
 		text-align: left;
@@ -59,14 +59,17 @@
 		height: var(--bs-accordion-btn-icon-width);
 		margin-left: auto;
 		content: "";
+		background-color: lightgray;
+		border-radius: var(--bs-accordion-btn-icon-width); 
 		background-image: var(--bs-accordion-btn-icon);
 		background-repeat: no-repeat;
-		background-size: var(--bs-accordion-btn-icon-width);
+		background-size: 80%;
+		background-position: center;
 		transition: var(--bs-accordion-btn-icon-transition);
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.accordion-button::after {
-		transition: none;
+			transition: none;
 		}
 	}
 	// .accordion-button:hover {
@@ -164,5 +167,8 @@
 		.collapsing.collapse-horizontal {
 		transition: none;
 		}
+	}
+	.no-right-padding{
+		padding-right: 0px !important;
 	}
 }
