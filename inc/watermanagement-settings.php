@@ -14,9 +14,24 @@ function watermanagement_settings_page() {
 	echo "
 	<div class='wrap'>
 		<h1>Water Management Plugin Settings</h1>
-		<p>This plugin recreates the water management features of <a href='https://share.producedwater.org'>share.producedwater.org</a>, a water management prototype website, developed as part of a collaboration between teh Ground Water Protection Council (watermanagement) and the US Department of Energy (DOE). The watermanagement tool provides all of the features to collect information about produced water avaialability and needs from users, and suggests mutually beneficial trades that minimize transportation distances between matched users.</p>
-		<p>This plugin creates the necessary posts types, request forms, and dashboard to collect and store the users produced water information, it will then create an export JSON file of the data which can be used to compute a match.</p>
-		<p>Functionality to match users together is provided by a separate Python script that will have to be installed on your server separately. You can find this script with instructions in the <a href='https://github.com/project-pareto/watersharing'>Git Repo</a>.
+		<p>This plugin recreates the water management features of <a href='https://share.producedwater.org'>share.producedwater.org</a>, a water management prototype website, developed as part of a collaboration between the Ground Water Protection Council and the US Department of Energy (DOE). The watermanagement tool provides all of the features to collect information about produced water avaialability and needs from users, and suggests mutually beneficial trades that minimize transportation distances between matched users.</p>
+		<h2>Setup Guide</h2>
+		<p>This plugin creates the necessary posts types, request forms, and dashboard to collect and store the users 
+		produced water information, it will then create an export JSON file of the data which can be used to compute a
+		match. The blocks needed to add the aforementioned forms and dashboard to your site can be found and used in the
+		block editor and show up as follows:</p>
+		<div style='display: flex;'>
+			<img src=\"../wp-content/plugins/watersharing-wp/assets/img/trading_blocks.png\" 
+			class = \"instructional-images\"' />	
+			<img src=\"../wp-content/plugins/watersharing-wp/assets/img/sharing_blocks.png\" 
+			class = \"instructional-images\"' />
+		</div>
+		<p>For detailed guidance on how to use the block editor, please visit 
+		<a href='https://developer.wordpress.org/block-editor/'>the official Wordpress documentation.</a></p>
+		
+		<p>Functionality to match users together is provided by a separate Python script that will have to be installed 
+		on your server separately. You can find this script with instructions in the 
+		<a href='https://github.com/project-pareto/watersharing'>Git Repo</a>.
 		<hr/>
 		<form method='post' action='options.php'>
             ";
