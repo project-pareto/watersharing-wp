@@ -19,6 +19,7 @@
 		font-size: 16px; font-size: 1rem;
 		line-height: 1.5;
 		padding: 8px 24px;
+		width:auto !important;
 
 		&:hover {
 			background: $grey;
@@ -153,4 +154,9 @@
 @keyframes spin {
 0% { transform: rotate(0deg); }
 100% { transform: rotate(360deg); }
+}
+
+.submit-column{
+	text-align:right;
+	width:100% !important;
 }

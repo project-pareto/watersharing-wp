@@ -338,7 +338,7 @@ function buildRequestForm($type = "", $title = "") {
 	$qd_array = [$qd];
 	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', 'Quality Disclosures', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
 	
-	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '');
+	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '', '', 'Water Quality');
 
 	$action = esc_url( admin_url('admin-post.php') );
 	error_log("Form action URL: $action");
@@ -368,8 +368,8 @@ function buildRequestForm($type = "", $title = "") {
 		$quality_disclosures
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>
-			<label class='watersharing-form-label'></label>
-			<div class='watersharing-input-col'>
+			<hr/>
+			<div class='watersharing-input-col submit-column'>
 				<button type='submit' class='watersharing-submit-button'>Submit</button>
 			</div>
 		</div>
