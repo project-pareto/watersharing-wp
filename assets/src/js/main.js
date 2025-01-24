@@ -392,7 +392,9 @@
 							tooltip: {
 								enabled: false
 							}
-						}
+						},
+						responsive:true,
+						maintainAspectRatio: false
 					}
 				});
 			}
