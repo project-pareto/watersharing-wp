@@ -284,20 +284,20 @@ function buildRequestForm($type = "", $title = "") {
 	$html = "";
 
 	// Set up the fields for the form
-	$well_pad = buildFormField( 'well_pad', 'Wellpad, Pipeline Riser, or CTP', 'pads', '', 'Create A New Site' );
-	$well_name = buildFormField('well_name', 'Site Name', 'text', 'required', '', 'Site Name');
+	$well_pad = buildFormField( 'well_pad', 'CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
+	$well_name = buildFormField('well_name', 'CTP Identifier', 'text', 'required', '', 'Site Name');
 
 	$input_array = [];	
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
+	$latlong = buildFormField("coordinates", "CTP Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
 	$share = ($type === 'share_supply');
-	$share ? $transport = buildFormField('transport_radius', 'Transport Radius (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
+	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
 
 
 	#Trade Specific Fields
@@ -317,16 +317,16 @@ function buildRequestForm($type = "", $title = "") {
 	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col", "", $bid_array): $bid_info = "";
 
 	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): $bid_total = "";
-	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Specific Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): $bid_specific_total = "";
+	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Barrel Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): $bid_specific_total = "";
 
 	//Trucks
-	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Available Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "","placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	$trucks = buildFormField('trucks', 'Can Provide Trucks', 'multi_column', '', '','', '', "three-col toggle $type-trucks-checkbox", '', $trucks_array);
 
 	//Layflats
-	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Available Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "three-col toggle $type-layflats-checkbox", '', $layflats_array );
