@@ -72,7 +72,12 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 
 			case 'number':
-				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
+				if($id === 'latitude' || $id === 'longitude'){
+					$step = "step='any'";
+				} else {
+					$step = "";
+				}
+				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $step $required $readOnly>";
 				break;
 			
 			case 'date':
@@ -270,10 +275,9 @@ function buildRequestForm($type = "", $title = "") {
 	$well_name = buildFormField('well_name', 'Pad Name', 'text', 'required', 'Pad Name');
 
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "acf_key" => "", "class" => "", "readonly" => ""];
-	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "two-col", "", 
-	$input_array);
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "latitude", "acf_key" => "", "class" => "", "readonly" => "", "step" => "any"];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "longitude", "acf_key" => "", "class" => "", "readonly" => "", "step" => "any"];
+	$latlong = buildFormField("coordinates", "Coordinates", "multi_column", "required", "", "", "two-col", "", $input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', 'Rate (bpd)', 'number', 'required', 'Rate in barrels per day');
