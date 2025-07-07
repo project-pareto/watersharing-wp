@@ -73,7 +73,12 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 
 			case 'number':
-				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly $parameters>";
+				if($id === 'latitude' || $id === 'longitude'){
+					$step = "step='any'";
+				} else {
+					$step = "";
+				}
+				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $step $required $readOnly $parameters>";
 				break;
 			
 			case 'date':
