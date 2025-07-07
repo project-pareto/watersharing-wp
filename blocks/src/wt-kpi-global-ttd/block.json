@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 3,
+	"name": "watermanagement/kpi-ttd-global",
+	"version": "0.1.0",
+	"title": "Total Trades To Date",
+	"category": "watertrading",
+	"description": "Displays the number of accepted trades on the watersharing platform.",
+	"example": {},
+	"supports": {
+		"html": false
+	},
+	"textdomain": "kpi-ttd-global",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"render": "file:./render.php"
+}
