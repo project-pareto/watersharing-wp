@@ -73,12 +73,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 
 			case 'number':
-				if($id === 'latitude' || $id === 'longitude'){
-					$step = "step='any'";
-				} else {
-					$step = "";
-				}
-				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $step $required $readOnly $parameters>";
+				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly $parameters>";
 				break;
 			
 			case 'date':
@@ -293,8 +288,8 @@ function buildRequestForm($type = "", $title = "") {
 	$well_name = buildFormField('well_name', 'CTP Identifier', 'text', 'required', '', 'Site Name');
 
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$latlong = buildFormField("coordinates", "CTP Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
 	$input_array);
 
