@@ -5,11 +5,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
-const isProduction = process.env.NODE_ENV === 'production';
+module.exports = (env, argv) => {
+	const isProduction = argv.mode === 'production';
 
-module.exports = [
-	{
-		mode: isProduction ? 'production' : 'development',
+	return [{
+		mode: argv.mode,
 		devtool: isProduction ? false : 'source-map',
 		entry: {
 			'watersharing': [ './assets/src/js/main.js', './assets/src/scss/frontend.scss' ],
@@ -33,7 +33,21 @@ module.exports = [
 				// sass compilation
 				{
 					test: /\.(sass|scss)$/,
-					use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+					use: [
+						MiniCssExtractPlugin.loader, 
+						{
+							loader: 'css-loader',
+							options: {
+								sourceMap: !isProduction
+							}
+						}, 
+						{
+							loader: 'sass-loader',
+							options: {
+								sourceMap: !isProduction
+							}
+						}
+					]
 				},
 				// loader for webfonts (only required if loading custom fonts)
 				{
@@ -69,5 +83,5 @@ module.exports = [
 				new CssMinimizerPlugin(),
 			]
 		},
-	}
-];
+	}];
+};
