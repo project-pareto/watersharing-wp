@@ -124,6 +124,14 @@
 	}
 }
 
+.watersharing-form > .watersharing-row.watersharing-row.watersharing-row{
+	flex-direction: column;
+	> *{
+		flex: 1 0 100%;
+		width: auto;
+	}
+}
+
 .meta-box-checkbox {
     display: flex;
     align-items: center;

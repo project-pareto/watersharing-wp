@@ -1,7 +1,7 @@
 .watersharing-row {
 	.accordion {
 		--bs-accordion-color: var(--bs-body-color);
-		--bs-accordion-bg: var(--bs-body-bg);
+		--bs-accordion-bg: inherit;
 		--bs-accordion-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
 		--bs-accordion-border-color: var(--bs-border-color);
 		--bs-accordion-border-width: var(--bs-border-width);

@@ -39,7 +39,7 @@ define('WATERSHARING_PLUGIN_PATH', plugin_dir_path(__FILE__));
 // enqueue plugin styles and scripts
 function watersharing_plugin_enqueue()
 {
-	wp_enqueue_style( 'fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css', array(), false );
+	wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css', array(), false );
 	wp_enqueue_style('watersharing-styles', plugins_url('assets/dist/css/watersharing.min.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . 'assets/dist/css/watersharing.min.css') );
 	wp_enqueue_style('datatables-styles', 'https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css', array(), null);
 

@@ -9,13 +9,13 @@
 
 		.watersharing-card-inner {
 			.watersharing-card-header {
-				background: $dark-blue;
+				background: var(--card-header-color-bg, $dark-blue);
 				text-align: center;
 				padding-top: 1.5rem;
 				padding-bottom: 1rem;
 
 				.watersharing-card-title {
-					color: #FFF;
+					color: var(--card-header-color-fg, #FFF);
 					display: block;
 					font-size: 1.625rem;
 					font-weight: 500;
