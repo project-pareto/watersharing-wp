@@ -5,9 +5,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = [
 	{
+		mode: isProduction ? 'production' : 'development',
+		devtool: isProduction ? false : 'source-map',
 		entry: {
 			'watersharing': [ './assets/src/js/main.js', './assets/src/scss/frontend.scss' ],
 			'watersharing-admin': [ './assets/src/scss/editor.scss' ],
@@ -15,7 +18,9 @@ module.exports = [
 		output: {
 			path: path.resolve(__dirname, 'assets/dist/js/'),
 			filename: '[name].min.js',
-			clean: true
+			clean: true,
+			devtoolNamespace: 'watersharing-wp',
+			devtoolModuleFilenameTemplate: 'webpack://watersharing-wp/[resource-path]'
 		},
 		module: {
 			rules: [
