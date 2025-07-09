@@ -11,8 +11,7 @@
 			.watersharing-card-header {
 				background: var(--card-header-color-bg, $dark-blue);
 				text-align: center;
-				padding-top: 1.5rem;
-				padding-bottom: 1rem;
+				padding: var(--card-header-padding, 1.5rem 0 1rem 0);
 				display: flex;
 				justify-content: center;
 				align-items: center;
@@ -36,7 +35,7 @@
 
 			.watersharing-card-body {
 				@media (min-width: 576px) {
-					padding: 40px 60px 60px;
+					padding: var(--card-body-padding, 40px 60px 60px);
 				}
 
 				padding: 20px;
