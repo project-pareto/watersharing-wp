@@ -381,7 +381,7 @@ function buildRequestForm($type = "", $title = "") {
 		<div class='watersharing-card-wrap'>
 			<div class='watersharing-card-inner'>
 				<div class='watersharing-card-header'>
-					<span class='watersharing-card-title'>$title</span>
+					<i class='fa-regular fa-map'></i> <h1 class='h4 watersharing-card-title'>$title</h1>
 				</div>
 				<div class='watersharing-card-body'>
 				$form
