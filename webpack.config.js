@@ -5,9 +5,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const RemoveEmptyScriptsPlugin = require('webpack-remove-empty-scripts');
 
+module.exports = (env, argv) => {
+	const isProduction = argv.mode === 'production';
 
-module.exports = [
-	{
+	return [{
+		mode: argv.mode,
+		devtool: isProduction ? false : 'source-map',
 		entry: {
 			'watersharing': [ './assets/src/js/main.js', './assets/src/scss/frontend.scss' ],
 			'watersharing-admin': [ './assets/src/scss/editor.scss' ],
@@ -15,7 +18,9 @@ module.exports = [
 		output: {
 			path: path.resolve(__dirname, 'assets/dist/js/'),
 			filename: '[name].min.js',
-			clean: true
+			clean: true,
+			devtoolNamespace: 'watersharing-wp',
+			devtoolModuleFilenameTemplate: 'webpack://watersharing-wp/[resource-path]'
 		},
 		module: {
 			rules: [
@@ -28,7 +33,21 @@ module.exports = [
 				// sass compilation
 				{
 					test: /\.(sass|scss)$/,
-					use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader']
+					use: [
+						MiniCssExtractPlugin.loader, 
+						{
+							loader: 'css-loader',
+							options: {
+								sourceMap: !isProduction
+							}
+						}, 
+						{
+							loader: 'sass-loader',
+							options: {
+								sourceMap: !isProduction
+							}
+						}
+					]
 				},
 				// loader for webfonts (only required if loading custom fonts)
 				{
@@ -64,5 +83,5 @@ module.exports = [
 				new CssMinimizerPlugin(),
 			]
 		},
-	}
-];
+	}];
+};

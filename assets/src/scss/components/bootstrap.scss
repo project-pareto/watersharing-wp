@@ -1,7 +1,7 @@
 .watersharing-row {
 	.accordion {
 		--bs-accordion-color: var(--bs-body-color);
-		--bs-accordion-bg: var(--bs-body-bg);
+		--bs-accordion-bg: inherit;
 		--bs-accordion-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, border-radius 0.15s ease;
 		--bs-accordion-border-color: var(--bs-border-color);
 		--bs-accordion-border-width: var(--bs-border-width);
@@ -9,6 +9,8 @@
 		--bs-accordion-inner-border-radius: calc(var(--bs-border-radius) - (var(--bs-border-width)));
 		--bs-accordion-btn-padding-x: 1.25rem;
 		--bs-accordion-btn-padding-y: 1rem;
+		--bs-accordion-btn-font-size: 0.875rem;
+		--bs-accordion-btn-font-weight: 700;
 		--bs-accordion-btn-color: var(--bs-body-color);
 		--bs-accordion-btn-bg: var(--bs-accordion-bg);
 		--bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23212529' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
@@ -29,7 +31,8 @@
 		align-items: center;
 		width: 100%;
 		padding: var(--bs-accordion-btn-padding-y) 0rem;
-		font-size: 1rem;
+		font-size: var(--bs-accordion-btn-font-size);
+		font-weight: var(--bs-accordion-btn-font-weight);
 		color: var(--bs-accordion-btn-color);
 		text-align: left;
 		background-color: var(--bs-accordion-btn-bg);

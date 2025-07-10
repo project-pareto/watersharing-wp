@@ -2,30 +2,40 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
-		border-radius: 10px;
+		border-radius: var(--box-border-radius, 5px); // --box-border-radius is not defined in the plugin but added so that consuming themes can override it. If theme does not specify it falls back to 5px
 		box-shadow: $drop-shadow;
 		margin-bottom: 3rem;
 		overflow: auto;
 
 		.watersharing-card-inner {
 			.watersharing-card-header {
-				background: $dark-blue;
+				background: var(--card-header-color-bg, $dark-blue);
 				text-align: center;
-				padding-top: 1.5rem;
-				padding-bottom: 1rem;
+				padding: var(--card-header-padding, 1.5rem 0 1rem 0);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 1ch;
 
-				.watersharing-card-title {
-					color: #FFF;
+				[class^='fa-'] {
+					color: var(--accent-color, $dark-blue);
+					font-size: 1.2rem;
+				}
+				
+				.watersharing-card-title,
+				h1.watersharing-card-title {
+					color: var(--card-header-color-fg, #FFF);
 					display: block;
-					font-size: 1.625rem;
-					font-weight: 500;
+					font-size: 1.125rem;
+					font-weight: 700;
 					line-height: 1.75;
+					margin: 0;
 				}
 			}
 
 			.watersharing-card-body {
 				@media (min-width: 576px) {
-					padding: 40px 60px 60px;
+					padding: var(--card-body-padding, 40px 60px 60px);
 				}
 
 				padding: 20px;
@@ -38,7 +48,7 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-form {
 		.watersharing-row {
-			margin-bottom: 1rem;
+			margin-bottom: var(--form-row-bottom-margin, 1rem);
 		}
 
 		input, input.input, input[type='date'], input[type='text'], select {
@@ -60,7 +70,7 @@
 
 			display:flex;
 			flex-shrink: 0;
-			font-weight: 700;
+			font-weight: 600;
 			line-height: 1.5;
 			max-width: 100%;
 			padding: 7px 10px 7px 0;

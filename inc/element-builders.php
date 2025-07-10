@@ -288,8 +288,8 @@ function buildRequestForm($type = "", $title = "") {
 	$well_name = buildFormField('well_name', 'CTP Identifier', 'text', 'required', '', 'Site Name');
 
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step = 'any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$latlong = buildFormField("coordinates", "CTP Coordinates", "multi_column", "required", "", "", "", "two-col", "", 
 	$input_array);
 
@@ -381,7 +381,7 @@ function buildRequestForm($type = "", $title = "") {
 		<div class='watersharing-card-wrap'>
 			<div class='watersharing-card-inner'>
 				<div class='watersharing-card-header'>
-					<span class='watersharing-card-title'>$title</span>
+					<i class='fa-regular fa-map'></i> <h1 class='h4 watersharing-card-title'>$title</h1>
 				</div>
 				<div class='watersharing-card-body'>
 				$form
