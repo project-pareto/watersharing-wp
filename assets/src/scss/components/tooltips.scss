@@ -5,6 +5,7 @@
   --tt-font-size: 12px;
   --tt-move: 4px;
   --tt-icon-color: var(--accent-color-forms, #{$dark-blue});
+  --tt-left-x-offset: 0; // this works to shift left-sided tooltips horizontally except more effort will be needed to complete this so that there is no sideways animation for tooltips that use --tt-move (current default)
 }
 
 button[aria-label][data-tt-pos] {
@@ -81,11 +82,17 @@ button[aria-label][data-tt-pos] {
     transition: none;
   }
   
-  &[data-tt-pos="up"]:hover:after, &[data-tt-pos="up"][data-tt-visible]:after, &[data-tt-pos="down"]:hover:after, &[data-tt-pos="down"][data-tt-visible]:after {
+  &[data-tt-pos="up"]:hover:after, 
+  &[data-tt-pos="up"][data-tt-visible]:after, 
+  &[data-tt-pos="down"]:hover:after, 
+  &[data-tt-pos="down"][data-tt-visible]:after {
     transform: translate(-50%, 0);
   }
   
-  &[data-tt-pos="up"]:hover:before, &[data-tt-pos="up"][data-tt-visible]:before, &[data-tt-pos="down"]:hover:before, &[data-tt-pos="down"][data-tt-visible]:before {
+  &[data-tt-pos="up"]:hover:before, 
+  &[data-tt-pos="up"][data-tt-visible]:before, 
+  &[data-tt-pos="down"]:hover:before, 
+  &[data-tt-pos="down"][data-tt-visible]:before {
     transform: translate(-50%, 0);
   }
   
@@ -105,15 +112,32 @@ button[aria-label][data-tt-pos] {
     right: 5px;
   }
   
-  &[data-tt-pos*="-left"]:hover:after, &[data-tt-pos*="-left"][data-tt-visible]:after, &[data-tt-pos*="-right"]:hover:after, &[data-tt-pos*="-right"][data-tt-visible]:after {
+  &[data-tt-pos*="-left"]:hover:after, 
+  &[data-tt-pos*="-left"][data-tt-visible]:after, 
+  &[data-tt-pos*="-right"]:hover:after, 
+  &[data-tt-pos*="-right"][data-tt-visible]:after {
     transform: translate(0, 0);
   }
   
-  &[data-tt-pos*="-left"]:hover:before, &[data-tt-pos*="-left"][data-tt-visible]:before, &[data-tt-pos*="-right"]:hover:before, &[data-tt-pos*="-right"][data-tt-visible]:before {
+  &[data-tt-pos*="-left"]:hover:before, 
+  &[data-tt-pos*="-left"][data-tt-visible]:before, 
+  &[data-tt-pos*="-right"]:hover:before, 
+  &[data-tt-pos*="-right"][data-tt-visible]:before {
     transform: translate(0, 0);
   }
   
-  &[data-tt-pos^="up"]:before, &[data-tt-pos^="up"]:after {
+
+  &[data-tt-pos*="-left"]:hover:after, 
+  &[data-tt-pos*="-left"][data-tt-visible]:after, 
+  &[data-tt-pos*="-left"]:hover:before, 
+  &[data-tt-pos*="-left"][data-tt-visible]:before{
+    transform: translate(var(--tt-left-x-offset, 0), 0); // optional --tt-left-x-offset to offset x position of left-sided tt
+  }
+  
+
+  
+  &[data-tt-pos^="up"]:before, 
+  &[data-tt-pos^="up"]:after {
     bottom: 100%;
     transform-origin: top;
     transform: translate(0, var(--tt-move));
@@ -144,20 +168,28 @@ button[aria-label][data-tt-pos] {
     border-bottom-color: var(--tt-color);
   }
   
-  &[data-tt-pos="down"]:after, &[data-tt-pos="down"]:before {
+  &[data-tt-pos="down"]:after, 
+  &[data-tt-pos="down"]:before {
     left: 50%;
     transform: translate(-50%, calc(var(--tt-move) * -1));
   }
   
-  &[data-tt-pos="left"]:hover:after, &[data-tt-pos="left"][data-tt-visible]:after, &[data-tt-pos="right"]:hover:after, &[data-tt-pos="right"][data-tt-visible]:after {
+  &[data-tt-pos="left"]:hover:after, 
+  &[data-tt-pos="left"][data-tt-visible]:after, 
+  &[data-tt-pos="right"]:hover:after, 
+  &[data-tt-pos="right"][data-tt-visible]:after {
     transform: translate(0, -50%);
   }
   
-  &[data-tt-pos="left"]:hover:before, &[data-tt-pos="left"][data-tt-visible]:before, &[data-tt-pos="right"]:hover:before, &[data-tt-pos="right"][data-tt-visible]:before {
+  &[data-tt-pos="left"]:hover:before, 
+  &[data-tt-pos="left"][data-tt-visible]:before, 
+  &[data-tt-pos="right"]:hover:before, 
+  &[data-tt-pos="right"][data-tt-visible]:before {
     transform: translate(0, -50%);
   }
   
-  &[data-tt-pos="left"]:after, &[data-tt-pos="left"]:before {
+  &[data-tt-pos="left"]:after, 
+  &[data-tt-pos="left"]:before {
     right: 100%;
     top: 50%;
     transform: translate(var(--tt-move), -50%);
@@ -174,7 +206,8 @@ button[aria-label][data-tt-pos] {
     border-left-color: var(--tt-color);
   }
   
-  &[data-tt-pos="right"]:after, &[data-tt-pos="right"]:before {
+  &[data-tt-pos="right"]:after, 
+  &[data-tt-pos="right"]:before {
     left: 100%;
     top: 50%;
     transform: translate(calc(var(--tt-move) * -1), -50%);
@@ -213,7 +246,7 @@ button[aria-label][data-tt-pos] {
   
   @media screen and (max-width: 768px) {
     &[data-tt-length="xlarge"]:after {
-      width: 90vw;
+      width: 86vw;
     }
   }
   
