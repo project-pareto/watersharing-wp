@@ -294,7 +294,7 @@ function buildRequestForm($type = "", $title = "") {
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Rate field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i> Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
+	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Rate field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
 	$share = ($type === 'share_supply');
 	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
@@ -306,9 +306,9 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
+	$trade ? $site_compatibility = buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
 	 
-	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
+	$trade ? $bid_type = buildFormField('bid_type', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Bid Type field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
