@@ -306,15 +306,15 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array): $site_compatibility = "";
+	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
 	 
-	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
+	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
-	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col", "", $bid_array): $bid_info = "";
+	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col ", "", $bid_array): $bid_info = "";
 
 	$trade ? $bid_total = buildFormField("bid_total", "Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): $bid_total = "";
 	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "Barrel Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): $bid_specific_total = "";
