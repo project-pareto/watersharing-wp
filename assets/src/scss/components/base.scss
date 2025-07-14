@@ -169,9 +169,15 @@
 		> label.watersharing-form-label{
 			padding-block: 14px;
 			align-items: flex-start;
+			@media (max-width: $lg-screen){
+				padding-bottom: 0;
+			}
 		}
 		label + .watersharing-input-col{
 			padding-block: 14px;
+			@media (max-width: $lg-screen){
+				padding-top: 7px;
+			}
 		}
 	}
 }
