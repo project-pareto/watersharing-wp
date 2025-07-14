@@ -44,14 +44,15 @@
 /* Watersharing Input Styles */
 .watersharing-blocks, .watertrading-blocks {
 	input, input.input, input[type='date'], input[type='text'], select {
+		box-sizing: border-box;
+		padding: var(--input-padding, 6px 15px);
 		background-color: var(--input-bg, #FFF);
 		background-clip: padding-box;
 		border: var(--input-border, 1px solid $light-grey);
 		border-radius: var(--input-radius, 5px);
-		box-sizing: border-box;
 		font-size: var(--input-font-size, 0.75rem);
 		line-height: var(--input-line-height, 1.5);
-		padding: var(--input-padding, 6px 15px);
+		accent-color: var(--accent-color-forms, #{$dark-blue});
 	}
 }
 
@@ -146,7 +147,7 @@
     align-items: center;
 
     .meta-box-input.checkbox {
-		accent-color: var(--accent-color,$blue);
+		accent-color: var(--accent-color-forms,$blue);
         height: 15px;
         width: 15px;
 		margin-right:15px;
