@@ -13,11 +13,11 @@
 		--bs-accordion-btn-font-weight: 700;
 		--bs-accordion-btn-color: var(--bs-body-color);
 		--bs-accordion-btn-bg: var(--bs-accordion-bg);
-		--bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23212529' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+		--bs-accordion-btn-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26' fill='none'%3e%3cmask id='mask0_122_515' style='mask-type:alpha' maskUnits='userSpaceOnUse' x='0' y='0' width='26' height='26'%3e%3crect width='26' height='26' fill='%230092C3'/%3e%3c/mask%3e%3cg mask='url(%23mask0_122_515)'%3e%3cpath d='M8.92292 24L7 22.0771L15.9104 13.1667L7 4.25625L8.92292 2.33333L19.7563 13.1667L8.92292 24Z' fill='%230092C3'/%3e%3c/g%3e%3c/svg%3e");
 		--bs-accordion-btn-icon-width: 1.25rem;
-		--bs-accordion-btn-icon-transform: rotate(-180deg);
+		--bs-accordion-btn-icon-transform: rotate(90deg);
 		--bs-accordion-btn-icon-transition: transform 0.2s ease-in-out;
-		--bs-accordion-btn-active-icon: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23052c65' stroke-linecap='round' stroke-linejoin='round'%3e%3cpath d='M2 5L8 11L14 5'/%3e%3c/svg%3e");
+		--bs-accordion-btn-active-icon: var(--bs-accordion-btn-icon);
 		--bs-accordion-btn-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 		--bs-accordion-body-padding-x: 1.25rem;
 		--bs-accordion-body-padding-y: 1rem;
@@ -62,7 +62,6 @@
 		height: var(--bs-accordion-btn-icon-width);
 		margin-left: auto;
 		content: "";
-		background-color: lightgray;
 		border-radius: var(--bs-accordion-btn-icon-width); 
 		background-image: var(--bs-accordion-btn-icon);
 		background-repeat: no-repeat;
