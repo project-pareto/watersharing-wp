@@ -125,7 +125,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 						$radio_label = ucwords($set);
 						$input .= "
 							<div class='meta-radio-select'>
-								<input type='radio' name='$id_lower' id='$set_lower' value='$set' required = '$required' class = 'radio-button'>
+								<input type='radio' name='$id_lower' id='$set_lower' value='$set' required='$required' class='radio-button'>
 									<label for='$set_lower'>
 										$radio_label
 									</label>	
@@ -134,7 +134,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					}
 				}
 				$input = "
-					<div class='custom-meta-field'>
+					<div class='custom-meta-field $class'>
 						<div class=meta-box-radio>
 							$input
 						</div>
@@ -147,7 +147,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				$input = "
 					<div class='meta-box-checkbox'> 
 						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
-						<label>
+						<label for='$id'>
 							$label
 						</label>	
 					</div>
@@ -308,7 +308,7 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$trade ? $site_compatibility = buildFormField('site_compatibility', 'Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
 	 
-	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
+	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
