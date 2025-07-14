@@ -126,7 +126,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 						$input .= "
 							<div class='meta-radio-select'>
 								<input type='radio' name='$id_lower' id='$set_lower' value='$set' required = '$required' class = 'radio-button'>
-									<label>
+									<label for='$set_lower'>
 										$radio_label
 									</label>	
 							</div>
