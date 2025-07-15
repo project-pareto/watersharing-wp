@@ -363,7 +363,6 @@ function buildRequestForm($type = "", $title = "") {
 		$quality_disclosures
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>
-			<hr/>
 			<div class='watersharing-input-col submit-column'>
 				<button type='submit' class='watersharing-submit-button'>Submit</button>
 			</div>
