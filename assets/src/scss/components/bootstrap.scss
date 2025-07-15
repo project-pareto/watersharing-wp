@@ -1,4 +1,13 @@
 .watersharing-row {
+
+
+.button-label{
+	
+}
+.font-normal-weight{
+	font-weight: normal !important;
+}
+
 	.accordion {
 		--bs-accordion-color: var(--bs-body-color);
 		--bs-accordion-bg: inherit;
@@ -44,7 +53,7 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.accordion-button {
-		transition: none;
+			transition: none;
 		}
 	}
 	.accordion-button:not(.collapsed) {
@@ -152,7 +161,7 @@
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.collapsing {
-		transition: none;
+			transition: none;
 		}
 	}
 	.collapsing.collapse-horizontal {

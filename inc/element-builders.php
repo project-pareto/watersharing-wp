@@ -139,15 +139,15 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 							$input
 						</div>
 					</div>
-			";
-			break;
+				";
+				break;
 
 			case 'checkbox':
 				$id_spaced = ucfirst(strtolower(str_replace('_', ' ', $id)));
 				$input = "
 					<div class='meta-box-checkbox'> 
 						<input type='checkbox' name='$id' id='$id' class='meta-box-input checkbox' value='1'>
-						<label for='$id'>
+						<label for='$id' class='spot150'>
 							$label
 						</label>	
 					</div>
@@ -247,12 +247,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
 	
 	$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox");
-
 	($add_label) ?
 	$html = "
 		<div class='watersharing-row'>
 			
-			<label for='$id' class='watersharing-form-label'>$checkbox<p>$label$label_required</p></label>
+			<label for='$id' class='watersharing-form-label spot255'>$checkbox<p>$label$label_required</p></label>
 			<div class='watersharing-input-col'>
 				$input
 			</div>
@@ -294,7 +293,7 @@ function buildRequestForm($type = "", $title = "") {
 	$input_array);
 
 	$dates = buildFormField('date_range', 'Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Rate field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
+	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Rate field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 
 	$share = ($type === 'share_supply');
 	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
@@ -306,12 +305,12 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$trade ? $site_compatibility = buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
+	$trade ? $site_compatibility = buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
 	 
-	$trade ? $bid_type = buildFormField('bid_type', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Bid Type field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-regular fa-circle-question"></i></span> Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
+	$trade ? $bid_type = buildFormField('bid_type', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Bid Type field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
 
 	$bid_array = [];
-	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
+	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01' min='0'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
 	$trade ? $bid_info =  buildFormField("bid_info", "Bid", "multi_column", "required", "", "", "", "two-col ", "", $bid_array): $bid_info = "";
@@ -331,12 +330,12 @@ function buildRequestForm($type = "", $title = "") {
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "three-col toggle $type-layflats-checkbox", '', $layflats_array );
 
-	$trade ? $delivery = buildFormField('Delivery', 'Can Provide Transport', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]): $delivery = '';
+	$trade ? $delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]): $delivery = '';
 
 	//Quality Disclosures
 	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']): $qd = "";
 	$qd_array = [$qd];
-	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', 'Quality Disclosures', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
+	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '<span class=button-label>Quality Disclosures</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
 	
 	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '', '', 'Water Quality');
 
@@ -360,10 +359,6 @@ function buildRequestForm($type = "", $title = "") {
 		$bid_info
 		$bid_total
 		$bid_specific_total
-
-		<div class='watersharing-section-break'>
-			<div class='watersharing-info-text'>Optional fields:</div>
-		</div>
 		$water_quality
 		$quality_disclosures
 		<input type='hidden' name='post_type' value='$type'>
