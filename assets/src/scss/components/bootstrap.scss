@@ -56,6 +56,10 @@
 			transition: none;
 		}
 	}
+	.accordion-intro-text{
+		font-size: 0.6875rem;
+		line-height: 1.45;
+	}
 	.accordion-button:not(.collapsed) {
 		color: var(--bs-accordion-active-color);
 		background-color: var(--bs-accordion-active-bg);

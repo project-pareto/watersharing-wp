@@ -14,7 +14,7 @@
 	.watersharing-submit-button {
 		background: $blue;
 		border: none;
-		border-radius: 10px;
+		border-radius: var(--input-radius,5px);
 		box-shadow: $drop-shadow;
 		color: #FFF;
 		cursor: pointer;

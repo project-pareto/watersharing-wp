@@ -64,6 +64,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
     echo $html;
 }
 
+
 // function to build out request form fields
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
@@ -178,6 +179,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 			
 			case 'accordion':
+				$a_accordion_intros = [
+					'Quality Disclosures' => 'Use this optional section to declare quality properties associated with your request; either quality associated with water you have or requirements for water you need. You may populate some or all of the fields provided. Doing so can help refine the matches you receive but is not required.',
+				];
+				$intro_text = $a_accordion_intros[$id] ?? '';
+				$intro_text_markup = $intro_text ? "<div class='accordion-intro-text'>$intro_text</div>" : '';
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
@@ -191,15 +197,16 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 							<div class='qd-accordion'>
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
-										<label class='watersharing-form-label no-right-padding accordion'>
-										<button class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='false' aria-controls='collapse-$class'>
+										<label id='$id_lower-label' class='watersharing-form-label no-right-padding accordion'>
+										<button id='$id_lower-button' class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='false' aria-controls='collapse-$class'>
 											<strong>$label</strong>
 										</button>
 										</label>
-										<div id='collapse-$class' class='accordion-collapse collapse' aria-labelledby='headingOne'>
-										<div class='accordion-body'>
-											$input
-										</div>
+										<div id='collapse-$class' class='accordion-collapse collapse' aria-labelledby='$id_lower-label'>
+											$intro_text_markup
+											<div class='accordion-body'>
+												$input
+											</div>
 										</div>
 									</div>
 								</div>
