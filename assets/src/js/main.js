@@ -247,6 +247,18 @@
 			  $button.removeClass('collapsed').attr('aria-expanded', true); // Remove collapsed state
 		  }
 		}
+
+		function hideOtherAccordions($target) {
+			const $otherAccordions = $('.accordion-collapse').not($target);
+
+			$otherAccordions.each(function() {
+				const $otherAccordion = $(this);
+				const $otherButton = $('[data-bs-target="#' + $otherAccordion.attr('id') + '"]');
+				if($otherAccordion && $otherButton) {
+					hideCollapse($otherAccordion, $otherButton);
+				}
+			});
+		}		
 	  
 		// Function to hide the collapse
 		function hideCollapse($element, $button) {
@@ -274,11 +286,13 @@
 			var targetSelector = $(this).attr('data-bs-target');
 			var $target = $(targetSelector);
 			var $button = $(this); 
-		
+
+
 			if ($target.hasClass('show')) {
 				hideCollapse($target, $button); 
 			} else {
-				showCollapse($target, $button); 
+				hideOtherAccordions($target);
+				showCollapse($target, $button);
 			}
 		});
 		
