@@ -166,6 +166,23 @@
 	}
 }
 
+// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection) so this was having no effect. I was going to ask about this but then realized that the row checkboxes are not presented on mobile so there's good reason to hide the Manage Selection interface on mobile. To make this work I moved this outside the tables
+.hide-on-mobile {
+	display: none;
+
+	@media (min-width: 768px) {
+		display: block;
+	}
+}
+
+.show-on-mobile {
+	display: none;
+
+	@media (max-width: 767px) {
+		display: inline;
+	}
+}
+
 /* Watersharing Match Request Table Styles */
 table.watersharing-table, table.watertrading-table{
 	border-collapse: separate;
@@ -198,6 +215,11 @@ table.watersharing-table, table.watertrading-table{
 			padding: 4px 18px 4px 4px;
 			text-align: left;
 		}
+	}
+
+	.tablesorter-header-inner{
+		font-size: var(--table-column-header-font-size, 0.75rem);
+		font-weight: 400;
 	}
 
 	tr.watersharing-request-detail {
@@ -243,7 +265,6 @@ table.watersharing-table, table.watertrading-table{
 
 		& > td {
 			padding: .5rem .5rem;
-			border-bottom-width: 1px;
 
 			&.align-middle {
 				vertical-align: middle;
@@ -336,22 +357,6 @@ table.watersharing-table, table.watertrading-table{
 		padding: 10px;
 	}
 
-	.hide-on-mobile {
-		display: none;
-
-		@media (min-width: 768px) {
-			display: block;
-		}
-	}
-
-	.show-on-mobile {
-		display: none;
-
-		@media (max-width: 767px) {
-			display: inline;
-		}
-	}
-
 	.watersharing-match-action {
 	    background: none;
 	    box-shadow: none;
@@ -385,6 +390,12 @@ table.watersharing-table, table.watertrading-table{
 			}
 		}
 	}
+}
+
+.table-action-row{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
 }
 
 .watersharing-kpi-block{
