@@ -984,12 +984,12 @@ function buildRequestTable( $type = '' ) {
 			</table>
 
 			<div class='hide-on-mobile'>
-				<select name='post_action' id='post_action' class='user-select'>
+				<select name='post_action' id='post_action' class='user-select select-request-action'>
 					<option value='' selected hidden disabled>Manage Selection</option>
 					<option value='close'>Close Request(s)</option>
 					<option value='delete'>Delete Request(s)</option>
 				</select>
-				<input id='$type-status-submit' type='submit' name='submit' class='watersharing-submit-button post-status-submit' value='Apply' disabled/>
+				<input id='$type-status-submit' type='submit' name='submit' class='watersharing-secondary-button post-status-submit' value='Apply' disabled/>
 			</div>
 		</form>
 	";

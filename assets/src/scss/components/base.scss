@@ -1,5 +1,7 @@
 /* Watersharing Button Styles */
-.watersharing-blocks, .watertrading-blocks, .watersharing-table {
+.watersharing-blocks, 
+.watertrading-blocks, 
+.watersharing-table {
 	&.full-width {
 		max-width: 100%;
 	}
@@ -22,7 +24,32 @@
 		line-height: 1.5;
 		padding: 8px 24px;
 		width:auto !important;
+		transition: all 0.3s ease;
+		&:focus,
+		&:hover {
+			background: $grey;
+		}
 
+		&:disabled, .disabled {
+			cursor: pointer;
+			opacity: 0.65;
+			pointer-events: none;
+		}
+	}
+	
+	.watersharing-secondary-button {
+		background: $blue;
+		border: none;
+		border-radius: var(--input-radius,5px);
+		box-shadow: $drop-shadow;
+		color: #FFF;
+		font-size: 16px; font-size: 1rem;
+		line-height: 1.5;
+		padding: 8px 3ch;
+		width: auto !important;
+		transition: all 0.3s ease;
+		cursor: pointer;
+		&:focus,
 		&:hover {
 			background: $grey;
 		}
@@ -57,6 +84,9 @@
 	.meta-box-checkbox label,
 	.meta-box-radio label{
 		font-size: var(--input-font-size, 0.75rem);
+	}
+	.select-request-action{
+		--input-padding: 11px 13px
 	}
 }
 
