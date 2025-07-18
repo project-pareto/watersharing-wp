@@ -17,7 +17,7 @@
 		--bs-accordion-border-radius: 0;
 		--bs-accordion-inner-border-radius: 0;
 		--bs-accordion-btn-padding-x: 1.25rem;
-		--bs-accordion-btn-padding-y: 1rem;
+		--bs-accordion-btn-padding-y: 0.8em;
 		--bs-accordion-btn-font-size: 0.875rem;
 		--bs-accordion-btn-font-weight: 700;
 		--bs-accordion-btn-color: var(--bs-body-color);
@@ -50,6 +50,9 @@
 		overflow-anchor: none;
 		transition: var(--bs-accordion-transition);
 		padding-left: 0px;
+		> strong{
+			font-weight: inherit;
+		}
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.accordion-button {
@@ -125,7 +128,14 @@
 	.accordion-collapse{
 		border-bottom: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
 	}
+	.accordion-button.collapsed{
+		border-bottom: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
+	}
 	.accordion-item:last-of-type > .accordion-collapse {
+	}
+
+	&:has(.accordion){
+		margin-bottom: 0 !important;
 	}
 	
 	.accordion-body {

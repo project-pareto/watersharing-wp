@@ -266,7 +266,7 @@
 			// console.log('hideCollapse() Hiding collapse:', $element, $button);
 			// console.log('Element classes:', $element.attr('class'));
 			if (!$element.hasClass('collapsing') || $element.hasClass('show-initial') ) {
-				console.log('Checks passes to Hide collapse');
+				// console.log('Checks passes to Hide collapse');
 				$element
 				.css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
 				.removeClass('collapse show show-initial')
@@ -282,7 +282,7 @@
 					$element.removeClass('collapsing').addClass('collapse').css('height', '');
 				});
 				$button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
-				console.log('Collapse complete hidden:', $element);
+				// console.log('Collapse complete hidden:', $element);
 			}
 		}
 	  

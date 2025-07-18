@@ -300,43 +300,47 @@ function qdBuilder($names = []){
 function buildRequestForm($type = "", $title = "") {
 	$html = "";
 
+	#Trade Specific Fields
+	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+
 	// Set up the fields for the form
 	$well_pad = buildFormField('well_pad', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select an existing Custody Transfer Point (CTP) or define a new one. Newly created CTPs will be saved for future reference. A CTP can be a well location, a pipeline hub, or other location where water may be exchanged."><i class="fa-solid fa-circle-info"></i></span> CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
 	$well_name = buildFormField('well_name', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Name of the CTP. This name will be used to identify this point for you."><i class="fa-solid fa-circle-info"></i></span> CTP Identifier', 'text', 'required', '', 'Site Name');
-	$primary_info_fields = [$well_pad, $well_name];
-	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
-
-
 	$input_array = [];	
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$latlong = buildFormField("coordinates", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter latitude and longitude coordinates here. AquaTrade uses the WGS 84 coordinate system, the same system used by Google Maps and other popular mapping software.'><i class='fa-solid fa-circle-info'></i></span> CTP Geospatial Coordinates", "multi_column", "required", "", "", "", "two-col", "", $input_array);
-
 	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
-
-	$share = ($type === 'share_supply');
-	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
-
-
-	#Trade Specific Fields
-	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
-
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$trade ? $site_compatibility = buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col outer-row-horizontal-mq-lg', '', $sites_array): $site_compatibility = "";
-	 
-	$trade ? $bid_type = buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'outer-row-horizontal-mq-lg', '', ['Willing to pay', 'Want to be paid']): $bid_type = "";
+	$site_compatibility = $trade ? buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array) :  "";
+	
+	$bid_type = $trade ? buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): "";
 
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01' min='0'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
-	$trade ? $bid_info =  buildFormField("bid_info", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter a bid to provide or accept water. Enter positive values only, decimal values are allowed (e.g., 1.99). Do not enter other punctuation (commas, etc.). Use the dropdown menu to select units of either USD per barrel or USD total. The form will also show you whichever you did not specify.'><i class='fa-solid fa-circle-info'></i></span> Bid", "multi_column", "required", "", "", "", "two-col ", "", $bid_array): $bid_info = "";
+	$bid_info = $trade ? buildFormField("bid_info", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter a bid to provide or accept water. Enter positive values only, decimal values are allowed (e.g., 1.99). Do not enter other punctuation (commas, etc.). Use the dropdown menu to select units of either USD per barrel or USD total. The form will also show you whichever you did not specify.'><i class='fa-solid fa-circle-info'></i></span> Bid", "multi_column", "required", "", "", "", "two-col ", "", $bid_array): "";
 
-	$trade ? $bid_total = buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): $bid_total = "";
-	$trade ? $bid_specific_total = buildFormField("bid_specific_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): $bid_specific_total = "";
+	$bid_total = $trade ? buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): "";
+	$bid_specific_total = $trade ? buildFormField("bid_specific_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): "";
+
+	$primary_info_fields = [$well_pad, $well_name, $latlong, $dates, $rate, $site_compatibility, $bid_type,	$bid_info, $bid_total, $bid_specific_total];
+	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
+
+
+
+
+	$share = ($type === 'share_supply');
+	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
+
+
+
+
+	 
 
 	//Trucks
 	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
@@ -368,17 +372,9 @@ function buildRequestForm($type = "", $title = "") {
 		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		$primary_information
-		$latlong
-		$site_compatibility
 		$delivery
-		$dates
-		$rate
-		$transport
-		$bid_type
-		$bid_info
-		$bid_total
-		$bid_specific_total
 		$water_quality
+		$transport
 		$quality_disclosures
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>

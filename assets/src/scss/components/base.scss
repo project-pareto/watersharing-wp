@@ -96,12 +96,16 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	& > * {
+	> * {
 		align-self: stretch;
 		box-sizing: border-box;
 		flex-shrink: 0;
 		max-width: 100%;
 		width: 100%;
+	}
+
+	> label{
+		margin-bottom: 0.4rem;
 	}
 
 	&.centerered{
@@ -159,6 +163,10 @@
 	}
 }
 
+#primary-information .accordion-button{
+	border-top: none;
+}
+#primary-information .accordion-body > .watersharing-row,
 .watersharing-form > .watersharing-row.watersharing-row.watersharing-row{
 	flex-direction: column;	
 	> *{
@@ -210,6 +218,10 @@
 			}
 		}
 	}
+}
+
+.watersharing-input-col + .watersharing-input-col .accordion-button{
+	border-top: none;
 }
 
 .meta-box-checkbox {
