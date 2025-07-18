@@ -66,6 +66,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 
 
 // function to build out request form fields
+$first_accordion = false;
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
 		switch ($type) {
@@ -179,18 +180,28 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				break;
 			
 			case 'accordion':
+				global $first_accordion;
+				$id_lower = strtolower(str_replace(' ', '-', $id));
+				if($first_accordion==false) {
+					$first_accordion = $id_lower;
+				}
+				$button_class = $first_accordion == $id_lower ? 'accordion-button' : 'accordion-button collapsed';
+				$state_class = $first_accordion == $id_lower ? 'show-initial' : '';
+				// cfdump($state_class);
+				$aria_expanded = $first_accordion == $id_lower ? 'true' : 'false';
+
 				$a_accordion_intros = [
 					'Quality Disclosures' => 'Use this optional section to declare quality properties associated with your request; either quality associated with water you have or requirements for water you need. You may populate some or all of the fields provided. Doing so can help refine the matches you receive but is not required.',
 				];
 				$intro_text = $a_accordion_intros[$id] ?? '';
 				$intro_text_markup = $intro_text ? "<div class='accordion-intro-text'>$intro_text</div>" : '';
+			
 				$input = "";
 				if(!empty($dataset)){
 					foreach($dataset as $set){
 						$input .= "$set";
 					}
 				}
-				$id_lower = strtolower(str_replace(' ', '-', $id));
 				$input = "
 					<div class='watersharing-row'>			
 						<div class='watersharing-input-col accordion'>
@@ -198,11 +209,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
 										<label id='$id_lower-label' class='watersharing-form-label no-right-padding accordion'>
-										<button id='$id_lower-button' class='accordion-button collapsed' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='false' aria-controls='collapse-$class'>
+										<button id='$id_lower-button' class='$button_class' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='$aria_expanded' aria-controls='collapse-$class'>
 											<strong>$label</strong>
 										</button>
 										</label>
-										<div id='collapse-$class' class='accordion-collapse collapse' aria-labelledby='$id_lower-label'>
+										<div id='collapse-$class' class='accordion-collapse collapse $state_class' aria-labelledby='$id_lower-label'>
 											$intro_text_markup
 											<div class='accordion-body'>
 												$input
@@ -290,8 +301,11 @@ function buildRequestForm($type = "", $title = "") {
 	$html = "";
 
 	// Set up the fields for the form
-	$well_pad = buildFormField( 'well_pad', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select an existing Custody Transfer Point (CTP) or define a new one. Newly created CTPs will be saved for future reference. A CTP can be a well location, a pipeline hub, or other location where water may be exchanged."><i class="fa-solid fa-circle-info"></i></span> CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
+	$well_pad = buildFormField('well_pad', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select an existing Custody Transfer Point (CTP) or define a new one. Newly created CTPs will be saved for future reference. A CTP can be a well location, a pipeline hub, or other location where water may be exchanged."><i class="fa-solid fa-circle-info"></i></span> CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
 	$well_name = buildFormField('well_name', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Name of the CTP. This name will be used to identify this point for you."><i class="fa-solid fa-circle-info"></i></span> CTP Identifier', 'text', 'required', '', 'Site Name');
+	$primary_info_fields = [$well_pad, $well_name];
+	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
+
 
 	$input_array = [];	
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
@@ -353,8 +367,7 @@ function buildRequestForm($type = "", $title = "") {
 		<input type='hidden' name='action' value='create_water_request'>
 		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
-		$well_pad
-		$well_name
+		$primary_information
 		$latlong
 		$site_compatibility
 		$delivery
