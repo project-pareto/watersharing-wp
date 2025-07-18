@@ -227,7 +227,8 @@
 	$(document).ready(function () {
 		// Function to show the collapse
 		function showCollapse($element, $button) {
-			if (!$element.hasClass('collapsing') && !$element.hasClass('show')) {
+			// console.log('Showing collapse for:', $element, $button);
+			if (!$element.hasClass('collapsing') && (!$element.hasClass('show') && !$element.hasClass('show-initial'))) {
 				$element
 					.removeClass('collapse')
 					.addClass('collapsing') // Start collapsing animation
@@ -262,8 +263,10 @@
 	  
 		// Function to hide the collapse
 		function hideCollapse($element, $button) {
-
-			if (!$element.hasClass('collapsing') && ($element.hasClass('show') || $element.hasClass('show-initial'))) {
+			// console.log('hideCollapse() Hiding collapse:', $element, $button);
+			// console.log('Element classes:', $element.attr('class'));
+			if (!$element.hasClass('collapsing') || $element.hasClass('show-initial') ) {
+				console.log('Checks passes to Hide collapse');
 				$element
 				.css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
 				.removeClass('collapse show show-initial')
@@ -279,11 +282,13 @@
 					$element.removeClass('collapsing').addClass('collapse').css('height', '');
 				});
 				$button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
+				console.log('Collapse complete hidden:', $element);
 			}
 		}
 	  
 		// Add event listeners for all accordion buttons
 		$('.accordion-button').on('click', function () {
+			// console.log('Accordion button clicked:', this);
 			var targetSelector = $(this).attr('data-bs-target');
 			var $target = $(targetSelector);
 			var $button = $(this); 

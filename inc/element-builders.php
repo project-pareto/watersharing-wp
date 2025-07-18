@@ -186,7 +186,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 					$first_accordion = $id_lower;
 				}
 				$button_class = $first_accordion == $id_lower ? 'accordion-button' : 'accordion-button collapsed';
-				$state_class = $first_accordion == $id_lower ? 'show-initial' : '';
+				$state_class = $first_accordion == $id_lower ? 'show show-initial' : '';
 				// cfdump($state_class);
 				$aria_expanded = $first_accordion == $id_lower ? 'true' : 'false';
 
