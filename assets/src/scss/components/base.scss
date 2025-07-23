@@ -81,9 +81,14 @@
 		line-height: var(--input-line-height, 1.5);
 		accent-color: var(--accent-color-forms, #{$dark-blue});
 	}
-	.meta-box-checkbox label,
-	.meta-box-radio label{
-		font-size: var(--input-font-size, 0.75rem);
+	label{
+		cursor: pointer;
+	}
+	.meta-box-checkbox,
+	.meta-box-radio{
+		label{
+			font-size: var(--input-font-size, 0.75rem);
+		}
 	}
 	.select-request-action{
 		--input-padding: 11px 13px

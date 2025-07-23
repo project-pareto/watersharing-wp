@@ -69,6 +69,7 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 $first_accordion = false;
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
+		// cfdump($type, 'TYPE');
 		switch ($type) {
 			case 'text':
 				$input = "<input type='text' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
@@ -263,13 +264,17 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 	($required === 'required') ? $label_required = "<span class='required'>*</span>" : $label_required = "";
 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
-	
+	if (strpos($label, 'Can Provide Trucks') !== false) {
+		// cfdump($label, 'Label');
+		// cfdump($type, 'Type');
+		// cfdump($class, 'class');
+		// cfdump($input, 'input');
+	}
 	$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox");
 	($add_label) ?
 	$html = "
 		<div class='watersharing-row'>
-			
-			<label for='$id' class='watersharing-form-label spot255'>$checkbox<p>$label$label_required</p></label>
+			<label class='watersharing-form-label spot255'>$checkbox<p>$label$label_required</p></label>
 			<div class='watersharing-input-col'>
 				$input
 			</div>
@@ -346,23 +351,32 @@ function buildRequestForm($type = "", $title = "") {
 	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '', '', 'Water Quality');
 
 
-	 
+	// Can Provide Transport (optional) Accordion
 
+	$transport_col_class = $share ? 'two-col' : 'three-col';
 	//Trucks
 	$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
-	$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+	if($trade){
+		$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+	}
 	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "","placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
-	$trucks = buildFormField('trucks', 'Can Provide Trucks', 'multi_column', '', '','', '', "three-col toggle $type-trucks-checkbox", '', $trucks_array);
+	$trucks = buildFormField('trucks', 'Can Provide Trucks', 'multi_column', '', '','', '', "$transport_col_class toggle $type-trucks-checkbox", '', $trucks_array);
 
 	//Layflats
 	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
-	$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+	if($trade){
+		$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+	}
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => "", "placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
-	$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "three-col toggle $type-layflats-checkbox", '', $layflats_array );
+	$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "$transport_col_class toggle $type-layflats-checkbox", '', $layflats_array );
 
-	$trade ? $delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]): $delivery = '';
+	$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]);
 
-	//Quality Disclosures | Quality Requirements
+
+
+
+
+	//Quality Disclosures | Quality Requirements Accordion
 	$qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']);
 	$qd_array = [$qd];
 	$quality_accord_label = $supply_demand === 'supply' ? 'Quality Disclosures' : 'Quality Requirements';
