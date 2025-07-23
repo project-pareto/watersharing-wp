@@ -300,8 +300,11 @@ function qdBuilder($names = []){
 function buildRequestForm($type = "", $title = "") {
 	$html = "";
 
+	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
+
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+
 
 	// Set up the fields for the form
 	$well_pad = buildFormField('well_pad', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select an existing Custody Transfer Point (CTP) or define a new one. Newly created CTPs will be saved for future reference. A CTP can be a well location, a pipeline hub, or other location where water may be exchanged."><i class="fa-solid fa-circle-info"></i></span> CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
@@ -310,12 +313,12 @@ function buildRequestForm($type = "", $title = "") {
 	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
 	$latlong = buildFormField("coordinates", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter latitude and longitude coordinates here. AquaTrade uses the WGS 84 coordinate system, the same system used by Google Maps and other popular mapping software.'><i class='fa-solid fa-circle-info'></i></span> CTP Geospatial Coordinates", "multi_column", "required", "", "", "", "two-col", "", $input_array);
-	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
-	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "Can Accept Trucks", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "Can Accept Layflats", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$site_compatibility = $trade ? buildFormField('site_compatibility', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="This is informative text about the Site Compatability field. If this had been an actual Tooltip, this text would be specific to this field."><i class="fa-solid fa-circle-info"></i></span> Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array) :  "";
+	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array);
+	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
+	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 	
 	$bid_type = $trade ? buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): "";
 
@@ -328,16 +331,19 @@ function buildRequestForm($type = "", $title = "") {
 	$bid_total = $trade ? buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly"): "";
 	$bid_specific_total = $trade ? buildFormField("bid_specific_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "text", "", "", "0", "", ' ' . $type . '-specval', "readonly"): "";
 
-	$primary_info_fields = [$well_pad, $well_name, $latlong, $dates, $rate, $site_compatibility, $bid_type,	$bid_info, $bid_total, $bid_specific_total];
+	$primary_info_fields = [$well_pad, $well_name, $latlong, $site_compatibility, $dates, $rate, $bid_type,	$bid_info, $bid_total, $bid_specific_total];
 	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
 
 
 
 
 	$share = ($type === 'share_supply');
+
+	// ********** // Transport Range (mi) that shows on only Share I Have Water / Share Supply // ********** // 
 	$share ? $transport = buildFormField('transport_radius', 'Transport Range (mi)', 'number', 'required', '', 'Range in miles') : $transport = "";
 
-
+	// ********** // Water Quality that shows on only Share // ********** // 
+	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '', '', 'Water Quality');
 
 
 	 
@@ -356,12 +362,14 @@ function buildRequestForm($type = "", $title = "") {
 
 	$trade ? $delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]): $delivery = '';
 
-	//Quality Disclosures
-	$trade ? $qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']): $qd = "";
+	//Quality Disclosures | Quality Requirements
+	$qd = qdBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']);
 	$qd_array = [$qd];
-	$trade ? $quality_disclosures = buildFormField('Quality Disclosures', '<span class=button-label>Quality Disclosures</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array): $quality_disclosures = "";
-	
-	$trade ? $water_quality = "" : $water_quality = buildFormField('water_quality', 'Water Quality', 'text', '', '', 'Water Quality');
+	$quality_accord_label = $supply_demand === 'supply' ? 'Quality Disclosures' : 'Quality Requirements';
+	$quality_disclosures = buildFormField('Quality Disclosures', '<span class=button-label>' . $quality_accord_label . '</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-qd', '', $qd_array);
+
+
+
 
 	$action = esc_url( admin_url('admin-post.php') );
 	error_log("Form action URL: $action");
