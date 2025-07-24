@@ -135,7 +135,8 @@
 
 			display: none;
 			flex: 0 0 auto;
-			width: 16.66666667%;
+			width: 4%;
+			align-self: center;
 			text-align: center;
 		}
 
@@ -143,7 +144,7 @@
 			@media (min-width: 576px) {
 				flex: 0 0 auto;
 				margin-bottom: 0;
-				width: 41.66667%;
+				width: 48%;
 			}
 
 			margin-bottom: 8px;
