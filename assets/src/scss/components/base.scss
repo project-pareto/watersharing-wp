@@ -125,6 +125,16 @@
 		justify-content: space-between;
 	}
 
+	&.subs-stack{
+		> .watersharing-input-col.subs-stack > .watersharing-row{
+			flex-direction: column;
+			.watersharing-form-label,
+			.watersharing-input-col{
+				width: auto;
+			}
+		}
+	}
+
 	&.three-col{
 		justify-content: space-between;
 	}
