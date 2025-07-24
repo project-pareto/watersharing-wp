@@ -213,7 +213,7 @@ function export_to_pareto( $post_id ) {
         if(!empty($items)) {
             foreach($items as $item) {
                 $query_post_type = get_post_type($item);
-                $bpd_rate = ($query_post_type == 'trade_demand') ? "Demand Rate (bpd)":  "Supply Rate (bpd)";
+                $bpd_rate_label = ($query_post_type == 'trade_demand' || $query_post_type == 'share_demand') ? "Demand Rate (bpd)":  "Supply Rate (bpd)";
                 $bid = ($query_post_type == 'trade_demand') ? "Consumer Bid (USD/bbl)": "Supplier Bid (USD/bbl)";
 
                 $item_array = [];
@@ -230,8 +230,6 @@ function export_to_pareto( $post_id ) {
                 $end = get_post_meta($item, 'end_date', true);
 
                 $rate = (float)get_post_meta($item, 'rate_bpd', true);
-                $max = get_post_meta($item, 'transport_radius', true);
-                $max = $max !== '' ? (int)$max : '';
 
                 //get trade record details
                 // $site_compatibility = get_post_meta($item, 'site_compatibility', true);
@@ -286,8 +284,7 @@ function export_to_pareto( $post_id ) {
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        'Rate'            => $rate,
-                        'Max Transport'    => $max, // Field is in question, awaiting confirmation
+                        $bpd_rate_label   => $rate,
 
                         // added Can Provide Transport fields (minus transport bidding fields)
                         'Trucks Accepted'    => $can_accept_trucks,
@@ -329,7 +326,7 @@ function export_to_pareto( $post_id ) {
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        $bpd_rate            => $rate,
+                        $bpd_rate_label   => $rate,
                         $bid             => $bid_amount,
                         'Bid Type'              => $bid_type,
                         'Trucks Accepted'    => $can_accept_trucks,
