@@ -81,13 +81,13 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			
 			case 'date':
 				$input = "
-					<div class='watersharing-row'>
+					<div class='watersharing-row columns-grow-w-dash'>
 						<div class='watersharing-date-col start-dp'>
-							<input type='date' class='form-control placeholder-toggle start-dp-wrapper inital$class' id='start_date' name='start_date' $required>
+							<input type='date' class='form-control placeholder-toggle start-dp-wrapper inital$class' id='start_date' name='start_date' title='Start Date' $required>
 						</div>
 						<div class='watersharing-date-sep'>—</div>
 						<div class='watersharing-date-col end-dp'>
-							<input type='date' class='form-control placeholder-toggle end-dp-wrapper inital$class' id='end_date' name='end_date' $required disabled>
+							<input type='date' class='form-control placeholder-toggle end-dp-wrapper inital$class' id='end_date' name='end_date' title='End Date' $required disabled>
 						</div>
 					</div>
 				";
@@ -315,18 +315,18 @@ function buildRequestForm($type = "", $title = "") {
 	$well_pad = buildFormField('well_pad', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select an existing Custody Transfer Point (CTP) or define a new one. Newly created CTPs will be saved for future reference. A CTP can be a well location, a pipeline hub, or other location where water may be exchanged."><i class="fa-solid fa-circle-info"></i></span> CTP (Wellpad, Pipeline Riser, etc.)', 'pads', '', 'Create A New Site' );
 	$well_name = buildFormField('well_name', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Name of the CTP. This name will be used to identify this point for you."><i class="fa-solid fa-circle-info"></i></span> CTP Identifier', 'text', 'required', '', 'Site Name');
 	$input_array = [];	
-	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any'", "acf_key" => "", "class" => "", "readonly" => ""];
-	$latlong = buildFormField("coordinates", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter latitude and longitude coordinates here. AquaTrade uses the WGS 84 coordinate system, the same system used by Google Maps and other popular mapping software.'><i class='fa-solid fa-circle-info'></i></span> CTP Geospatial Coordinates", "multi_column", "required", "", "", "", "two-col", "", $input_array);
+	$input_array[] = ["id" => "latitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Latitude", "parameters" => "step='any' title='Latitude'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$input_array[] = ["id" => "longitude", "label" => "", "type" => "number", "required" => "required", "placeholder" => "Longitude", "parameters" => "step='any' title='Longitude'", "acf_key" => "", "class" => "", "readonly" => ""];
+	$latlong = buildFormField("coordinates", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter latitude and longitude coordinates here. AquaTrade uses the WGS 84 coordinate system, the same system used by Google Maps and other popular mapping software.'><i class='fa-solid fa-circle-info'></i></span> CTP Geospatial Coordinates", "multi_column", "required", "", "", "", "two-col columns-grow", "", $input_array);
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "I can accept trucks on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "I can accept layflat pipelines on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', 'required', '', '', '', 'two-col', '', $sites_array);
+	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', 'required', 'data-js-tag-outer-label="ok"', '', '', 'two-col large-outer-label no-bottom-margin', '', $sites_array);
 	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', '','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 	
 	// Bid Info
-	$bid_type = $trade ? buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', '', '', ['Willing to pay', 'Want to be paid']): "";
+	$bid_type = $trade ? buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'large-outer-label', '', ['Willing to pay', 'Want to be paid']): "";
 	$bid_array = [];
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01' min='0'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];

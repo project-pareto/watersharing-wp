@@ -153,7 +153,22 @@
 				padding-left: var(--half-gap);
 			}
 		}
-
+	}
+	
+	// :has(.large-outer-label)
+	&:has(.large-outer-label):is(.accordion-body > .watersharing-row){
+		>label{
+			margin-top: 0.4rem;
+			p{
+				font-size: 0.75rem;
+				font-weight: 700;
+			}
+		}
+	}
+	&:has(.large-outer-label.no-bottom-margin):is(.accordion-body > .watersharing-row){
+		>label{
+			margin-bottom: 0;
+		}
 	}
 
 	&.three-col{
