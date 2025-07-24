@@ -9,3 +9,4 @@ wflogs
 .DS_Store
 node_modules
 *.map
+io/watertrading/demo-export

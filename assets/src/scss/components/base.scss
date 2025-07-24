@@ -135,6 +135,27 @@
 		}
 	}
 
+	&.columns-grow{
+		// outline: 2px solid red;
+
+		.watersharing-input-col.two-col.columns-grow{
+			--gap: 1em;
+			--half-gap: calc(var(--gap) / 2);
+			// outline: 2px solid fuchsia;
+			flex-grow: 1;
+			flex-basis: calc(50% - var(--gap));
+			width: unset !important;
+			padding-right: var(--half-gap);
+			
+			&:is(.watersharing-input-col.two-col.columns-grow + .watersharing-input-col.two-col.columns-grow){
+				// outline: 2px solid red;
+				padding-right: 0;
+				padding-left: var(--half-gap);
+			}
+		}
+
+	}
+
 	&.three-col{
 		justify-content: space-between;
 	}

@@ -81,7 +81,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			
 			case 'date':
 				$input = "
-					<div class='watersharing-row no-margin-bottom'>
+					<div class='watersharing-row'>
 						<div class='watersharing-date-col start-dp'>
 							<input type='date' class='form-control placeholder-toggle start-dp-wrapper inital$class' id='start_date' name='start_date' $required>
 						</div>
@@ -331,16 +331,16 @@ function buildRequestForm($type = "", $title = "") {
 	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01' min='0'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
 	$bid_units = ["USD/day", "USD/bbl.day"];
 	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
-	$bid_info = $trade ? buildFormField("bid_info", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter a bid to provide or accept water. Enter positive values only, decimal values are allowed (e.g., 1.99). Do not enter other punctuation (commas, etc.). Use the dropdown menu to select units of either USD per barrel or USD total. The form will also show you whichever you did not specify.'><i class='fa-solid fa-circle-info'></i></span> Bid", "multi_column", "required", "", "", "", "two-col ", "", $bid_array): "";
+	$bid_info = $trade ? buildFormField("bid_info", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter a bid to provide or accept water. Enter positive values only, decimal values are allowed (e.g., 1.99). Do not enter other punctuation (commas, etc.). Use the dropdown menu to select units of either USD per barrel or USD total. The form will also show you whichever you did not specify.'><i class='fa-solid fa-circle-info'></i></span> Bid", "multi_column", "required", "", "", "", "two-col columns-grow", "", $bid_array): "";
 
 	$bid_totals = [];
 	$bid_totals_row = '';
 	if($trade){
 		// $bid_totals[] = buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly");
-		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => ' ' . $type . '-totalval', "readonly" => ""];
-		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => ' ' . $type . '-specval', "readonly" => ""];
+		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-totalval', "readonly" => ""];
+		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-specval', "readonly" => ""];
 
-		$bid_totals_row = buildFormField("bid-totals-row", "", "multi_column", "", "", "", "", "two-col subs-stack", "", $bid_totals);
+		$bid_totals_row = buildFormField("bid-totals-row", "", "multi_column", "", "", "", "", "two-col subs-stack columns-grow", "", $bid_totals);
 		// $bid_totals_row = buildFormField"id" => ("bid-totals-row", "label" => "", "type" => "multi_column", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "two-col", "readonl"", );
 	}
 
