@@ -1,11 +1,37 @@
-# Plugin GitIgnore
-# Ignore the following for the WordPress plugin
+# Wordpress - ignore core, configuration, examples, uploads and logs.
+# https://github.com/github/gitignore/blob/main/WordPress.gitignore
 
+# Core
+#
+# Note: if you want to stage/commit WP core files
+# you can delete this whole section/until Configuration.
+/license.txt
+/readme.html
+
+# Configuration
 wp-config.php
 php.ini
 
+# Example themes
+/wp-content/themes/twenty*/
+
+# Example plugin
+/wp-content/plugins/hello.php
 wflogs
+
+# Uploads
+/wp-content/uploads/
+
+# Log files
+*.log
+
+# htaccess
+/.htaccess
+
 
 .DS_Store
 node_modules
+package-lock.json
 *.map
+io/watertrading/demo-export
+

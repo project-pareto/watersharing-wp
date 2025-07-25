@@ -212,9 +212,9 @@ function export_to_pareto( $post_id ) {
         $items = $query->get_posts();
         if(!empty($items)) {
             foreach($items as $item) {
-            $query_post_type = get_post_type($item);
-            $bpd_rate = ($query_post_type == 'trade_demand') ? "Demand Rate (bpd)":  "Supply Rate (bpd)";
-            $bid = ($query_post_type == 'trade_demand') ? "Consumer Bid (USD/bbl)": "Supplier Bid (USD/bbl)";
+                $query_post_type = get_post_type($item);
+                $bpd_rate_label = ($query_post_type == 'trade_demand' || $query_post_type == 'share_demand') ? "Demand Rate (bpd)":  "Supply Rate (bpd)";
+                $bid = ($query_post_type == 'trade_demand') ? "Consumer Bid (USD/bbl)": "Supplier Bid (USD/bbl)";
 
                 $item_array = [];
                 $well = $lat = $long = $start = $end = $rate = $max = "";
@@ -230,8 +230,6 @@ function export_to_pareto( $post_id ) {
                 $end = get_post_meta($item, 'end_date', true);
 
                 $rate = (float)get_post_meta($item, 'rate_bpd', true);
-                $max = get_post_meta($item, 'transport_radius', true);
-                $max = $max !== '' ? (int)$max : '';
 
                 //get trade record details
                 // $site_compatibility = get_post_meta($item, 'site_compatibility', true);
@@ -286,8 +284,36 @@ function export_to_pareto( $post_id ) {
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        'Rate'            => $rate,
-                        'Max Transport'    => $max,
+                        $bpd_rate_label   => $rate,
+
+                        // added Can Provide Transport fields (minus transport bidding fields)
+                        'Trucks Accepted'    => $can_accept_trucks,
+                        'Pipes Accepted'    => $can_accept_layflats,
+                        'Truck Max Dist (mi)'=> $truck_transport_radius,  
+                        'Trucking Capacity (bpd)'        => $truck_capacity,  
+                        'Pipe Max Dist (mi)' => $layflats_transport_radius,
+                        'Pipeline Capacity (bpd)'     => $layflats_capacity,
+
+                        // Added Quality Requirements | Disclosures 
+                        'TSS'     => $tss_measure_value,
+                        'TDS'     => $tds_measure_value,
+                        'Chloride'=> $chloride_measure_value,
+                        'Barium'  => $barium_measure_value,
+                        'Calcium carbonates' => $calciumcarbonate_measure_value,
+                        'Iron'    => $iron_measure_value,
+                        'Boron'   => $boron_measure_value,
+                        'Hydrogen Sulfide' => $hydrogensulfide_measure_value,
+                        'NORM'    => $norm_measure_value,
+                        'TSS Constraint'             => $tss_limit,          
+                        'TDS Constraint'             => $tds_limit,            
+                        'Chloride Constraint'        => $chloride_limit,       
+                        'Barium Constraint'          => $barium_limit,        
+                        'Calcium carbonates Constraint'=> $calciumcarbonate_limit,
+                        'Iron Constraint'            => $iron_limit,          
+                        'Boron Constraint'           => $boron_limit,     
+                        'Hydrogen Sulfide Constraint'=> $hydrogensulfide_limit,
+                        'NORM Constraint'            => $norm_limit,
+
                     );
                 }
                 else{
@@ -300,7 +326,7 @@ function export_to_pareto( $post_id ) {
                         'Latitude'        => $lat,
                         'Start Date'    => $start,
                         'End Date'        => $end,
-                        $bpd_rate            => $rate,
+                        $bpd_rate_label   => $rate,
                         $bid             => $bid_amount,
                         'Bid Type'              => $bid_type,
                         'Trucks Accepted'    => $can_accept_trucks,
