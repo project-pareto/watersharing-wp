@@ -37,32 +37,36 @@
 		}
 	}
 	
-	.watersharing-secondary-button {
-		background: $blue;
-		border: none;
-		border-radius: var(--input-radius,5px);
-		box-shadow: $drop-shadow;
-		color: #FFF;
-		font-size: 16px; font-size: 1rem;
-		line-height: 1.5;
-		padding: 8px 3ch;
-		width: auto !important;
-		transition: all 0.3s ease;
-		cursor: pointer;
-		&:focus,
-		&:hover {
-			background: $grey;
-		}
-
-		&:disabled, .disabled {
-			cursor: pointer;
-			opacity: 0.65;
-			pointer-events: none;
-		}
-	}
+	
 
 	:disabled, .disabled {
 		cursor: pointer;
+		opacity: 0.65;
+		pointer-events: none;
+	}
+}
+
+.table-action-row .watersharing-secondary-button {
+	background: $blue;
+	border: none;
+	border-radius: var(--input-radius,5px);
+	box-shadow: $drop-shadow;
+	color: #FFF;
+	font-size: 16px; font-size: 1rem;
+	line-height: 1.5;
+	padding: 8px 3ch;
+	width: auto !important;
+	transition: all 0.3s ease;
+	cursor: pointer;
+	&:focus,
+	&:hover {
+		background: $grey;
+	}
+
+	&:disabled, 
+	.disabled {
+		color: var(--input-color-disabled, #9b9b9b);
+		cursor: not-allowed !important;
 		opacity: 0.65;
 		pointer-events: none;
 	}
