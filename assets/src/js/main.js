@@ -325,9 +325,10 @@
 
 		//Calculating total / specific bid value
 		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
+			// console.log('Input changed:', this);
 			// Determine the prefix based on the triggered element's class
 			var prefix = $(this).hasClass("trade_supply-bid_amount") || $(this).hasClass("trade_supply-rate_bpd") || $(this).hasClass("trade_supply-bid_units") ? "trade_supply-" : "trade_demand-";
-			
+			// console.log('Prefix determined:', prefix);
 			// Use the prefix to find the respective elements within the same group
 			var $bid = $("." + prefix + "bid_amount");
 			var $rate = $("." + prefix + "rate_bpd");
