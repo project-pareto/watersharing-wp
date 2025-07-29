@@ -1,9 +1,43 @@
 .tablesorter-default {
-    width: 100%
+    width: 100%;
+    border-spacing: 0;
+    border-collapse: collapse;
+    th,
+    td{
+        text-align: unset !important;
+        border-top: 1px solid var(--table-border-color, #D9D9D9);
+        border-left: 1px solid var(--table-border-color, #D9D9D9);
+        overflow: hidden;
+
+        &:last-child{
+            border-right: 1px solid var(--table-border-color, #D9D9D9);
+        }
+    }
+    tbody{
+        box-shadow: none;
+        overflow: hidden;        
+        tr:nth-last-child(2){
+            td{
+                border-bottom: 1px solid var(--table-border-color, #D9D9D9);
+                &:first-child{
+                    border-bottom-left-radius: var(--border-corner-radius, 10px);
+                }
+            }
+        }
+    }
+    thead{
+        th:first-child{
+            border-top-left-radius: var(--border-corner-radius, 10px);
+        }
+        th:last-child{
+            border-top-right-radius: var(--border-corner-radius, 10px);
+        }
+    }
 }
 
 .tablesorter-default .tablesorter-header {
-    cursor: pointer
+    cursor: pointer;
+    text-align: left !important;
 }
 
 .tablesorter-default .sorter-false {
@@ -16,7 +50,7 @@
 }
 
 .tablesorter-default thead .tablesorter-header {
-    background-position: left !important;
+    background-position: 4px !important;
     background-repeat: no-repeat;
     cursor: pointer;
     padding: 4px 4px 4px 18px !important;
@@ -73,7 +107,8 @@
     background-color: #fff
 }
 
-.tablesorter-default .tablesorter-filter-row input.tablesorter-filter,.tablesorter-default .tablesorter-filter-row select.tablesorter-filter {
+.tablesorter-default .tablesorter-filter-row input.tablesorter-filter,
+.tablesorter-default .tablesorter-filter-row select.tablesorter-filter {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;

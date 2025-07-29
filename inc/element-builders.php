@@ -964,7 +964,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle'><strong class='label show-on-mobile'>Status: </strong>$status</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Rate (bbp): </strong>$rate</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
-						<td class='align-middle text-center'>
+						<td class='align-middle text-center dashboard-action-td'>
 							<a class='watersharing-match-action toggle-row$toggle_disabled'>
 								<i class='fa fa-chevron-right'></i>
 							</a>

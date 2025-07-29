@@ -186,8 +186,8 @@
 
 /* Watersharing Match Request Table Styles */
 table.watersharing-table, table.watertrading-table{
-	border-collapse: separate;
-	border-spacing: 0 .125em;
+	// border-collapse: separate;
+	// border-spacing: 0 .125em;
 	margin-bottom: 1rem;
 	vertical-align: top;
 	width: 100%;
@@ -249,7 +249,6 @@ table.watersharing-table, table.watertrading-table{
 
 	tr.watersharing-request-row {
 		background: #FFF;
-		box-shadow: $drop-shadow;
 		position: relative;
 
 		@media (max-width: 767px) {
