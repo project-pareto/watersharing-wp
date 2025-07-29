@@ -72,11 +72,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 		// cfdump($type, 'TYPE');
 		switch ($type) {
 			case 'text':
-				$input = "<input type='text' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
+				$input = "<input type='text' class='form-control $class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
 				break;
 
 			case 'number':
-				$input = "<input type='number' class='form-control$class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly $parameters>";
+				$input = "<input type='number' class='form-control $class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly $parameters>";
 				break;
 			
 			case 'date':
