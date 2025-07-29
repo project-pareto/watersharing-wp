@@ -213,7 +213,7 @@ table.watersharing-table, table.watertrading-table{
 
 		th {
 			line-height: 2;
-			padding: 4px 18px 4px 4px;
+			padding: 4px 4px 4px 18px;
 			text-align: left;
 		}
 	}
@@ -363,6 +363,15 @@ table.watersharing-table, table.watertrading-table{
 	    box-shadow: none;
 	    color: #4e79a7;
 	    padding: 0;
+		&.toggle-row{
+			display: inline-block;
+			min-width: 20px;
+			min-height: 20px;
+			border-radius: 10px;
+			background-color: var(--button-bg-color, #00678F);
+			color: #fff;
+			aspect-ratio: 1 / 1;
+		}
 
 		&.approval {
 		    color: #000;

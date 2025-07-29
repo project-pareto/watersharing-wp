@@ -11,16 +11,16 @@
 }
 
 .tablesorter-default .tablesorter-header-inner {
-    padding: 4px 18px 4px 4px;
+    padding: 0 0 0 18px;
     position: relative
 }
 
 .tablesorter-default thead .tablesorter-header {
-    background-position: 100%;
+    background-position: left !important;
     background-repeat: no-repeat;
     cursor: pointer;
-    padding: 4px 18px 4px 4px;
-    white-space: normal
+    padding: 4px 4px 4px 18px !important;
+    white-space: normal;
 }
 
 .tablesorter-default thead .nosort {
