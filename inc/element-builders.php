@@ -883,7 +883,7 @@ function buildRequestTable( $type = '' ) {
 									<span><a href='mailto:$email'>$email</a></span>
 								</div>
 							";
-						$summation = "MATCHED";
+						$summation = "<span class='status-message-matched'>Operator Matched!</span>";
 					} else {
 						// $summation = "PENDING";
 						$contact = "";

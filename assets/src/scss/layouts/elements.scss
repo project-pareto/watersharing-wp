@@ -170,7 +170,7 @@
 // hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection)
 .hide-on-mobile {
 	@media (max-width: 767px) {
-		display: none;
+		display: none !important;
 	}
 }
 
@@ -225,6 +225,11 @@ table.watersharing-table, table.watertrading-table{
 
 		&.collapse {
 			display: none;
+		}
+		&.show + .watersharing-request-row{
+			@media (max-width: 767px) {
+				margin-top: 3em;
+			}
 		}
 
 		&:not(collapse) > td > div {
@@ -336,33 +341,36 @@ table.watersharing-table, table.watertrading-table{
 		border: 1px solid $light-blue;
 		padding: 10px;
 	}
-
 	.watersharing-match-action {
-	    background: none;
+		background: none;
 	    box-shadow: none;
 	    color: #4e79a7;
-		&.toggle-row{
-			display: inline-block;
-			min-width: 20px;
-			min-height: 20px;
-			border-radius: 10px;
-			background-color: var(--button-bg-color, #00678F);
-			color: #fff;
-			aspect-ratio: 1 / 1;
-		}
+		&.approval{
+			padding: 0.4em 0.5em;
+			display: flex;
+			flex-direction: row;
+			gap: 1ch;
+			align-items: center;
+			justify-content: center;
+			border-radius: 5px;
+			color: #000;
+			cursor: pointer;
+			font-size: 16px;
+			font-weight: 700;
+			text-decoration: none;
 
-		&.approval {
-		    color: #000;
-		    cursor: pointer;
-		    font-size: 16px;
-		    font-weight: 700;
-		    text-decoration: none;
+			&.approve-action{
+				border: 1px solid #C1FFD2;
+			}
+			&.decline-action{
+				border: 1px solid #FFD9D6;
+			}
 
-			&.decline-action.checked i, &.decline-action:hover i {
+			&.decline-action i {
 				color: $red;
 			}
 
-			&.approve-action.checked i, &.approve-action:hover i {
+			&.approve-action i {
 				color: $green;
 			}
 
@@ -375,8 +383,16 @@ table.watersharing-table, table.watertrading-table{
 				font-size: 20px;
 			}
 		}
+		&.toggle-row{
+			display: inline-block;
+			min-width: 20px;
+			min-height: 20px;
+			border-radius: 10px;
+			background-color: var(--button-bg-color, #00678F);
+			color: #fff;
+			aspect-ratio: 1 / 1;
+		}
 	}
-
 }
 
 .watersharing-match-block{
@@ -411,23 +427,24 @@ table.watersharing-table, table.watertrading-table{
 		order: 2;
 		padding: 0
 	}
-	.watersharing-match-action {
-		display: inline-block;
-		border: 1px solid $light-blue;
-		border-radius: 10px;
-		padding: 0.4em 0.5em;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
+	.status-message-matched{
+		color: var(--color-success, #219653);
+
 	}
+
 	@media (min-width: $md-screen) {
 		flex-direction: row;
 		.match-summation{
 			order: unset;
+			flex-basis: 27.5%;
+			display: grid;
+			place-items: center;
 		}
 		.match-detail{
 			order: unset;
+			flex-basis: 72.5%;
 		}
+
 	}
 }
 

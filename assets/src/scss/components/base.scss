@@ -68,7 +68,9 @@
 
 	&:disabled, 
 	.disabled {
-		color: var(--input-color-disabled, #9b9b9b);
+		color: #fff;
+		background-color: var(--input-color-disabled, #BDBDBD);
+		border: 1px solid #fff;
 		cursor: not-allowed !important;
 		opacity: 0.65;
 		pointer-events: none;
