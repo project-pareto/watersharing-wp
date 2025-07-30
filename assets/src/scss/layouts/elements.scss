@@ -167,12 +167,10 @@
 	}
 }
 
-// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection) so this was having no effect. I was going to ask about this but then realized that the row checkboxes are not presented on mobile so there's good reason to hide the Manage Selection interface on mobile. To make this work I moved this outside the tables
+// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection)
 .hide-on-mobile {
-	display: none;
-
-	@media (min-width: 768px) {
-		display: block;
+	@media (max-width: 767px) {
+		display: none;
 	}
 }
 
@@ -186,8 +184,6 @@
 
 /* Watersharing Match Request Table Styles */
 table.watersharing-table, table.watertrading-table{
-	// border-collapse: separate;
-	// border-spacing: 0 .125em;
 	margin-bottom: 1rem;
 	vertical-align: top;
 	width: 100%;
@@ -249,19 +245,10 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	tr.watersharing-request-row {
-		// background: #FFF;
 		position: relative;
 
 		@media (max-width: 767px) {
 			margin-bottom: 10px;
-		}
-
-		&.closed {
-			// background: #EAEAEA;
-		}
-
-		&.row-expanded {
-			// background: #D8E2F3;
 		}
 
 		& > td {
@@ -369,7 +356,6 @@ table.watersharing-table, table.watertrading-table{
 		    cursor: pointer;
 		    font-size: 16px;
 		    font-weight: 700;
-		    // margin-right: 20px;
 		    text-decoration: none;
 
 			&.decline-action.checked i, &.decline-action:hover i {
@@ -457,8 +443,7 @@ table.watersharing-table, table.watertrading-table{
 	position: relative;
 	width:100%;
 	margin-right:10px;
-	border:3px solid;
-	// border-width: 1px;
+	border: 3px solid;
 	border-radius:8px;
 	border-color: $blue;
 	padding-top:5px;
