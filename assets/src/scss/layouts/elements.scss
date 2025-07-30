@@ -291,6 +291,10 @@ table.watersharing-table, table.watertrading-table{
 				}
 			}
 		}
+
+		&:has(.status-closed){
+			background-color: $alt-gray;
+		}
 	}
 
 	span.status-matched {
@@ -391,6 +395,11 @@ table.watersharing-table, table.watertrading-table{
 			background-color: var(--button-bg-color, #00678F);
 			color: #fff;
 			aspect-ratio: 1 / 1;
+			&.disabled{
+				@media (max-width: 767px) {
+					display: none;
+				}
+			}
 		}
 	}
 }
