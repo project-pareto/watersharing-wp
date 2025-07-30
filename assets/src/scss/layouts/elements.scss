@@ -409,6 +409,12 @@ table.watersharing-table, table.watertrading-table{
 		&.match-buttons{
 			border-bottom: none;
 		}
+
+		&.match-contact{
+			@media (min-width: $md-screen) {
+				border-bottom: none;
+			}
+		}
 		
 		&.match-approval{
 			padding-block: 0;
@@ -429,7 +435,7 @@ table.watersharing-table, table.watertrading-table{
 	}
 	.status-message-matched{
 		color: var(--color-success, #219653);
-
+		font-weight: 700;
 	}
 
 	@media (min-width: $md-screen) {
