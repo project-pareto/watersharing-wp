@@ -204,6 +204,7 @@ table.watersharing-table, table.watertrading-table{
 		tr.watersharing-request-row {
 			> td {
 				border-bottom: 1px solid $light-blue;
+				border-right: 1px solid $light-blue;
 			}
 		}
 	}
@@ -311,14 +312,17 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	span.matches {
-		&.matched i {
-		    color: #70ad47
-		}
-
+		font-size: 16px;
 		i {
+			font-size: 15px;
 			color: #a32828;
 			margin-right: 10px
 		}
+
+		&.matched i {
+		    color: #219653
+		}
+
 	}
 
 	.watersharing-request-detail {
@@ -400,6 +404,9 @@ table.watersharing-table, table.watertrading-table{
 		padding: 0.5em;
 		border-bottom: 1px solid var(--table-border-color, #D9D9D9);
 		border-right: 1px solid var(--table-border-color, #D9D9D9);
+		&.match-buttons{
+			border-bottom: none;
+		}
 		
 		&.match-approval{
 			padding-block: 0;
@@ -408,7 +415,7 @@ table.watersharing-table, table.watertrading-table{
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
-			border-bottom: none;
+			border: none;
 		}
 	}
 	.match-summation{

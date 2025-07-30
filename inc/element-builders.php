@@ -901,8 +901,7 @@ function buildRequestTable( $type = '' ) {
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
 					:$field3 = "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' 
-					data-trade-csv='" . esc_attr($trade_csv) . "' 
-					style='margin-top: 8px;'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>";
+					data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='match-cell match-avoid-field watersharing-col-half'>
