@@ -871,14 +871,15 @@ function buildRequestTable( $type = '' ) {
 					if ($lookup_status === 'approved') {
 
 						$name = get_userdata( get_post_field( 'post_author', $match_record ) )->first_name . ' ' . get_userdata( get_post_field( 'post_author', $match_record ) )->last_name;
-						$phone = get_user_meta( get_post_field( 'post_author', $match_record ), 'phone_number', true );
+						$raw_phone = get_user_meta( get_post_field( 'post_author', $match_record ), 'phone_number', true );
+						$sanitized_phone = preg_replace('/[^0-9+]/', '', $raw_phone);
 						$email = get_userdata( get_post_field( 'post_author', $match_record ) )->user_email;
-
+						
 						$contact = "
 								<div class='match-cell match-contact'>
 									<strong class='heading'>Contact Information:</strong>
 									<span>$name</span>
-									<span><a href='tel:$phone'>$phone</a></span>
+									<span><a href='tel:$sanitized_phone'>$raw_phone</a></span>
 									<span><a href='mailto:$email'>$email</a></span>
 								</div>
 							";
