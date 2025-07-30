@@ -850,23 +850,20 @@ function buildRequestTable( $type = '' ) {
 					$match_range = "$match_start - $match_end";
 
 					$approve_actions = "
-							<a class='watersharing-match-action approval approve-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='approve' data-table='$type-RequestTable'><i class='fa-solid fa-thumbs-up'></i> Approve</a>
-							<a class='watersharing-match-action approval decline-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='decline' data-table='$type-RequestTable'><i class='fa-solid fa-thumbs-down'></i> Decline</a>
+						<div class='match-cell match-approval'>
+							<a class='watersharing-match-action approval approve-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='approve' data-table='$type-RequestTable'>Approve <i class='fa-solid fa-thumbs-up'></i></a>
+							<a class='watersharing-match-action approval decline-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='decline' data-table='$type-RequestTable'>Decline <i class='fa-solid fa-thumbs-down'></i></a>
+						</div>
 						";
+					$summation = $approve_actions;
 
 					if ($user_action) {
 						if ($user_action === 'approve') {
-							$approve_actions = "
-									<a class='watersharing-match-action approval approve-action checked'><i class='fa-solid fa-thumbs-up'></i> Approve</a>
-									<a class='watersharing-match-action approval decline-action disabled'><i class='fa-solid fa-thumbs-down'></i> Decline</a>
-								";
+							$approve_actions = '<!-- User Has Approved -->';
 						}
 
 						if ($user_action === 'decline') {
-							$approve_actions = "
-									<a class='watersharing-match-action approval approve-action disabled'><i class='fa-solid fa-thumbs-up'></i> Approve</a>
-									<a class='watersharing-match-action approval decline-action checked'><i class='fa-solid fa-thumbs-down'></i> Decline</a>
-								";
+							$approve_actions = '<!-- User Has Declined -->';
 						}
 					}
 
@@ -878,21 +875,17 @@ function buildRequestTable( $type = '' ) {
 						$email = get_userdata( get_post_field( 'post_author', $match_record ) )->user_email;
 
 						$contact = "
-								<div class='watersharing-col-third watersharing-contact'>
-									<span class='heading'>Contact Information</span>
-									<span>$name</<span>
+								<div class='match-cell match-contact'>
+									<strong class='heading'>Contact Information:</strong>
+									<span>$name</span>
 									<span><a href='tel:$phone'>$phone</a></span>
 									<span><a href='mailto:$email'>$email</a></span>
 								</div>
 							";
+						$summation = "MATCHED";
 					} else {
-						$contact = "
-								<div class='watersharing-col-third watersharing-no-contact'>
-									<div class='no-contact'>
-										<span>Approval Pending</span>
-									</div>
-								</div>
-							";
+						// $summation = "PENDING";
+						$contact = "";
 					}
 
 					//Added logic for trading
@@ -901,18 +894,18 @@ function buildRequestTable( $type = '' ) {
 					if($total_value){$total_value = number_format($total_value);}
 					if($total_volume){$total_volume = number_format($total_volume);}
 
-					(strpos($type,'share') !== false) ? $field1 = "<strong>Dates:</strong> $match_range": $field1 = "<strong>Total Value:</strong> $total_value USD";
-					(strpos($type,'share') !== false) ? $field2 = "<strong>Rate (bpd):</strong> $fullfilled": $field2 = "<strong>Total Volume:</strong> $total_volume bbl";
+					(strpos($type,'share') !== false) ? $field1 = '' : $field1 = "<div class='match-cell match-field-1 watersharing-col-half'><strong>Total Value:</strong> $total_value USD</div>"; // Do not show dates in the details (its on the row headers)
+					(strpos($type,'share') !== false) ? $field2 = "<div class='match-cell match-field-2 match-rate match-fullfilled-rate watersharing-col-half'><strong>Rate (bpd):</strong> $fullfilled</div>" : $field2 = "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
 					(strpos($type,'share') !== false) ? $field3 = "
-					<div class='watersharing-col-half watersharing-match-col'>
+					<div class='match-cell match-lookup-distance watersharing-col-half'>
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
-					:$field3 = "<button class='watersharing-submit-button download-summary-btn' 
+					:$field3 = "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' 
 					data-trade-csv='" . esc_attr($trade_csv) . "' 
-					style='margin-top: 8px;'>Download Detailed Summary</button>";
+					style='margin-top: 8px;'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
-					"<div class='watersharing-col-half watersharing-match-col'>
+					"<div class='match-cell match-avoid-field watersharing-col-half'>
 						<strong>$avoid_label:</strong> $avoided
 					</div>"
 					: $avoid_field = "";
@@ -920,30 +913,22 @@ function buildRequestTable( $type = '' ) {
 
 					$match_rows .= "
 							<div>
-								<div class='watersharing-row watersharing-match-block'>
-									<div class='watersharing-match-detail' style = 'padding-right: 10px;'>
+								<div class='watersharing-match-block'>
+									<div class='match-detail'>
 										<div class='watersharing-row'>
-											<div class='watersharing-col watersharing-match-col'>
-												<div class='watersharing-row'>
-													<div class='watersharing-col-half'>
-														<strong>Matched Operator:</strong> $match_op
-													</div>
-													<div class='watersharing-col-half'>
-														$approve_actions
-													</div>
-												</div>
+											<div class='match-cell match-operator watersharing-col-half'>
+												<strong>Matched Operator:</strong> $match_op
 											</div>
-											<div class='watersharing-col-half watersharing-match-col'>
-												$field1
-											</div>
-											<div class='watersharing-col-half watersharing-match-col'>
-												$field2
-											</div>
+											$field1
+											$field2
 											$field3
 											$avoid_field
+											$contact
 										</div>
 									</div>
-									$contact
+									<div class='match-summation'>
+										$summation
+									</div>
 								</div>
 							</div>
 						";
@@ -958,7 +943,7 @@ function buildRequestTable( $type = '' ) {
 			( isset( get_post_meta( $post, 'status', true )['value'] ) && get_post_meta( $post, 'status', true ) === 'closed' ) ? $row_class = " closed" : $row_class = "";
 			$rows .= "
 					<tr class='watersharing-request-row$row_class' data-row-number='row-$number'>
-						<td class='align-middle hide-on-mobile'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
+						<td class='align-middle hide-on-mobile check-cell'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Status: </strong>$status</td>
@@ -978,7 +963,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Rate (bbp): </strong>$rate</td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
 						<td class='align-middle d-none'></td>
-						<td colspan='7'>
+						<td class='dashboard-row-inner-dt' colspan='7'>
 							$match_rows
 						</td>
 					</tr>

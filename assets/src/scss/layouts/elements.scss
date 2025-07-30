@@ -231,7 +231,7 @@ table.watersharing-table, table.watertrading-table{
 		}
 
 		&:not(collapse) > td > div {
-			max-height: 250px;
+			max-height: 350px;
 		}
 
 		&.collapsing > td > div {
@@ -248,7 +248,7 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	tr.watersharing-request-row {
-		background: #FFF;
+		// background: #FFF;
 		position: relative;
 
 		@media (max-width: 767px) {
@@ -256,15 +256,18 @@ table.watersharing-table, table.watertrading-table{
 		}
 
 		&.closed {
-			background: #EAEAEA;
+			// background: #EAEAEA;
 		}
 
 		&.row-expanded {
-			background: #D8E2F3;
+			// background: #D8E2F3;
 		}
 
 		& > td {
 			padding: .5rem .5rem;
+			@media (min-width: $md-screen){
+				padding: .2rem .5rem;
+			}
 
 			&.align-middle {
 				vertical-align: middle;
@@ -272,8 +275,8 @@ table.watersharing-table, table.watertrading-table{
 
 			input[type=checkbox] {
 			    height: 20px;
-			    margin-top: 6px;
 			    width: 20px;
+				margin-block: 3px;
 
 				&:hover {
 					cursor: pointer;
@@ -319,20 +322,6 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	.watersharing-request-detail {
-		background: $light-blue;
-
-		.watersharing-match-block {
-			font-size: 14px;
-			padding: .5rem 1rem;
-
-			.watersharing-match-detail {
-				@media (min-width: 992px) {
-					flex: 0 0 auto;
-					width: 66.6666667%;
-				}
-			}
-		}
-
 		.watersharing-contact {
 			span {
 				display: block;
@@ -361,7 +350,6 @@ table.watersharing-table, table.watertrading-table{
 	    background: none;
 	    box-shadow: none;
 	    color: #4e79a7;
-	    padding: 0;
 		&.toggle-row{
 			display: inline-block;
 			min-width: 20px;
@@ -377,7 +365,7 @@ table.watersharing-table, table.watertrading-table{
 		    cursor: pointer;
 		    font-size: 16px;
 		    font-weight: 700;
-		    margin-right: 20px;
+		    // margin-right: 20px;
 		    text-decoration: none;
 
 			&.decline-action.checked i, &.decline-action:hover i {
@@ -394,9 +382,58 @@ table.watersharing-table, table.watertrading-table{
 
 			i {
 				color: $light-blue;
-				font-size: 24px;
-				margin-right: 10px
+				font-size: 20px;
 			}
+		}
+	}
+
+}
+
+.watersharing-match-block{
+	display: flex;
+	flex-direction: column;
+	.match-detail,
+	.match-summation{
+		padding: 1em;
+	}
+	.match-cell{
+		padding: 0.5em;
+		border-bottom: 1px solid var(--table-border-color, #D9D9D9);
+		border-right: 1px solid var(--table-border-color, #D9D9D9);
+		
+		&.match-approval{
+			padding-block: 0;
+			display: flex;
+			gap: 1rem;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			border-bottom: none;
+		}
+	}
+	.match-summation{
+		order: 1;
+	}
+	.match-detail{
+		order: 2;
+		padding: 0
+	}
+	.watersharing-match-action {
+		display: inline-block;
+		border: 1px solid $light-blue;
+		border-radius: 10px;
+		padding: 0.4em 0.5em;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+	}
+	@media (min-width: $md-screen) {
+		flex-direction: row;
+		.match-summation{
+			order: unset;
+		}
+		.match-detail{
+			order: unset;
 		}
 	}
 }
@@ -425,3 +462,6 @@ table.watersharing-table, table.watertrading-table{
 	display: none !important;
 }
 
+button [class^='fa-'] {
+	color: inherit;
+}

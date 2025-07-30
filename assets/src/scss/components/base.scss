@@ -35,6 +35,9 @@
 			opacity: 0.65;
 			pointer-events: none;
 		}
+		[class^='fa-'] {
+			color: inherit;
+		}
 	}
 	
 	

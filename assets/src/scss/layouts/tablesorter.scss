@@ -3,17 +3,30 @@
     border-spacing: 0;
     border-collapse: collapse;
     tbody{
+        td:not(.dashboard-action-td){
+            @media (min-width: $md-screen){
+                line-height: 1;
+            }
+        }
         box-shadow: none;
         overflow: hidden;        
         th,
         td{
-            text-align: unset !important;
+            // text-align: unset !important;
+            text-align: left;
             border-top: 1px solid var(--table-border-color, #D9D9D9);
             border-left: 1px solid var(--table-border-color, #D9D9D9);
             overflow: hidden;
     
             &:last-child{
                 border-right: 1px solid var(--table-border-color, #D9D9D9);
+            }
+            &.check-cell{
+                margin-block: 0;
+            }
+            &.check-cell + td{
+                border-left: none;
+                padding-left: 0;
             }
         }
         tr:first-child{
@@ -30,7 +43,13 @@
                 &:first-child{
                     border-bottom-left-radius: var(--border-corner-radius, 10px);
                 }
+                &:last-child{
+                    border-bottom-right-radius: var(--border-corner-radius, 10px);
+                }
             }
+        }
+        .align-middle span{
+            text-transform: capitalize;
         }
     }
 }
