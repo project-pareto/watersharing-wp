@@ -734,6 +734,24 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 
 // function to build out a table of requests for a user
 function buildRequestTable( $type = '' ) {
+	$watersharing_enabled = get_option('watersharing_toggle', 0);
+	$watertrading_enabled = get_option('watertrading_toggle', 0);
+	
+	// Redirect IDs on creation
+	$watersharing_prod_redirect_id = get_option('production_dashboard_page', '');
+	$watersharing_cons_redirect_id = get_option('consumption_dashboard_page', '');
+	$watertrading_prod_redirect_id = get_option('wt_production_dashboard_page', '');
+	$watertrading_cons_redirect_id = get_option('wt_consumption_dashboard_page', '');
+
+	// Send-To feature requires both toggles to be enabled
+	$watersharing_enabled = empty($watersharing_enabled) ? 0 : $watersharing_enabled;
+	$watertrading_enabled = empty($watertrading_enabled) ? 0 : $watertrading_enabled;
+	$send_to_enabled = $watersharing_enabled && $watertrading_enabled;
+
+	// cfdump($watersharing_enabled, 'watersharing_enabled');
+	// cfdump($watertrading_enabled, 'watertrading_enabled');
+	// cfdump($send_to_enabled, 'send_to_enabled');
+
 	$rows = "";
 
 	// query for the requsts
@@ -773,7 +791,7 @@ function buildRequestTable( $type = '' ) {
 			// check for matches
 			$match_rows = "";
 			$match_prompt = "<span class='matches no-match'><i class='fa-solid fa-bullseye'></i>Not Found</span>";
-			$toggle_disabled = " disabled";
+			$toggle_disabled = $send_to_enabled ? " copy-to-only" : " disabled";
 
 			$lookups = lookupMatches( $post, $type );
 			if( $lookups ) {
@@ -902,7 +920,7 @@ function buildRequestTable( $type = '' ) {
 						<strong>Distance (miles):</strong> $lookup_distance
 					</div>"
 					:$field3 = "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' 
-					data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>";
+					data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button class='watersharing-submit-button send-to-btn'>Send to Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>";
 					
 					(strpos($type,'share') !== false) ? $avoid_field = 
 					"<div class='match-cell match-avoid-field watersharing-col-half'>
@@ -936,6 +954,8 @@ function buildRequestTable( $type = '' ) {
 					$match_prompt = "<span class='matches matched'><i class='fa-solid fa-bullseye'></i><strong>$count</strong> Matches Found</span>";
 					$toggle_disabled = "";
 				}
+			} else {
+				$match_rows = "<div class='watersharing-match-block'><div class='match-detail'><div class='match-cell match-send-to watersharing-col-half'><button class='watersharing-submit-button send-to-btn'>Send to Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>";
 			}
 			
 			$rate = number_format($rate);
@@ -950,7 +970,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle'><strong class='label show-on-mobile'>Rate (bbp): </strong>$rate</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
 						<td class='align-middle text-center dashboard-action-td'>
-							<a class='watersharing-match-action toggle-row$toggle_disabled'>
+							<a class='watersharing-match-action toggle-row$toggle_disabled' data-toggle-disabled='$toggle_disabled'>
 								<i class='fa fa-chevron-right'></i>
 							</a>
 						</td>
@@ -964,7 +984,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
 						<td class='align-middle d-none'></td>
 						<td class='dashboard-row-inner-dt' colspan='7'>
-							$match_rows
+							$match_rows 
 						</td>
 					</tr>
 				";
