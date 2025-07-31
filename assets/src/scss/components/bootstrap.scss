@@ -104,27 +104,10 @@
 	.accordion-item {
 		color: var(--bs-accordion-color);
 		background-color: var(--bs-accordion-bg);
-		// border: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);
 		border:none;
-	}
-	.accordion-item:first-of-type {
-		// border-top-left-radius: var(--bs-accordion-border-radius);
-		// border-top-right-radius: var(--bs-accordion-border-radius);
-	}
-	.accordion-item:first-of-type > .accordion-header .accordion-button {
-		// border-top-left-radius: var(--bs-accordion-inner-border-radius);
-		// border-top-right-radius: var(--bs-accordion-inner-border-radius);
 	}
 	.accordion-item:not(:first-of-type) {
 		border-top: 0;
-	}
-	.accordion-item:last-of-type {
-		// border-bottom-right-radius: var(--bs-accordion-border-radius);
-		// border-bottom-left-radius: var(--bs-accordion-border-radius);
-	}
-	.accordion-item:last-of-type > .accordion-header .accordion-button.collapsed {
-		// border-bottom-right-radius: var(--bs-accordion-inner-border-radius);
-		// border-bottom-left-radius: var(--bs-accordion-inner-border-radius);
 	}
 	.accordion-collapse{
 		border-bottom: var(--bs-accordion-border-width) solid var(--bs-accordion-border-color);

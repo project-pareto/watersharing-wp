@@ -98,7 +98,7 @@
 		if ($emptyRequired.length > 0) {
 			alert('Please fill in all required fields in the Primary Information section.');
 		}
-		return; // intentionally allowing form to attempt to submit to trigger the browser's validation ui (form wont actually submit)
+		return; // intentionally allowing form submit to trigger the browser's client-side validation ui (form wont actually submit with empty required)
 	});
 
 	// toggle match details display
@@ -239,7 +239,6 @@
 	$(document).ready(function () {
 		// Function to show the collapse
 		function showCollapse($element, $button) {
-			// console.log('Showing collapse for:', $element, $button);
 			if (!$element.hasClass('collapsing') && (!$element.hasClass('show') && !$element.hasClass('show-initial'))) {
 				$element
 					.removeClass('collapse')
