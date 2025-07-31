@@ -31,7 +31,6 @@
 		updateSubmitButton( type );
 	})
 
-
 	// alert user of changing request status
 	$(document).on('click', '.post-status-submit', function(event) {
 
@@ -87,6 +86,19 @@
 				latitudeInput.val('');
 			}
 		}
+	});
+
+	$(document).on('click', '.create-post-submit-button', function(event) {
+		const $form = $(this).closest('form');
+		const $requiredFields = $form.find('[required]');
+		const $emptyRequired = $requiredFields.filter(function() {
+			return $(this).val().trim() === '';
+		});
+		
+		if ($emptyRequired.length > 0) {
+			alert('Please fill in all required fields in the Primary Information section.');
+		}
+		return; // intentionally allowing form to attempt to submit to trigger the browser's validation ui (form wont actually submit)
 	});
 
 	// toggle match details display

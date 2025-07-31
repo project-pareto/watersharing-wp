@@ -401,7 +401,7 @@ function buildRequestForm($type = "", $title = "") {
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>
 			<div class='watersharing-input-col submit-column'>
-				<button type='submit' class='watersharing-submit-button'>Submit</button>
+				<button type='submit' class='watersharing-submit-button create-post-submit-button'>Submit</button>
 			</div>
 		</div>
 	</form>
