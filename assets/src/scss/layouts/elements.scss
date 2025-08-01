@@ -415,14 +415,9 @@ table.watersharing-table, table.watertrading-table{
 		padding: 0.5em;
 		border-bottom: 1px solid var(--table-border-color, #D9D9D9);
 		border-right: 1px solid var(--table-border-color, #D9D9D9);
+		&.match-send-to,
 		&.match-buttons{
 			border-bottom: none;
-		}
-
-		&.match-contact{
-			@media (min-width: $md-screen) {
-				border-bottom: none;
-			}
 		}
 		
 		&.match-approval{
