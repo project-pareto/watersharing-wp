@@ -234,9 +234,60 @@
 
 	$(document).ready( function() {
 		sortTables();
-	})
+	});
+
+	function runMoveMes() {
+		console.log('Running moveMes function');
+		const $appendTos = jQuery('[data-append-to]');
+		$appendTos.each(function() {
+			const $ele = jQuery(this);
+			const targetSelector = $ele.data('append-to');
+			const $target = jQuery(targetSelector);
+
+			if ($target.length) {
+				$ele.appendTo($target);
+				$ele.removeAttr('data-append-to');
+				$ele.addClass('js-moved');
+			} else {
+				console.warn(`Target element ${targetSelector} not found for`, $ele);
+			}
+		});
+	}
+
+	function runDomMutators() {
+		console.log('Running runDomMutators function');
+		runMoveMes();
+	}
+
+	function setupSendToDialogs() {
+		console.log('Setting up Send-to dialogs');
+		const sendToDialog = document.querySelector(".send-to-dialog");
+		const sendToButtons = document.querySelectorAll(".send-to-btn");
+
+		if( sendToDialog && sendToButtons.length) {
+			sendToButtons.forEach(function(sendToButton) {
+				const sPid = sendToButton.getAttribute('data-pid');
+				console.log('sendToButton',sendToButton);
+				console.log('sPid',sPid);
+				sendToButton.addEventListener('click', function() {
+					console.log('Opening dialog for PID:', sPid);
+					sendToDialog.showModal();
+				});
+			});
+			sendToDialog.querySelector(".dialog-closer").onclick = function () {
+				console.log('Closing dialog');
+				sendToDialog.close();
+			};
+		}
+
+	}
 
 	$(document).ready(function () {
+		console.log('READY');
+		runDomMutators();
+
+		setupSendToDialogs();
+
 		// Function to show the collapse
 		function showCollapse($element, $button) {
 			if (!$element.hasClass('collapsing') && (!$element.hasClass('show') && !$element.hasClass('show-initial'))) {

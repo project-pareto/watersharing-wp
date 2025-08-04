@@ -916,8 +916,8 @@ function buildRequestTable( $type = '' ) {
 					$field_share_distance = (strpos($type,'share') !== false) ? "<div class='match-cell match-lookup-distance watersharing-col-half'><strong>Distance (miles):</strong> $lookup_distance</div>" : "";
 					
 					if($send_to_enabled){
-						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
-						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
 					} else{
 						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>" : "";
 						$field_share_buttons_matched =  '';
@@ -954,7 +954,7 @@ function buildRequestTable( $type = '' ) {
 			} else {
 				// No Matches
 				$send_to_target = ($type === 'share_supply' || $type === 'share_demand') ? 'Trading' : 'Sharing';
-				$unmatched_send_to = $send_to_enabled ? "<button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
+				$unmatched_send_to = $send_to_enabled ? "<button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
 				$match_rows = $send_to_enabled ? "<div class='watersharing-match-block unmatched'><div class='match-detail'><div class='match-cell match-send-to unmatched-send-to watersharing-col-half'>$unmatched_send_to</div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>" : '';
 			}
 			
@@ -1032,6 +1032,19 @@ function buildRequestTable( $type = '' ) {
 				</div>
 			</div>
 		</form>
+		<dialog id='send-to-dialog' class='dialog send-to-dialog' data-append-to='body'x>
+			<header>
+				<h4>Send Info to X Portal</h4>
+				<button type='button' aria-label='Close dialog' id='js-close-button' class='dialog-closer'>
+					<svg viewBox='0 0 352 512' width='100' title='times'>
+						<path d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z' />
+					</svg>
+				</button>
+			</header>
+			<form id='send-to-form' method='post' action='" . admin_url('admin-post.php') . "'>
+				form here
+			</form>
+		</dialog>
 	";
 
 	return $table;
