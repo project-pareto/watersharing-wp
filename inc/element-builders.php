@@ -916,8 +916,8 @@ function buildRequestTable( $type = '' ) {
 					$field_share_distance = (strpos($type,'share') !== false) ? "<div class='match-cell match-lookup-distance watersharing-col-half'><strong>Distance (miles):</strong> $lookup_distance</div>" : "";
 					
 					if($send_to_enabled){
-						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button class='watersharing-submit-button send-to-btn'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
-						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button send-to-btn'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
 					} else{
 						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>" : "";
 						$field_share_buttons_matched =  '';
@@ -954,7 +954,7 @@ function buildRequestTable( $type = '' ) {
 			} else {
 				// No Matches
 				$send_to_target = ($type === 'share_supply' || $type === 'share_demand') ? 'Trading' : 'Sharing';
-				$unmatched_send_to = $send_to_enabled ? "<button class='watersharing-submit-button send-to-btn'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
+				$unmatched_send_to = $send_to_enabled ? "<button class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
 				$match_rows = $send_to_enabled ? "<div class='watersharing-match-block unmatched'><div class='match-detail'><div class='match-cell match-send-to unmatched-send-to watersharing-col-half'>$unmatched_send_to</div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>" : '';
 			}
 			
