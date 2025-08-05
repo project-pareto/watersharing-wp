@@ -931,6 +931,7 @@ function buildRequestTable( $type = '' ) {
 	if( !empty( $data ) ) {
 		$number = 1;
 		foreach( $data as $post ) {
+			// cfdump(getWaterRequestForSendTo($post));
 			( get_post_meta( $post, 'well_name', true ) ) ? $well = get_post_meta( $post, 'well_name', true ) : $well = "";
 			( get_post_meta( $post, 'status', true ) ) ? $status = "<span class='status-" . get_post_meta( $post, 'status', true ) . "'>" . get_post_meta( $post, 'status', true ) . "</span>" : $status = "";
 
@@ -1209,6 +1210,80 @@ function buildRequestTable( $type = '' ) {
 	";
 
 	return $table;
+}
+
+function getWaterRequestData($pid){
+	$post_info = [];
+	$post_info['pid'] = $pid;
+	$post_info['post_type'] = get_post_type($pid);
+	$post_info['rate_bpd'] = get_post_meta($pid, 'rate_bpd', true);
+	$post_info['post_author'] = get_post_field('post_author', $pid);
+	$post_info['author_name'] = get_the_author_meta('display_name', $post_info['post_author']);
+	$post_info['author_id'] = get_the_author_meta('ID', $post_info['post_author']);
+	$post_info['well_name'] = get_post_meta($pid, 'well_name', true);
+	$post_info['latitude'] = get_post_meta($pid, 'latitude', true);
+	$post_info['longitude'] = get_post_meta($pid, 'longitude', true);
+	$post_info['start_date'] = get_post_meta($pid, 'start_date', true);
+	$post_info['end_date'] = get_post_meta($pid, 'end_date', true);
+	$post_info['can_accept_trucks'] = get_post_meta($pid, 'can_accept_trucks', true);
+	$post_info['can_accept_layflats'] = get_post_meta($pid, 'can_accept_layflats', true);
+	$post_info['bid_type'] = get_post_meta($pid, 'bid_type', true);
+	$post_info['bid_amount'] = (float)get_post_meta($pid, 'bid_amount', true);
+	$post_info['bid_units'] = get_post_meta($pid, 'bid_units', true);
+	$post_info['truck_transport_radius'] = (float)get_post_meta($pid, 'truck_transport_radius', true);
+	$post_info['truck_transport_bid'] = (float)get_post_meta($pid, 'truck_transport_bid', true);
+	$post_info['truck_capacity'] = (float)get_post_meta($pid, 'truck_capacity', true);
+	$post_info['layflats_transport_radius'] = (float)get_post_meta($pid, 'layflats_transport_radius', true);
+	$post_info['layflats_transport_bid'] = (float)get_post_meta($pid, 'layflats_transport_bid', true);
+	$post_info['layflats_capacity'] = (float)get_post_meta($pid, 'layflats_capacity', true);
+	$post_info['tss_limit'] = get_post_meta($pid, 'tss_limit', true);
+	$post_info['tss_measure_value'] = (float)get_post_meta($pid, 'tss_measure_value', true);
+	$post_info['tds_limit'] = get_post_meta($pid, 'tds_limit', true);
+	$post_info['tds_measure_value'] = (float)get_post_meta($pid, 'tds_measure_value', true);
+	$post_info['chloride_limit'] = get_post_meta($pid, 'chloride_limit', true);
+	$post_info['chloride_measure_value'] = (float)get_post_meta($pid, 'chloride_measure_value', true);
+	$post_info['barium_limit'] = get_post_meta($pid, 'barium_limit', true);
+	$post_info['barium_measure_value'] = (float)get_post_meta($pid, 'barium_measure_value', true);
+	$post_info['calciumcarbonate_limit'] = get_post_meta($pid, 'calciumcarbonate_limit', true);
+	$post_info['calciumcarbonate_measure_value'] = (float)get_post_meta($pid, 'calciumcarbonate_measure_value', true);
+	$post_info['iron_limit'] = get_post_meta($pid, 'iron_limit', true);
+	$post_info['iron_measure_value'] = (float)get_post_meta($pid, 'iron_measure_value', true);
+	$post_info['boron_limit'] = get_post_meta($pid, 'boron_limit', true);
+	$post_info['boron_measure_value'] = (float)get_post_meta($pid, 'boron_measure_value', true);
+	$post_info['hydrogensulfide_limit'] = get_post_meta($pid, 'hydrogensulfide_limit', true);
+	$post_info['hydrogensulfide_measure_value'] = (float)get_post_meta($pid, 'hydrogensulfide_measure_value', true);
+	$post_info['norm_limit'] = get_post_meta($pid, 'norm_limit', true);
+	$post_info['norm_measure_value'] = (float)get_post_meta($pid, 'norm_measure_value', true);
+	return $post_info;
+
+
+
+}
+
+function getWaterRequestForSendTo($pid){
+	
+	$post_info = getWaterRequestData($pid);
+	$post_info['cloned_from'] = $pid;
+	$post_og_type = $post_info['post_type'];
+	if(strpos($post_og_type, 'trade_') === 0){
+		$post_info['post_type'] = str_replace('trade_', 'share_', $post_og_type);
+	} elseif(strpos($post_og_type, 'share_') === 0){
+		$post_info['post_type'] = str_replace('share_', 'trade_', $post_og_type);
+	} else {
+		$post_info['post_type'] = $post_og_type;
+	}
+	
+ 	if($post_info['post_type'] === 'share_supply' || $post_info['post_type'] === 'share_demand'){
+		$post_info['bid_amount'] = '';
+		$post_info['bid_type'] =  '';
+		$post_info['bid_units'] = '';
+	}
+
+	// cfdump($post_info, 'post_info');
+
+	// die();
+
+	return $post_info;
 }
 
 ?>
