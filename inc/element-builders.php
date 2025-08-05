@@ -461,6 +461,7 @@ function buildSendToRequestForm($type = "") {
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+	$share = ($type === 'share_supply' || $type === 'share_demand');
 
 
 	// Set up the fields for the form
@@ -495,14 +496,8 @@ function buildSendToRequestForm($type = "") {
 		$bid_totals_row = '';
 	}
 
-	// $primary_info_fields = [$well_pad, $well_name, $latlong, $site_compatibility, $dates, $rate, $bid_type,	$bid_info, $bid_totals_row];
-	
-
-	$share = ($type === 'share_supply' || $type === 'share_demand');
-
 
 	// Can Provide Transport (optional) Accordion
-	
 	$transport_col_class = $share ? 'two-col' : 'three-col';
 	//Trucks
 	if($trade){
