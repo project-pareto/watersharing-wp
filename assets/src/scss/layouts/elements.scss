@@ -2,7 +2,7 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
-		border-radius: var(--box-border-radius, 5px); // --box-border-radius is not defined in the plugin but added so that consuming themes can override it. If theme does not specify it falls back to 5px
+		border-radius: var(--box-border-radius, 5px);
 		box-shadow: $drop-shadow;
 		margin-bottom: 3rem;
 		overflow: auto;
@@ -167,7 +167,6 @@
 	}
 }
 
-// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection) so this was having no effect. I was going to ask about this but then realized that the row checkboxes are not presented on mobile so there's good reason to hide the Manage Selection interface on mobile. To make this work I moved this outside the tables
 .hide-on-mobile {
 	display: none;
 
@@ -406,7 +405,6 @@ table.watersharing-table, table.watertrading-table{
 	width:100%;
 	margin-right:10px;
 	border:3px solid;
-	// border-width: 1px;
 	border-radius:8px;
 	border-color: $blue;
 	padding-top:5px;
