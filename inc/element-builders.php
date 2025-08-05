@@ -187,13 +187,19 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			case 'accordion':
 				global $first_accordion;
 				$id_lower = strtolower(str_replace(' ', '-', $id));
-				if($first_accordion==false) {
+				$has_no_init_open = strpos( $class, 'no-init-open-accordion' ) !== false;
+				
+				if ( $first_accordion === false && !$has_no_init_open) {
 					$first_accordion = $id_lower;
 				}
-				$button_class = $first_accordion == $id_lower ? 'accordion-button' : 'accordion-button collapsed';
-				$state_class = $first_accordion == $id_lower ? 'show show-initial' : '';
+				
+				// If no-init-open-accordion is present, force all accordions to be closed
+				$should_be_open = !$has_no_init_open && ($first_accordion == $id_lower);
+				
+				$button_class = $should_be_open ? 'accordion-button' : 'accordion-button collapsed';
+				$state_class = $should_be_open ? 'show show-initial' : '';
 				// cfdump($state_class);
-				$aria_expanded = $first_accordion == $id_lower ? 'true' : 'false';
+				$aria_expanded = $should_be_open ? 'true' : 'false';
 
 				$a_accordion_intros = [
 					'Quality Disclosures' => 'Use this optional section to declare quality properties associated with your request; either quality associated with water you have or requirements for water you need. You may populate some or all of the fields provided. Doing so can help refine the matches you receive but is not required.',
@@ -214,11 +220,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
 										<label id='$id_lower-label' class='watersharing-form-label no-right-padding accordion'>
-										<button id='$id_lower-button' class='$button_class' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='$aria_expanded' aria-controls='collapse-$class'>
+										<button id='$id_lower-button' class='$button_class' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$id_lower' aria-expanded='$aria_expanded' aria-controls='collapse-$id_lower'>
 											<strong>$label</strong>
 										</button>
 										</label>
-										<div id='collapse-$class' class='accordion-collapse collapse $state_class' aria-labelledby='$id_lower-label'>
+										<div id='collapse-$id_lower' class='accordion-collapse collapse $state_class' aria-labelledby='$id_lower-label'>
 											$intro_text_markup
 											<div class='accordion-body'>
 												$input
@@ -521,7 +527,7 @@ function buildSendToRequestForm($type = "") {
 	}
 	
 	if($trade){
-		$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]);
+		$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery no-init-open-accordion', '', [$trucks,$layflats]);
 	} else {
 		$delivery = '';
 	}
