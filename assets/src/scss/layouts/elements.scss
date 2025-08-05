@@ -2,7 +2,7 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
-		border-radius: var(--box-border-radius, 5px); // --box-border-radius is not defined in the plugin but added so that consuming themes can override it. If theme does not specify it falls back to 5px
+		border-radius: var(--box-border-radius, 5px);
 		box-shadow: $drop-shadow;
 		margin-bottom: 3rem;
 		overflow: auto;
@@ -167,7 +167,7 @@
 .watersharing-blocks, .watertrading-blocks {
 }
 
-// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection)
+
 .hide-on-mobile {
 	@media (max-width: 767px) {
 		display: none !important;
