@@ -454,11 +454,11 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
+// function to build out Send-to-Portal X request forms
 function buildSendToRequestForm($type = "") {
 	$html = "";
 	// cfdump($type, 'Type');
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
-
 	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 
@@ -1204,7 +1204,8 @@ function buildRequestTable( $type = '' ) {
 				</button>
 				<h4 class='text-centered'>Send Info to <span class='send-to-type text-capitalize'>$sending_to_type</span> Portal</h4>
 				</header>
-				<div class='form-container'>
+				<div class='form-container'>". 
+					(strpos($send_to_type, 'shar') === 0 ? '<p class="sharing-preamble">You are about to duplicate this information to the sharing portal. Bid fields will be removed from the new entry.</p>' : '') . "
 					<p class='dialog-intro'>Before this request can be sent to the $sending_to_type portal there are just a couple additional fields you need to review:</p>
 					". buildSendToRequestForm($send_to_type, '') ."
 				</div>
