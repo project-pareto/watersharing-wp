@@ -2,7 +2,7 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
-		border-radius: var(--box-border-radius, 5px); // --box-border-radius is not defined in the plugin but added so that consuming themes can override it. If theme does not specify it falls back to 5px
+		border-radius: var(--box-border-radius, 5px);
 		box-shadow: $drop-shadow;
 		margin-bottom: 3rem;
 		overflow: auto;
@@ -167,10 +167,9 @@
 	}
 }
 
-// hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection)
 .hide-on-mobile {
-	@media (max-width: 767px) {
-		display: none !important;
+	@media (min-width: 768px) {
+		display: none;
 	}
 }
 
@@ -184,6 +183,8 @@
 
 /* Watersharing Match Request Table Styles */
 table.watersharing-table, table.watertrading-table{
+	border-collapse: separate;
+	border-spacing: 0 .125em;
 	margin-bottom: 1rem;
 	vertical-align: top;
 	width: 100%;
@@ -200,7 +201,6 @@ table.watersharing-table, table.watertrading-table{
 		tr.watersharing-request-row {
 			> td {
 				border-bottom: 1px solid $light-blue;
-				border-right: 1px solid $light-blue;
 			}
 		}
 	}
@@ -210,7 +210,7 @@ table.watersharing-table, table.watertrading-table{
 
 		th {
 			line-height: 2;
-			padding: 4px 4px 4px 18px;
+			padding: 4px 18px 4px 4px;
 			text-align: left;
 		}
 	}
@@ -226,14 +226,9 @@ table.watersharing-table, table.watertrading-table{
 		&.collapse {
 			display: none;
 		}
-		&.show + .watersharing-request-row{
-			@media (max-width: 767px) {
-				margin-top: 3em;
-			}
-		}
 
 		&:not(collapse) > td > div {
-			max-height: 350px;
+			max-height: 250px;
 		}
 
 		&.collapsing > td > div {
@@ -250,17 +245,24 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	tr.watersharing-request-row {
+		background: #FFF;
+		box-shadow: $drop-shadow;
 		position: relative;
 
 		@media (max-width: 767px) {
 			margin-bottom: 10px;
 		}
 
+		&.closed {
+			background: #EAEAEA;
+		}
+
+		&.row-expanded {
+			background: #D8E2F3;
+		}
+
 		& > td {
 			padding: .5rem .5rem;
-			@media (min-width: $md-screen){
-				padding: .2rem .5rem;
-			}
 
 			&.align-middle {
 				vertical-align: middle;
@@ -268,8 +270,8 @@ table.watersharing-table, table.watertrading-table{
 
 			input[type=checkbox] {
 			    height: 20px;
+			    margin-top: 6px;
 			    width: 20px;
-				margin-block: 3px;
 
 				&:hover {
 					cursor: pointer;
@@ -291,10 +293,6 @@ table.watersharing-table, table.watertrading-table{
 				}
 			}
 		}
-
-		&:has(.status-closed){
-			background-color: $alt-gray;
-		}
 	}
 
 	span.status-matched {
@@ -308,20 +306,31 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	span.matches {
-		font-size: 16px;
+		&.matched i {
+		    color: #70ad47
+		}
+
 		i {
-			font-size: 15px;
 			color: #a32828;
 			margin-right: 10px
 		}
-
-		&.matched i {
-		    color: #219653
-		}
-
 	}
 
 	.watersharing-request-detail {
+		background: $light-blue;
+
+		.watersharing-match-block {
+			font-size: 14px;
+			padding: .5rem 1rem;
+
+			.watersharing-match-detail {
+				@media (min-width: 992px) {
+					flex: 0 0 auto;
+					width: 66.6666667%;
+				}
+			}
+		}
+
 		.watersharing-contact {
 			span {
 				display: block;
@@ -345,36 +354,26 @@ table.watersharing-table, table.watertrading-table{
 		border: 1px solid $light-blue;
 		padding: 10px;
 	}
+
 	.watersharing-match-action {
-		background: none;
+	    background: none;
 	    box-shadow: none;
 	    color: #4e79a7;
-		&.approval{
-			padding: 0.4em 0.5em;
-			display: flex;
-			flex-direction: row;
-			gap: 1ch;
-			align-items: center;
-			justify-content: center;
-			border-radius: 5px;
-			color: #000;
-			cursor: pointer;
-			font-size: 16px;
-			font-weight: 700;
-			text-decoration: none;
+	    padding: 0;
 
-			&.approve-action{
-				border: 1px solid #C1FFD2;
-			}
-			&.decline-action{
-				border: 1px solid #FFD9D6;
-			}
+		&.approval {
+		    color: #000;
+		    cursor: pointer;
+		    font-size: 16px;
+		    font-weight: 700;
+		    margin-right: 20px;
+		    text-decoration: none;
 
-			&.decline-action i {
+			&.decline-action.checked i, &.decline-action:hover i {
 				color: $red;
 			}
 
-			&.approve-action i {
+			&.approve-action.checked i, &.approve-action:hover i {
 				color: $green;
 			}
 
@@ -384,77 +383,10 @@ table.watersharing-table, table.watertrading-table{
 
 			i {
 				color: $light-blue;
-				font-size: 20px;
+				font-size: 24px;
+				margin-right: 10px
 			}
 		}
-		&.toggle-row{
-			display: inline-block;
-			min-width: 20px;
-			min-height: 20px;
-			border-radius: 10px;
-			background-color: var(--button-bg-color, #00678F);
-			color: #fff;
-			aspect-ratio: 1 / 1;
-			&.disabled{
-				@media (max-width: 767px) {
-					display: none;
-				}
-			}
-		}
-	}
-}
-
-.watersharing-match-block{
-	display: flex;
-	flex-direction: column;
-	.match-detail,
-	.match-summation{
-		padding: 1em;
-	}
-	.match-cell{
-		padding: 0.5em;
-		border-bottom: 1px solid var(--table-border-color, #D9D9D9);
-		border-right: 1px solid var(--table-border-color, #D9D9D9);
-		&.match-send-to,
-		&.match-buttons{
-			border-bottom: none;
-		}
-		
-		&.match-approval{
-			padding-block: 0;
-			display: flex;
-			gap: 1rem;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			border: none;
-		}
-	}
-	.match-summation{
-		order: 1;
-	}
-	.match-detail{
-		order: 2;
-		padding: 0
-	}
-	.status-message-matched{
-		color: var(--color-success, #219653);
-		font-weight: 700;
-	}
-
-	@media (min-width: $md-screen) {
-		flex-direction: row;
-		.match-summation{
-			order: unset;
-			flex-basis: 27.5%;
-			display: grid;
-			place-items: center;
-		}
-		.match-detail{
-			order: unset;
-			flex-basis: 72.5%;
-		}
-
 	}
 }
 
@@ -470,7 +402,7 @@ table.watersharing-table, table.watertrading-table{
 	position: relative;
 	width:100%;
 	margin-right:10px;
-	border: 3px solid;
+	border:3px solid;
 	border-radius:8px;
 	border-color: $blue;
 	padding-top:5px;
@@ -481,6 +413,3 @@ table.watersharing-table, table.watertrading-table{
 	display: none !important;
 }
 
-button [class^='fa-'] {
-	color: inherit;
-}
