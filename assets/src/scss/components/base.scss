@@ -152,26 +152,21 @@
 	}
 
 	&.columns-grow{
-		// outline: 2px solid red;
-
 		.watersharing-input-col.two-col.columns-grow{
 			--gap: 1em;
 			--half-gap: calc(var(--gap) / 2);
-			// outline: 2px solid fuchsia;
 			flex-grow: 1;
 			flex-basis: calc(50% - var(--gap));
 			width: unset !important;
 			padding-right: var(--half-gap);
 			
 			&:is(.watersharing-input-col.two-col.columns-grow + .watersharing-input-col.two-col.columns-grow){
-				// outline: 2px solid red;
 				padding-right: 0;
 				padding-left: var(--half-gap);
 			}
 		}
 	}
 	
-	// :has(.large-outer-label)
 	&:has(.large-outer-label):is(.accordion-body > .watersharing-row){
 		>label{
 			margin-top: 0.4rem;
@@ -209,7 +204,6 @@
 	}
 
 	.meta-box-radio{
-		// margin-bottom: 10px;
 		display:flex;
 		gap:10px;
 	}
@@ -217,7 +211,6 @@
 	.meta-radio-select{
 		display: flex;
 		align-items: center;
-		// margin-bottom: 10px;
 	}
 
 	.radio-button{
@@ -226,7 +219,7 @@
 
 	.meta-radio-select label {
 		margin-right: 10px;
-		white-space: nowrap; /* Prevents label text from wrapping */
+		white-space: nowrap;
 	}
 }
 
@@ -241,12 +234,7 @@
 		width: auto;
 	}
 
-	// USEAGE NOTE Watersharing Row variants
-	// .outer-row-horizontal to make the containing row horizontal
-	// .outer-row-horizontal-mq-lg to make the containing row horizontal on larger screens
-	// as of now, these styles repeat below. 
 	&:has(.outer-row-horizontal){
-		// these styles repeat below BECAUSE I cannot use @extend inside the mq to enable shared styles.
 		flex-direction: row;
 		align-items: start;
 		.watersharing-form-label{
@@ -258,7 +246,6 @@
 	}
 	&:has(.outer-row-horizontal-mq-lg){
 		@media (min-width: $lg-screen){
-			// these stytles repeat the ones directly above BECAUSE I cannot use @extend inside the mq to enable shared styles.
 			flex-direction: row;
 			align-items: start;
 			.watersharing-form-label{
