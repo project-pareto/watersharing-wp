@@ -45,126 +45,126 @@
 }
 
 /* Watersharing Form Styles */
-.watersharing-blocks, .watertrading-blocks {
-	.watersharing-form {
-		.watersharing-row {
-			margin-bottom: var(--form-row-bottom-margin, 1rem);
-		}
+.watersharing-form {
+	.watersharing-row {
+		margin-bottom: var(--form-row-bottom-margin, 1rem);
+	}
 
-		input, input.input, input[type='date'], input[type='text'], select {
-			width: 100%;
-		}
+	input, input.input, input[type='date'], input[type='text'], select {
+		width: 100%;
+	}
 
-		label[for]{
-			cursor: pointer;
-		}
+	label[for]{
+		cursor: pointer;
+	}
 
-		.watersharing-form-label {
-			@media (min-width: 576px) {
-				text-align: left;
-				flex: 0 0 auto;
-				width: 25%;
-				align-items: center;
-				gap:5px;
-			}
-
-			p{
-				margin:0px;
-			}
-
-			display:flex;
-			flex-shrink: 0;
-			font-weight: 600;
-			line-height: 1.5;
-			max-width: 100%;
-			padding: 0 10px 0 0;
-			width: 100%;
-
-			&.accordion{
-				width: 100% !important;
-			}
-
-			.checkbox{
-				width:25% !important;
-			}
-		}
-
-		.watersharing-input-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				width: 75%;
-			}
-
-			flex-shrink: 0;
-			max-width: 100%;
-			width: 100%;
-			align-content: center;
-
-			&.accordion{
-				width: 100% !important;
-			}
-
-			&.two-col{
-				width: 42% !important;
-			}
-
-			&.three-col{
-				width: 31% !important;
-			}
-
-			&.no-label{
-				width:100%;
-			}
-		}
-
-		.watersharing-text-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				margin-bottom: 0;
-				width: 30%;
-				margin-right: 10px;
-			}
-
-			margin-bottom: 8px;
-		}
-
-		.watersharing-date-sep {
-			@media (min-width: 576px) {
-				display: block;
-			}
-
-			display: none;
+	.watersharing-form-label {
+		@media (min-width: 576px) {
+			text-align: left;
 			flex: 0 0 auto;
-			width: 4%;
-			align-self: center;
-			text-align: center;
+			width: 25%;
+			align-items: center;
+			gap:5px;
 		}
 
-		.watersharing-date-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				margin-bottom: 0;
-				width: 48%;
-			}
-
-			margin-bottom: 8px;
+		p{
+			margin:0px;
 		}
 
-		.watersharing-section-break {
-			border-bottom: 1px solid $light-grey;
-			margin-top: 3rem;
-			margin-bottom: 1rem;
+		display:flex;
+		flex-shrink: 0;
+		font-weight: 600;
+		line-height: 1.5;
+		max-width: 100%;
+		padding: 0 10px 0 0;
+		width: 100%;
 
-			.watersharing-info-text {
-				font-size: 14px;
-				margin-bottom: 8px;
-			}
+		&.accordion{
+			width: 100% !important;
 		}
 
-		.watersharing-submit-button {
-			width: 100%;
+		.checkbox{
+			width:25% !important;
 		}
 	}
+
+	.watersharing-input-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			width: 75%;
+		}
+
+		flex-shrink: 0;
+		max-width: 100%;
+		width: 100%;
+		align-content: center;
+
+		&.accordion{
+			width: 100% !important;
+		}
+
+		&.two-col{
+			width: 42% !important;
+		}
+
+		&.three-col{
+			width: 31% !important;
+		}
+
+		&.no-label{
+			width:100%;
+		}
+	}
+
+	.watersharing-text-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			margin-bottom: 0;
+			width: 30%;
+			margin-right: 10px;
+		}
+
+		margin-bottom: 8px;
+	}
+
+	.watersharing-date-sep {
+		@media (min-width: 576px) {
+			display: block;
+		}
+
+		display: none;
+		flex: 0 0 auto;
+		width: 4%;
+		align-self: center;
+		text-align: center;
+	}
+
+	.watersharing-date-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			margin-bottom: 0;
+			width: 48%;
+		}
+
+		margin-bottom: 8px;
+	}
+
+	.watersharing-section-break {
+		border-bottom: 1px solid $light-grey;
+		margin-top: 3rem;
+		margin-bottom: 1rem;
+
+		.watersharing-info-text {
+			font-size: 14px;
+			margin-bottom: 8px;
+		}
+	}
+
+	.watersharing-submit-button {
+		width: 100%;
+	}
+}
+.watersharing-blocks, .watertrading-blocks {
 }
 
 // hide-on-mobile was being used outside of a .watersharing-table (specifically after it for Manage Selection)
