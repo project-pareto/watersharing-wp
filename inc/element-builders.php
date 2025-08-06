@@ -454,11 +454,9 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
-// 	function to build out Send-to-Portal X request forms
-//	$type is the post_type target of the send-to-portal request
+// 	function to build out Send-to-Portal X request forms. $type is the post_type _target_ of the send-to-portal request
 function buildSendToRequestForm($type = "") {
 	$html = "";
-	// cfdump($type, 'Type');
 
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 	$share = ($type === 'share_supply' || $type === 'share_demand');
@@ -466,7 +464,6 @@ function buildSendToRequestForm($type = "") {
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 	$trade_share_ing = ($type === 'trade_supply' || $type === 'trade_demand') ? 'Trading' : 'Sharing';
 
-	// Set up the fields for the form
 	$well_pad = buildFormField('well_pad', '', 'hidden', '' );
 	$well_name = buildFormField('well_name', '', 'hidden', '' );
 	$lat = buildFormField('latitude', '', 'hidden', '', '', '', '', '', '');
@@ -507,8 +504,7 @@ function buildSendToRequestForm($type = "") {
 	} else {
 		$trucks_transport_radius = buildFormField("truck_transport_radius", "", "hidden", "", "", "", "", "", "");
 		$trucks_capacity = buildFormField('truck_capacity', '', 'hidden', '', '','', '', '', '');
-	}
-	
+	}	
 	//Layflats
 	if($trade){
 		$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
@@ -519,11 +515,10 @@ function buildSendToRequestForm($type = "") {
 		$layflats_transport_radius = buildFormField('layflats_transport_radius', '', "hidden", '', '', '', '', '', '');
 		$layflats_capacity = buildFormField('layflats_capacity', '', 'hidden', '', '','', '', '', '');
 	}
-	
 	if($trade){
 		$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery no-init-open-accordion', '', [$trucks,$layflats]);
 	} else {
-		$delivery = '';
+		$delivery = $trucks_transport_radius.$trucks_capacity.$layflats_transport_radius.$layflats_capacity;
 	}
 
 	//Quality Disclosures | Quality Requirements Accordion
@@ -542,6 +537,8 @@ function buildSendToRequestForm($type = "") {
 		$well_name
 		$lat
 		$long
+		$can_accept_trucks
+		$can_accept_layflats
 		$rate
 		$qd
 		$dates
@@ -560,12 +557,6 @@ function buildSendToRequestForm($type = "") {
 
 	$html = "
 		$form
-		<div class='watersharing-card-wrap'>
-			<div class='watersharing-card-inner'>
-				<div class='watersharing-card-body'>
-				</div>
-			</div>
-		</div>
 	";
 
 
@@ -901,9 +892,7 @@ function buildRequestTable( $type = '' ) {
 	$supply_or_demand = (strpos($type,'supply') !== false) ? 'supply' : 'demand';
 
 	$send_to_type = $send_to_trade_or_share . '_' . $supply_or_demand;
-	// share_supply
-	// trade_supply
-	// share_demand 
+
 	$rows = "";
 
 	// query for the requsts
@@ -959,7 +948,6 @@ function buildRequestTable( $type = '' ) {
 				foreach( $lookups as $lookup ) {
 					$count++;
 
-					// ( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
 					if($type === 'share_supply'){
 						$user_interaction = 'producer_approval';
 					}
@@ -1061,7 +1049,6 @@ function buildRequestTable( $type = '' ) {
 							";
 						$summation = "<span class='status-message-matched'>Operator Matched!</span>";
 					} else {
-						// $summation = "PENDING";
 						$contact = "";
 					}
 
@@ -1070,8 +1057,6 @@ function buildRequestTable( $type = '' ) {
 
 					if($total_value){$total_value = number_format($total_value);}
 					if($total_volume){$total_volume = number_format($total_volume);}
-
-					// cfdump($send_to_enabled);
 
 					$field1 = (strpos($type,'share') !== false) ? '' : "<div class='match-cell match-field-1 watersharing-col-half'><strong>Total Value:</strong> $total_value USD</div>"; // Do not show dates in the details (its on the row headers)
 					$field2 = (strpos($type,'share') !== false) ? "<div class='match-cell match-field-2 match-rate match-fullfilled-rate watersharing-col-half'><strong>Rate (bpd):</strong> $fullfilled</div>" : "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
@@ -1289,10 +1274,6 @@ function getWaterRequestForSendTo($pid){
 		$post_info['bid_type'] =  '';
 		$post_info['bid_units'] = '';
 	}
-
-	// cfdump($post_info, 'post_info');
-
-	// die();
 
 	return $post_info;
 }

@@ -256,23 +256,62 @@
 
 	function enableDisabledSendToFields(){
 		const sendToDialog = document.querySelector('.send-to-dialog');
-
 		if (!sendToDialog) {
 			console.warn('Send-to dialog not found');
 			return;
 		}
 
-		// const disabledFields = sendToDialog.querySelectorAll('input:disabled, select:disabled, textarea:disabled');
-		const disabledFields = sendToDialog.querySelectorAll('#end_date');
+		const disabledFields = sendToDialog.querySelectorAll('input:disabled, select:disabled, textarea:disabled');
 		if (!disabledFields) {
-			console.log('No disabled fields found in send-to dialog');
 			return;
 		}
 
 		disabledFields.forEach(field => {
 			field.disabled = false;
-			console.log(`Enabled field: ${field.name || field.id}`);
 		});
+	}
+
+	function updateCanProvideChecks(){
+		const sendToDialog = document.querySelector('#send-to-dialog');
+		if (!sendToDialog) {
+			console.warn('Send-to dialog not found');
+			return;
+		}
+
+		// Check truck transport fields
+		const truckFields = ['truck_transport_radius', 'truck_transport_bid', 'truck_capacity'];
+		let hasTruckValue = false;
+		
+		truckFields.forEach(fieldId => {
+			const field = sendToDialog.querySelector(`#${fieldId}`);
+			if (field && field.value && field.value.trim() !== '' && field.value !== '0') {
+				hasTruckValue = true;
+			}
+		});
+		
+		// Check the trucks checkbox if any truck field has a value
+		const trucksCheckbox = sendToDialog.querySelector('#trucks-checkbox');
+		if (trucksCheckbox) {
+			trucksCheckbox.checked = hasTruckValue;
+		}
+
+		// Check layflats transport fields
+		const layflatsFields = ['layflats_transport_radius', 'layflats_transport_bid', 'layflats_capacity'];
+		let hasLayflatsValue = false;
+		
+		layflatsFields.forEach(fieldId => {
+			const field = sendToDialog.querySelector(`#${fieldId}`);
+			if (field && field.value && field.value.trim() !== '' && field.value !== '0') {
+				hasLayflatsValue = true;
+			}
+		});
+		
+		// Check the layflats checkbox if any layflats field has a value
+		const layflatsCheckbox = sendToDialog.querySelector('#layflats-checkbox');
+		if (layflatsCheckbox) {
+			layflatsCheckbox.checked = hasLayflatsValue;
+			console.log('Set layflats checkbox to:', hasLayflatsValue);
+		}
 	}
 
 	function runDomMutators() {
@@ -371,6 +410,7 @@
 				sendToButton.addEventListener('click', function() {
 					enableDisabledSendToFields();
 					updateSendToForm(sPid, tableType);
+					updateCanProvideChecks();
 					sendToDialog.showModal();
 				});
 			});
