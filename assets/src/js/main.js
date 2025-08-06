@@ -31,7 +31,6 @@
 		updateSubmitButton( type );
 	})
 
-
 	// alert user of changing request status
 	$(document).on('click', '.post-status-submit', function(event) {
 
@@ -89,6 +88,19 @@
 		}
 	});
 
+	$(document).on('click', '.create-post-submit-button', function(event) {
+		const $form = $(this).closest('form');
+		const $requiredFields = $form.find('[required]');
+		const $emptyRequired = $requiredFields.filter(function() {
+			return $(this).val().trim() === '';
+		});
+		
+		if ($emptyRequired.length > 0) {
+			alert('Please fill in all required fields in the Primary Information section.');
+		}
+		return; // intentionally allowing form submit to trigger the browser's client-side validation ui (form wont actually submit with empty required)
+	});
+
 	// toggle match details display
 	$(document).on('click', '.toggle-row', function() {
 		if( $(this).closest("tr").next("tr").hasClass('show') ) {
@@ -127,7 +139,7 @@
 	});
 
 	// Bind change event to the select element
-	$(document).on( 'change', 'select[name="well_pad"]', function() {
+	$(document).on('change', 'select[name="well_pad"]', function() {
 		// Get the selected option value
 		var selectedValue = $(this).val();
 
@@ -227,46 +239,58 @@
 	$(document).ready(function () {
 		// Function to show the collapse
 		function showCollapse($element, $button) {
-		  if (!$element.hasClass('collapsing') && !$element.hasClass('show')) {
-			$element
-			  .removeClass('collapse')
-			  .addClass('collapsing') // Start collapsing animation
-			  .css('height', 0); // Initial height is set to 0
+			if (!$element.hasClass('collapsing') && (!$element.hasClass('show') && !$element.hasClass('show-initial'))) {
+				$element
+					.removeClass('collapse')
+					.addClass('collapsing') // Start collapsing animation
+					.css('height', 0); // Initial height is set to 0
+				
+				// Trigger a reflow to allow the height change to animate
+				$element[0].offsetHeight;
 			
-			// Trigger a reflow to allow the height change to animate
-			$element[0].offsetHeight;
-	  
-			// Get the scroll height to animate to
-			var height = $element[0].scrollHeight;
-			$element
-			  .css('height', height + 'px') // Set the height for transition
-			  .one('transitionend', function () {
-				// Cleanup after transition ends
-				$element.removeClass('collapsing').addClass('collapse show').css('height', '');
-			  });
-			  $button.removeClass('collapsed').attr('aria-expanded', true); // Remove collapsed state
-		  }
+				// Get the scroll height to animate to
+				var height = $element[0].scrollHeight;
+				$element
+					.css('height', height + 'px') // Set the height for transition
+					.one('transitionend', function () {
+					// Cleanup after transition ends
+					$element.removeClass('collapsing').addClass('collapse show').css('height', '');
+					});
+					$button.removeClass('collapsed').attr('aria-expanded', true); // Remove collapsed state
+			}
 		}
+
+		function hideOtherAccordions($target) {
+			const $otherAccordions = $('.accordion-collapse').not($target);
+
+			$otherAccordions.each(function() {
+				const $otherAccordion = $(this);
+				const $otherButton = $('[data-bs-target="#' + $otherAccordion.attr('id') + '"]');
+				if($otherAccordion && $otherButton) {
+					hideCollapse($otherAccordion, $otherButton);
+				}
+			});
+		}		
 	  
 		// Function to hide the collapse
 		function hideCollapse($element, $button) {
-		  if (!$element.hasClass('collapsing') && $element.hasClass('show')) {
-			$element
-			  .css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
-			  .removeClass('collapse show')
-			  .addClass('collapsing'); // Start collapsing animation
-	  
-			// Trigger a reflow
-			$element[0].offsetHeight;
-	  
-			$element
-			  .css('height', 0) // Animate to height of 0
-			  .one('transitionend', function () {
-				// Cleanup after transition ends
-				$element.removeClass('collapsing').addClass('collapse').css('height', '');
-			  });
-			  $button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
-		  }
+			if (!$element.hasClass('collapsing') || $element.hasClass('show-initial') ) {
+				$element
+				.css('height', $element[0].scrollHeight + 'px') // Set height to current scroll height
+				.removeClass('collapse show show-initial')
+				.addClass('collapsing'); // Start collapsing animation
+		
+				// Trigger a reflow
+				$element[0].offsetHeight;
+		
+				$element
+				.css('height', 0) // Animate to height of 0
+				.one('transitionend', function () {
+					// Cleanup after transition ends
+					$element.removeClass('collapsing').addClass('collapse').css('height', '');
+				});
+				$button.addClass('collapsed').attr('aria-expanded', false); // Add collapsed state
+			}
 		}
 	  
 		// Add event listeners for all accordion buttons
@@ -274,11 +298,12 @@
 			var targetSelector = $(this).attr('data-bs-target');
 			var $target = $(targetSelector);
 			var $button = $(this); 
-		
-			if ($target.hasClass('show')) {
+
+			if ($target.hasClass('show') || $target.hasClass('show-initial')) {
 				hideCollapse($target, $button); 
 			} else {
-				showCollapse($target, $button); 
+				showCollapse($target, $button);
+				hideOtherAccordions($target);
 			}
 		});
 		

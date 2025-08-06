@@ -1,5 +1,7 @@
 /* Watersharing Button Styles */
-.watersharing-blocks, .watertrading-blocks, .watersharing-table {
+.watersharing-blocks, 
+.watertrading-blocks, 
+.watersharing-table {
 	&.full-width {
 		max-width: 100%;
 	}
@@ -14,7 +16,7 @@
 	.watersharing-submit-button {
 		background: $blue;
 		border: none;
-		border-radius: 10px;
+		border-radius: var(--input-radius,5px);
 		box-shadow: $drop-shadow;
 		color: #FFF;
 		cursor: pointer;
@@ -22,7 +24,32 @@
 		line-height: 1.5;
 		padding: 8px 24px;
 		width:auto !important;
+		transition: all 0.3s ease;
+		&:focus,
+		&:hover {
+			background: $grey;
+		}
 
+		&:disabled, .disabled {
+			cursor: pointer;
+			opacity: 0.65;
+			pointer-events: none;
+		}
+	}
+	
+	.watersharing-secondary-button {
+		background: $blue;
+		border: none;
+		border-radius: var(--input-radius,5px);
+		box-shadow: $drop-shadow;
+		color: #FFF;
+		font-size: 16px; font-size: 1rem;
+		line-height: 1.5;
+		padding: 8px 3ch;
+		width: auto !important;
+		transition: all 0.3s ease;
+		cursor: pointer;
+		&:focus,
 		&:hover {
 			background: $grey;
 		}
@@ -43,15 +70,35 @@
 
 /* Watersharing Input Styles */
 .watersharing-blocks, .watertrading-blocks {
-	input, input.input, input[type='date'], input[type='text'], select {
-		background-color: #FFF;
-		background-clip: padding-box;
-		border: 1px solid $light-grey;
-		border-radius: 10px;
+	input, 
+	input.input, 
+	input[type='date'], 
+	input[type='text'], 
+	select {
 		box-sizing: border-box;
-		font-size: 16px; font-size: 1rem;
-		line-height: 1.5;
-		padding: 8px 16px;
+		padding: var(--input-padding, 6px 15px);
+		background-color: var(--input-bg, #FFF);
+		background-clip: padding-box;
+		border: var(--input-border, 1px solid $light-grey);
+		border-radius: var(--input-radius, 5px);
+		font-size: var(--input-font-size, 0.75rem);
+		line-height: var(--input-line-height, 1.5);
+		accent-color: var(--accent-color-forms, #{$dark-blue});
+		&[disabled]{
+			background-color: var(--input-bg-disabled, $other-gray);
+		}
+	}
+	label{
+		cursor: pointer;
+	}
+	.meta-box-checkbox,
+	.meta-box-radio{
+		label{
+			font-size: var(--input-font-size, 0.75rem);
+		}
+	}
+	.select-request-action{
+		--input-padding: 11px 13px
 	}
 }
 
@@ -61,12 +108,16 @@
 	display: flex;
 	flex-wrap: wrap;
 
-	& > * {
+	> * {
 		align-self: stretch;
 		box-sizing: border-box;
 		flex-shrink: 0;
 		max-width: 100%;
 		width: 100%;
+	}
+
+	> label{
+		margin-bottom: 0.4rem;
 	}
 
 	&.centerered{
@@ -79,6 +130,56 @@
 
 	&.two-col{
 		justify-content: space-between;
+	}
+
+	&.subs-stack{
+		> .watersharing-input-col.subs-stack > .watersharing-row{
+			flex-direction: column;
+			.watersharing-form-label,
+			.watersharing-input-col{
+				width: auto;
+			}
+		}
+	}
+
+	&.columns-grow-with-dash {
+		--bs-body-line-height: 0;
+		align-items: center;
+		.watersharing-date-sep{
+			line-height: 0 !important;
+			outline: 2px solid fuchsia
+		}
+	}
+
+	&.columns-grow{
+		.watersharing-input-col.two-col.columns-grow{
+			--gap: 1em;
+			--half-gap: calc(var(--gap) / 2);
+			flex-grow: 1;
+			flex-basis: calc(50% - var(--gap));
+			width: unset !important;
+			padding-right: var(--half-gap);
+			
+			&:is(.watersharing-input-col.two-col.columns-grow + .watersharing-input-col.two-col.columns-grow){
+				padding-right: 0;
+				padding-left: var(--half-gap);
+			}
+		}
+	}
+	
+	&:has(.large-outer-label):is(.accordion-body > .watersharing-row){
+		>label{
+			margin-top: 0.4rem;
+			p{
+				font-size: 0.75rem;
+				font-weight: 700;
+			}
+		}
+	}
+	&:has(.large-outer-label.no-bottom-margin):is(.accordion-body > .watersharing-row){
+		>label{
+			margin-bottom: 0;
+		}
 	}
 
 	&.three-col{
@@ -103,7 +204,6 @@
 	}
 
 	.meta-box-radio{
-		// margin-bottom: 10px;
 		display:flex;
 		gap:10px;
 	}
@@ -111,7 +211,6 @@
 	.meta-radio-select{
 		display: flex;
 		align-items: center;
-		// margin-bottom: 10px;
 	}
 
 	.radio-button{
@@ -120,8 +219,63 @@
 
 	.meta-radio-select label {
 		margin-right: 10px;
-		white-space: nowrap; /* Prevents label text from wrapping */
+		white-space: nowrap;
 	}
+}
+
+#primary-information .accordion-button{
+	border-top: none;
+}
+#primary-information .accordion-body > .watersharing-row,
+.watersharing-form > .watersharing-row.watersharing-row.watersharing-row{
+	flex-direction: column;	
+	> *{
+		flex: 1 0 100%;
+		width: auto;
+	}
+
+	&:has(.outer-row-horizontal){
+		flex-direction: row;
+		align-items: start;
+		.watersharing-form-label{
+			flex: 0 0 33%;
+		}
+		.watersharing-input-col{
+			flex: 1 1 66%;
+		}
+	}
+	&:has(.outer-row-horizontal-mq-lg){
+		@media (min-width: $lg-screen){
+			flex-direction: row;
+			align-items: start;
+			.watersharing-form-label{
+				flex: 0 0 33%;
+			}
+			.watersharing-input-col{
+				flex: 1 1 66%;
+			}
+		}
+	}
+	&:has(.outer-row-horizontal),
+	&:has(.outer-row-horizontal-mq-lg){
+		> label.watersharing-form-label{
+			padding-block: 14px;
+			align-items: flex-start;
+			@media (max-width: $lg-screen){
+				padding-bottom: 0;
+			}
+		}
+		label + .watersharing-input-col{
+			padding-block: 14px;
+			@media (max-width: $lg-screen){
+				padding-top: 7px;
+			}
+		}
+	}
+}
+
+.watersharing-input-col + .watersharing-input-col .accordion-button{
+	border-top: none;
 }
 
 .meta-box-checkbox {
@@ -129,6 +283,7 @@
     align-items: center;
 
     .meta-box-input.checkbox {
+		accent-color: var(--accent-color-forms,$blue);
         height: 15px;
         width: 15px;
 		margin-right:15px;
@@ -159,6 +314,5 @@
 }
 
 .submit-column{
-	text-align:right;
-	width:100% !important;
+	padding-top: 25px;
 }
