@@ -1,0 +1,256 @@
+:root {
+  --tt-border-radius: 5px;
+  --tt-color: #{$dark-blue};
+  --tt-text-color: #{$light-blue};
+  --tt-font-size: 12px;
+  --tt-move: 4px;
+  --tt-icon-color: var(--accent-color-forms, #{$dark-blue});
+  --tt-left-x-offset: 0; // this works to shift left-sided tooltips horizontally except more effort will be needed to complete this so that there is no sideways animation for tooltips that use --tt-move (current default)
+}
+
+button[aria-label][data-tt-pos] {
+  overflow: visible;
+}
+
+[aria-label][data-tt-pos] {
+  position: relative;
+  cursor: pointer;
+  
+  i[class^="fa-"] {
+    color: var(--tt-icon-color);
+  }
+
+  &:after {
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.18s ease-out 0.18s;
+    text-indent: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-weight: normal;
+    font-style: normal;
+    text-shadow: none;
+    font-size: var(--tt-font-size);
+    background: var(--tt-color);
+    border-radius: 2px;
+    color: var(--tt-text-color);
+    border-radius: var(--tt-border-radius);
+    content: attr(aria-label);
+    padding: 0.5em 1em;
+    position: absolute;
+    white-space: nowrap;
+    z-index: 10;
+  }
+  
+  &:before {
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-top-color: var(--tt-color);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.18s ease-out 0.18s;
+    content: "";
+    position: absolute;
+    z-index: 10;
+  }
+  
+  &:hover:before,
+  &:hover:after,
+  &[data-tt-visible]:before,
+  &[data-tt-visible]:after,
+  &:not([data-tt-nofocus]):focus:before,
+  &:not([data-tt-nofocus]):focus:after {
+    opacity: 1;
+    pointer-events: none;
+  }
+  
+  &.font-awesome:after {
+    font-family: FontAwesome, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  }
+  
+  &[data-tt-break]:after {
+    white-space: pre;
+  }
+  
+  &[data-tt-break][data-tt-length]:after {
+    white-space: pre-line;
+    word-break: break-word;
+  }
+  
+  &[data-tt-blunt]:before,
+  &[data-tt-blunt]:after {
+    transition: none;
+  }
+  
+  &[data-tt-pos="up"]:hover:after, 
+  &[data-tt-pos="up"][data-tt-visible]:after, 
+  &[data-tt-pos="down"]:hover:after, 
+  &[data-tt-pos="down"][data-tt-visible]:after {
+    transform: translate(-50%, 0);
+  }
+  
+  &[data-tt-pos="up"]:hover:before, 
+  &[data-tt-pos="up"][data-tt-visible]:before, 
+  &[data-tt-pos="down"]:hover:before, 
+  &[data-tt-pos="down"][data-tt-visible]:before {
+    transform: translate(-50%, 0);
+  }
+  
+  &[data-tt-pos*="-left"]:after {
+    left: 0;
+  }
+  
+  &[data-tt-pos*="-left"]:before {
+    left: 5px;
+  }
+  
+  &[data-tt-pos*="-right"]:after {
+    right: 0;
+  }
+  
+  &[data-tt-pos*="-right"]:before {
+    right: 5px;
+  }
+  
+  &[data-tt-pos*="-left"]:hover:after, 
+  &[data-tt-pos*="-left"][data-tt-visible]:after, 
+  &[data-tt-pos*="-right"]:hover:after, 
+  &[data-tt-pos*="-right"][data-tt-visible]:after {
+    transform: translate(0, 0);
+  }
+  
+  &[data-tt-pos*="-left"]:hover:before, 
+  &[data-tt-pos*="-left"][data-tt-visible]:before, 
+  &[data-tt-pos*="-right"]:hover:before, 
+  &[data-tt-pos*="-right"][data-tt-visible]:before {
+    transform: translate(0, 0);
+  }
+  
+
+  &[data-tt-pos*="-left"]:hover:after, 
+  &[data-tt-pos*="-left"][data-tt-visible]:after, 
+  &[data-tt-pos*="-left"]:hover:before, 
+  &[data-tt-pos*="-left"][data-tt-visible]:before{
+    transform: translate(var(--tt-left-x-offset, 0), 0); // optional --tt-left-x-offset to offset x position of left-sided tt
+  }
+  
+
+  
+  &[data-tt-pos^="up"]:before, 
+  &[data-tt-pos^="up"]:after {
+    bottom: 100%;
+    transform-origin: top;
+    transform: translate(0, var(--tt-move));
+  }
+  
+  &[data-tt-pos^="up"]:after {
+    margin-bottom: 10px;
+  }
+  
+  &[data-tt-pos="up"]:before, &[data-tt-pos="up"]:after {
+    left: 50%;
+    transform: translate(-50%, var(--tt-move));
+  }
+  
+  &[data-tt-pos^="down"]:before, &[data-tt-pos^="down"]:after {
+    top: 100%;
+    transform: translate(0, calc(var(--tt-move) * -1));
+  }
+  
+  &[data-tt-pos^="down"]:after {
+    margin-top: 10px;
+  }
+  
+  &[data-tt-pos^="down"]:before {
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-bottom-color: var(--tt-color);
+  }
+  
+  &[data-tt-pos="down"]:after, 
+  &[data-tt-pos="down"]:before {
+    left: 50%;
+    transform: translate(-50%, calc(var(--tt-move) * -1));
+  }
+  
+  &[data-tt-pos="left"]:hover:after, 
+  &[data-tt-pos="left"][data-tt-visible]:after, 
+  &[data-tt-pos="right"]:hover:after, 
+  &[data-tt-pos="right"][data-tt-visible]:after {
+    transform: translate(0, -50%);
+  }
+  
+  &[data-tt-pos="left"]:hover:before, 
+  &[data-tt-pos="left"][data-tt-visible]:before, 
+  &[data-tt-pos="right"]:hover:before, 
+  &[data-tt-pos="right"][data-tt-visible]:before {
+    transform: translate(0, -50%);
+  }
+  
+  &[data-tt-pos="left"]:after, 
+  &[data-tt-pos="left"]:before {
+    right: 100%;
+    top: 50%;
+    transform: translate(var(--tt-move), -50%);
+  }
+  
+  &[data-tt-pos="left"]:after {
+    margin-right: 10px;
+  }
+  
+  &[data-tt-pos="left"]:before {
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-left-color: var(--tt-color);
+  }
+  
+  &[data-tt-pos="right"]:after, 
+  &[data-tt-pos="right"]:before {
+    left: 100%;
+    top: 50%;
+    transform: translate(calc(var(--tt-move) * -1), -50%);
+  }
+  
+  &[data-tt-pos="right"]:after {
+    margin-left: 10px;
+  }
+  
+  &[data-tt-pos="right"]:before {
+    width: 0;
+    height: 0;
+    border: 5px solid transparent;
+    border-right-color: var(--tt-color);
+  }
+  
+  &[data-tt-length]:after {
+    white-space: normal;
+  }
+  
+  &[data-tt-length="small"]:after {
+    width: 80px;
+  }
+  
+  &[data-tt-length="medium"]:after {
+    width: 150px;
+  }
+  
+  &[data-tt-length="large"]:after {
+    width: 260px;
+  }
+  
+  &[data-tt-length="xlarge"]:after {
+    width: 380px;
+  }
+  
+  @media screen and (max-width: 768px) {
+    &[data-tt-length="xlarge"]:after {
+      width: 86vw;
+    }
+  }
+  
+  &[data-tt-length="fit"]:after {
+    width: 100%;
+  }
+}

@@ -2,30 +2,40 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-card-wrap {
 		background: #FFF;
-		border-radius: 10px;
+		border-radius: var(--box-border-radius, 5px);
 		box-shadow: $drop-shadow;
 		margin-bottom: 3rem;
 		overflow: auto;
 
 		.watersharing-card-inner {
 			.watersharing-card-header {
-				background: $dark-blue;
+				background: var(--card-header-color-bg, $dark-blue);
 				text-align: center;
-				padding-top: 1.5rem;
-				padding-bottom: 1rem;
+				padding: var(--card-header-padding, 1.5rem 0 1rem 0);
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				gap: 1ch;
 
-				.watersharing-card-title {
-					color: #FFF;
+				[class^='fa-'] {
+					color: var(--accent-color-forms, $dark-blue);
+					font-size: 1.2rem;
+				}
+				
+				.watersharing-card-title,
+				h1.watersharing-card-title {
+					color: var(--card-header-color-fg, #FFF);
 					display: block;
-					font-size: 1.625rem;
-					font-weight: 500;
+					font-size: 1.125rem;
+					font-weight: 700;
 					line-height: 1.75;
+					margin: 0;
 				}
 			}
 
 			.watersharing-card-body {
 				@media (min-width: 576px) {
-					padding: 40px 60px 60px;
+					padding: var(--card-body-padding, 40px 60px 60px);
 				}
 
 				padding: 20px;
@@ -38,11 +48,15 @@
 .watersharing-blocks, .watertrading-blocks {
 	.watersharing-form {
 		.watersharing-row {
-			margin-bottom: 1rem;
+			margin-bottom: var(--form-row-bottom-margin, 1rem);
 		}
 
 		input, input.input, input[type='date'], input[type='text'], select {
 			width: 100%;
+		}
+
+		label[for]{
+			cursor: pointer;
 		}
 
 		.watersharing-form-label {
@@ -60,10 +74,10 @@
 
 			display:flex;
 			flex-shrink: 0;
-			font-weight: 700;
+			font-weight: 600;
 			line-height: 1.5;
 			max-width: 100%;
-			padding: 7px 10px 7px 0;
+			padding: 0 10px 0 0;
 			width: 100%;
 
 			&.accordion{
@@ -121,7 +135,8 @@
 
 			display: none;
 			flex: 0 0 auto;
-			width: 16.66666667%;
+			width: 4%;
+			align-self: center;
 			text-align: center;
 		}
 
@@ -129,7 +144,7 @@
 			@media (min-width: 576px) {
 				flex: 0 0 auto;
 				margin-bottom: 0;
-				width: 41.66667%;
+				width: 48%;
 			}
 
 			margin-bottom: 8px;
@@ -149,6 +164,22 @@
 		.watersharing-submit-button {
 			width: 100%;
 		}
+	}
+}
+
+.hide-on-mobile {
+	display: none;
+
+	@media (min-width: 768px) {
+		display: block;
+	}
+}
+
+.show-on-mobile {
+	display: none;
+
+	@media (max-width: 767px) {
+		display: inline;
 	}
 }
 
@@ -184,6 +215,11 @@ table.watersharing-table, table.watertrading-table{
 			padding: 4px 18px 4px 4px;
 			text-align: left;
 		}
+	}
+
+	.tablesorter-header-inner{
+		font-size: var(--table-column-header-font-size, 0.75rem);
+		font-weight: 400;
 	}
 
 	tr.watersharing-request-detail {
@@ -229,7 +265,6 @@ table.watersharing-table, table.watertrading-table{
 
 		& > td {
 			padding: .5rem .5rem;
-			border-bottom-width: 1px;
 
 			&.align-middle {
 				vertical-align: middle;
@@ -322,22 +357,6 @@ table.watersharing-table, table.watertrading-table{
 		padding: 10px;
 	}
 
-	.hide-on-mobile {
-		display: none;
-
-		@media (min-width: 768px) {
-			display: block;
-		}
-	}
-
-	.show-on-mobile {
-		display: none;
-
-		@media (max-width: 767px) {
-			display: inline;
-		}
-	}
-
 	.watersharing-match-action {
 	    background: none;
 	    box-shadow: none;
@@ -373,6 +392,12 @@ table.watersharing-table, table.watertrading-table{
 	}
 }
 
+.table-action-row{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
 .watersharing-kpi-block{
 	background: #fff;
 	box-shadow: 2px 2px 4px -2px rgba(0,0,0,.5);
@@ -380,7 +405,6 @@ table.watersharing-table, table.watertrading-table{
 	width:100%;
 	margin-right:10px;
 	border:3px solid;
-	// border-width: 1px;
 	border-radius:8px;
 	border-color: $blue;
 	padding-top:5px;
