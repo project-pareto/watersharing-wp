@@ -424,7 +424,6 @@
 	}
 
 	$(document).ready(function () {
-		console.log('READY');
 		runDomMutators();
 
 		setupSendToDialogs();

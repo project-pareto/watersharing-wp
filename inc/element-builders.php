@@ -327,8 +327,8 @@ function buildRequestForm($type = "", $title = "") {
 	$html = "";
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 
-	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+	$share = ($type === 'share_supply' || $type === 'share_demand');
 
 
 	// Set up the fields for the form
@@ -364,12 +364,6 @@ function buildRequestForm($type = "", $title = "") {
 
 	$primary_info_fields = [$well_pad, $well_name, $latlong, $site_compatibility, $dates, $rate, $bid_type,	$bid_info, $bid_totals_row];
 	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
-
-
-
-
-	$share = ($type === 'share_supply');
-
 
 	// Can Provide Transport (optional) Accordion
 	
@@ -411,7 +405,6 @@ function buildRequestForm($type = "", $title = "") {
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
-		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		$primary_information
 		$delivery
@@ -519,7 +512,6 @@ function buildSendToRequestForm($type = "") {
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='WTF watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
-		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		<input type='hidden' name='cloned_from' value=''>
 		$well_pad
@@ -863,12 +855,6 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 function buildRequestTable( $type = '' ) {
 	$watersharing_enabled = get_option('watersharing_toggle', 0);
 	$watertrading_enabled = get_option('watertrading_toggle', 0);
-	
-	// Redirect IDs on creation
-	$watersharing_prod_redirect_id = get_option('production_dashboard_page', '');
-	$watersharing_cons_redirect_id = get_option('consumption_dashboard_page', '');
-	$watertrading_prod_redirect_id = get_option('wt_production_dashboard_page', '');
-	$watertrading_cons_redirect_id = get_option('wt_consumption_dashboard_page', '');
 
 	// Send-To feature requires both toggles to be enabled
 	$watersharing_enabled = empty($watersharing_enabled) ? 0 : $watersharing_enabled;
