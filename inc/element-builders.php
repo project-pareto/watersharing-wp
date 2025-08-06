@@ -487,12 +487,9 @@ function buildSendToRequestForm($type = "") {
 	$bid_totals = [];
 	$bid_totals_row = '';
 	if($trade){
-		// $bid_totals[] = buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly");
-		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-totalval', "readonly" => ""];
-		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-specval', "readonly" => ""];
-
+		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "0", "acf_key" => "", "class" => $type . '-totalval', "readonly" => ""];
+		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => $type . '-specval', "readonly" => ""];
 		$bid_totals_row = buildFormField("bid-totals-row", "", "multi_column", "", "", "", "", "two-col subs-stack columns-grow", "", $bid_totals);
-		// $bid_totals_row = buildFormField"id" => ("bid-totals-row", "label" => "", "type" => "multi_column", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "two-col", "readonl"", );
 	} else {
 		$bid_totals_row = '';
 	}
@@ -552,9 +549,9 @@ function buildSendToRequestForm($type = "") {
 		$bid_totals_row
 		$delivery
 		<input type='hidden' name='post_type' value='$type'>
-		<div class='watersharing-row'>
+		<div class='watersharing-action-row'>
 			<div class='watersharing-input-col submit-column'>
-				Cancel <button type='submit' class='watersharing-submit-button create-post-submit-button'>Submit</button>
+				<button type='button' class='dialog-closer clear-button'>Cancel</button> <button type='submit' class='watersharing-submit-button create-post-submit-button non-fat-btn'>Add to Portal</button>
 			</div>
 		</div>
 	</form>

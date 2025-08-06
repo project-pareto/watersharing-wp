@@ -13,39 +13,40 @@
 		justify-content: center;
 	}
 
-	.watersharing-submit-button {
-		background: $blue;
-		border: none;
-		border-radius: var(--input-radius,5px);
-		box-shadow: $drop-shadow;
-		color: #FFF;
-		cursor: pointer;
-		font-size: 16px; font-size: 1rem;
-		line-height: 1.5;
-		padding: 8px 24px;
-		width:auto !important;
-		transition: all 0.3s ease;
-		&:focus,
-		&:hover {
-			background: $grey;
-		}
-
-		&:disabled, .disabled {
-			cursor: pointer;
-			opacity: 0.65;
-			pointer-events: none;
-		}
-		[class^='fa-'] {
-			color: inherit;
-		}
-	}
 	
 	
-
+	
 	:disabled, .disabled {
 		cursor: pointer;
 		opacity: 0.65;
 		pointer-events: none;
+	}
+}
+
+.watersharing-submit-button {
+	background: $blue;
+	border: none;
+	border-radius: var(--input-radius,5px);
+	box-shadow: $drop-shadow;
+	color: #FFF;
+	cursor: pointer;
+	font-size: 16px; font-size: 1rem;
+	line-height: 1.5;
+	padding: 8px 24px;
+	width:auto !important;
+	transition: all 0.3s ease;
+	&:focus,
+	&:hover {
+		background: $grey;
+	}
+
+	&:disabled, .disabled {
+		cursor: pointer;
+		opacity: 0.65;
+		pointer-events: none;
+	}
+	[class^='fa-'] {
+		color: inherit;
 	}
 }
 
@@ -75,6 +76,13 @@
 		opacity: 0.65;
 		pointer-events: none;
 	}
+}
+
+.clear-button{
+	background: transparent;
+	color: var(--accent-color-forms, #{$dark-blue});
+	text-decoration: underline;
+	border: none;
 }
 
 /* Watersharing Input Styles */
@@ -429,6 +437,12 @@ html:has(dialog[open]) {
 			height: 1.5rem;
 			fill: currentColor;
 		}
+	}
+
+	.watersharing-action-row .watersharing-input-col{
+		width: 100%;
+		justify-content: flex-end;
+		gap: 1ch;
 	}
 }
 

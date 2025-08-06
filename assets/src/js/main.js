@@ -254,8 +254,28 @@
 		});
 	}
 
+	function enableDisabledSendToFields(){
+		const sendToDialog = document.querySelector('.send-to-dialog');
+
+		if (!sendToDialog) {
+			console.warn('Send-to dialog not found');
+			return;
+		}
+
+		// const disabledFields = sendToDialog.querySelectorAll('input:disabled, select:disabled, textarea:disabled');
+		const disabledFields = sendToDialog.querySelectorAll('#end_date');
+		if (!disabledFields) {
+			console.log('No disabled fields found in send-to dialog');
+			return;
+		}
+
+		disabledFields.forEach(field => {
+			field.disabled = false;
+			console.log(`Enabled field: ${field.name || field.id}`);
+		});
+	}
+
 	function runDomMutators() {
-		// console.log('Running runDomMutators function');
 		runMoveMes();
 	}
 
@@ -326,7 +346,7 @@
 						}
 					});
 				} else if (field.tagName.toLowerCase() === 'select') {
-					// Handle select dropdowns
+					// Handle selects
 					field.value = fieldValue;
 				} else {
 					// Handle text inputs, hidden fields, textareas, etc.
@@ -341,26 +361,24 @@
 	}
 
 	function setupSendToDialogs() {
-		console.log('Setting up Send-to dialogs');
-		const sendToDialog = document.querySelector(".send-to-dialog");
+		const sendToDialog = document.getElementById("send-to-dialog");
 		const sendToButtons = document.querySelectorAll(".send-to-btn");
 
 		if( sendToDialog && sendToButtons.length) {
 			sendToButtons.forEach(function(sendToButton) {
 				const sPid = sendToButton.getAttribute('data-pid');
 				const tableType = sendToButton.getAttribute('data-table-type');
-				// console.log('sendToButton',sendToButton);
-				// console.log('sPid',sPid, 'tableType:', tableType);
 				sendToButton.addEventListener('click', function() {
-					console.log('Opening dialog for PID:', sPid, 'tableType:', tableType);
+					enableDisabledSendToFields();
 					updateSendToForm(sPid, tableType);
 					sendToDialog.showModal();
 				});
 			});
-			sendToDialog.querySelector(".dialog-closer").onclick = function () {
-				// console.log('Closing dialog');
-				sendToDialog.close();
-			};
+			sendToDialog.querySelectorAll(".dialog-closer").forEach(function(closeButton) {
+				closeButton.onclick = function () {
+					sendToDialog.close();
+				};
+			});
 		}
 
 	}
