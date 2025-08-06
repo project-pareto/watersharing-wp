@@ -69,7 +69,6 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 $first_accordion = false;
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
-		// cfdump($type, 'TYPE');
 		switch ($type) {
 			case 'text':
 				$input = "<input type='text' class='form-control $class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
@@ -188,7 +187,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				}
 				$button_class = $first_accordion == $id_lower ? 'accordion-button' : 'accordion-button collapsed';
 				$state_class = $first_accordion == $id_lower ? 'show show-initial' : '';
-				// cfdump($state_class);
+
 				$aria_expanded = $first_accordion == $id_lower ? 'true' : 'false';
 
 				$a_accordion_intros = [
@@ -264,12 +263,7 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 	($required === 'required') ? $label_required = "<span class='required'>*</span>" : $label_required = "";
 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
-	if (strpos($label, 'Can Provide Trucks') !== false) {
-		// cfdump($label, 'Label');
-		// cfdump($type, 'Type');
-		// cfdump($class, 'class');
-		// cfdump($input, 'input');
-	}
+
 	$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox");
 	($add_label) ?
 	$html = "
@@ -336,12 +330,10 @@ function buildRequestForm($type = "", $title = "") {
 	$bid_totals = [];
 	$bid_totals_row = '';
 	if($trade){
-		// $bid_totals[] = buildFormField("bid_total", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "text", "", "","0", "", ' ' . $type . '-totalval', "readonly");
 		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-totalval', "readonly" => ""];
 		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => '' . $type . '-specval', "readonly" => ""];
 
 		$bid_totals_row = buildFormField("bid-totals-row", "", "multi_column", "", "", "", "", "two-col subs-stack columns-grow", "", $bid_totals);
-		// $bid_totals_row = buildFormField"id" => ("bid-totals-row", "label" => "", "type" => "multi_column", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "two-col", "readonl"", );
 	}
 
 	$primary_info_fields = [$well_pad, $well_name, $latlong, $site_compatibility, $dates, $rate, $bid_type,	$bid_info, $bid_totals_row];
@@ -885,7 +877,6 @@ function buildRequestTable( $type = '' ) {
 							";
 						$summation = "<span class='status-message-matched'>Operator Matched!</span>";
 					} else {
-						// $summation = "PENDING";
 						$contact = "";
 					}
 
