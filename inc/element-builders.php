@@ -69,7 +69,6 @@ function buildMetaField( $type = "", $name = "", $label = "", $value = "", $opti
 $first_accordion = false;
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
-		// cfdump($type, 'TYPE');
 		switch ($type) {
 			case 'hidden':
 				$input = "<input type='hidden' class='form-control-hidden $class' id='$id' name='$id'>";
@@ -198,7 +197,6 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 				
 				$button_class = $should_be_open ? 'accordion-button' : 'accordion-button collapsed';
 				$state_class = $should_be_open ? 'show show-initial' : '';
-				// cfdump($state_class);
 				$aria_expanded = $should_be_open ? 'true' : 'false';
 
 				$a_accordion_intros = [
@@ -274,16 +272,10 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 	($required === 'required') ? $label_required = "<span class='required'>*</span>" : $label_required = "";
 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
-	if (strpos($label, 'Can Provide Trucks') !== false) {
-		// cfdump($label, 'Label');
-		// cfdump($type, 'Type');
-		// cfdump($class, 'class');
-		// cfdump($input, 'input');
-	}
+
 	if($type == 'hidden'){
 		$html = $input;
 	} else {
-		// cfdump($type, 'Type');
 		$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox" && $type != "hidden");
 		if($add_label){
 			$html = "
@@ -333,7 +325,6 @@ function qdHiddenBuilder($names = []){
 // function to build out request form
 function buildRequestForm($type = "", $title = "") {
 	$html = "";
-	// cfdump($type, 'Type');
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 
 	#Trade Specific Fields
