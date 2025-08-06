@@ -279,6 +279,7 @@ function export_to_pareto( $post_id ) {
                     $item_array = array(
                         'Index'            => $item,
                         'Operator'         => $author,
+                        'UserID'        => (string)$author_id,
                         'Wellpad'        => $well,
                         'Longitude'        => $long,
                         'Latitude'        => $lat,
