@@ -237,7 +237,7 @@
 	});
 
 	function runMoveMes() {
-		console.log('Running moveMes function');
+		// console.log('Running moveMes function');
 		const $appendTos = jQuery('[data-append-to]');
 		$appendTos.each(function() {
 			const $ele = jQuery(this);
@@ -255,7 +255,7 @@
 	}
 
 	function runDomMutators() {
-		console.log('Running runDomMutators function');
+		// console.log('Running runDomMutators function');
 		runMoveMes();
 	}
 
@@ -349,8 +349,8 @@
 			sendToButtons.forEach(function(sendToButton) {
 				const sPid = sendToButton.getAttribute('data-pid');
 				const tableType = sendToButton.getAttribute('data-table-type');
-				console.log('sendToButton',sendToButton);
-				console.log('sPid',sPid, 'tableType:', tableType);
+				// console.log('sendToButton',sendToButton);
+				// console.log('sPid',sPid, 'tableType:', tableType);
 				sendToButton.addEventListener('click', function() {
 					console.log('Opening dialog for PID:', sPid, 'tableType:', tableType);
 					updateSendToForm(sPid, tableType);
@@ -358,7 +358,7 @@
 				});
 			});
 			sendToDialog.querySelector(".dialog-closer").onclick = function () {
-				console.log('Closing dialog');
+				// console.log('Closing dialog');
 				sendToDialog.close();
 			};
 		}
