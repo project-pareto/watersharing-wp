@@ -464,6 +464,7 @@ function buildSendToRequestForm($type = "") {
 	$share = ($type === 'share_supply' || $type === 'share_demand');
 
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
+	$trade_share_ing = ($type === 'trade_supply' || $type === 'trade_demand') ? 'Trading' : 'Sharing';
 
 	// Set up the fields for the form
 	$well_pad = buildFormField('well_pad', '', 'hidden', '' );
@@ -551,7 +552,7 @@ function buildSendToRequestForm($type = "") {
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-action-row'>
 			<div class='watersharing-input-col submit-column'>
-				<button type='button' class='dialog-closer clear-button'>Cancel</button> <button type='submit' class='watersharing-submit-button create-post-submit-button non-fat-btn'>Add to Portal</button>
+				<button type='button' class='dialog-closer clear-button'>Cancel</button> <button type='submit' class='watersharing-submit-button create-post-submit-button non-fat-btn'>Add to $trade_share_ing Portal</button>
 			</div>
 		</div>
 	</form>
@@ -1196,9 +1197,7 @@ function buildRequestTable( $type = '' ) {
 		<dialog id='send-to-dialog' class='dialog send-to-dialog' data-append-to='body'>
 			<header>
 				<button type='button' aria-label='Close dialog' id='js-close-button' class='dialog-closer dialog-closer-x'>
-					<svg viewBox='0 0 352 512' width='100' title='times'>
-						<path d='M242.72 256l100.07-100.07c12.28-12.28 12.28-32.19 0-44.48l-22.24-22.24c-12.28-12.28-32.19-12.28-44.48 0L176 189.28 75.93 89.21c-12.28-12.28-32.19-12.28-44.48 0L9.21 111.45c-12.28 12.28-12.28 32.19 0 44.48L109.28 256 9.21 356.07c-12.28 12.28-12.28 32.19 0 44.48l22.24 22.24c12.28 12.28 32.2 12.28 44.48 0L176 322.72l100.07 100.07c12.28 12.28 32.2 12.28 44.48 0l22.24-22.24c12.28-12.28 12.28-32.19 0-44.48L242.72 256z' />
-					</svg>
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'><path d='M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z'/></svg>
 				</button>
 				<h4 class='text-centered'>Send Info to <span class='send-to-type text-capitalize'>$sending_to_type</span> Portal</h4>
 				</header>

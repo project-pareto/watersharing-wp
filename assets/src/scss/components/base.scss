@@ -431,11 +431,13 @@ html:has(dialog[open]) {
 		top: calc(var(--size) * -2);
 		right: calc(var(--size) * -2);
 		border: none;
-		background: none; 
+		background: none;
+		i,
 		svg {
+			display: inline-block;
 			width: 1.5rem;
 			height: 1.5rem;
-			fill: currentColor;
+			fill: var(--accent-color-forms, #{$dark-blue});
 		}
 	}
 
