@@ -454,15 +454,16 @@ function buildRequestForm($type = "", $title = "") {
 	return $html;
 }
 
-// function to build out Send-to-Portal X request forms
+// 	function to build out Send-to-Portal X request forms
+//	$type is the post_type target of the send-to-portal request
 function buildSendToRequestForm($type = "") {
 	$html = "";
 	// cfdump($type, 'Type');
-	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
-	#Trade Specific Fields
+
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
 	$share = ($type === 'share_supply' || $type === 'share_demand');
 
+	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 
 	// Set up the fields for the form
 	$well_pad = buildFormField('well_pad', '', 'hidden', '' );
@@ -538,6 +539,7 @@ function buildSendToRequestForm($type = "") {
 		<input type='hidden' name='action' value='create_water_request'>
 		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
+		<input type='hidden' name='cloned_from' value=''>
 		$well_pad
 		$well_name
 		$lat
@@ -549,7 +551,6 @@ function buildSendToRequestForm($type = "") {
 		$bid_info
 		$bid_totals_row
 		$delivery
-
 		<input type='hidden' name='post_type' value='$type'>
 		<div class='watersharing-row'>
 			<div class='watersharing-input-col submit-column'>
@@ -558,7 +559,6 @@ function buildSendToRequestForm($type = "") {
 		</div>
 	</form>
 	";
-
 
 	$html = "
 		$form
@@ -927,11 +927,16 @@ function buildRequestTable( $type = '' ) {
 
 	$data = $query->get_posts();
 
+	// collect send-to data for all posts
+	$send_to_data = [];
+
 	// iterate through each row
 	if( !empty( $data ) ) {
 		$number = 1;
 		foreach( $data as $post ) {
-			// cfdump(getWaterRequestForSendTo($post));
+			// collect send-to form data for this post
+			$send_to_data[$post] = getWaterRequestForSendTo($post);
+			
 			( get_post_meta( $post, 'well_name', true ) ) ? $well = get_post_meta( $post, 'well_name', true ) : $well = "";
 			( get_post_meta( $post, 'status', true ) ) ? $status = "<span class='status-" . get_post_meta( $post, 'status', true ) . "'>" . get_post_meta( $post, 'status', true ) . "</span>" : $status = "";
 
@@ -1075,8 +1080,8 @@ function buildRequestTable( $type = '' ) {
 					$field_share_distance = (strpos($type,'share') !== false) ? "<div class='match-cell match-lookup-distance watersharing-col-half'><strong>Distance (miles):</strong> $lookup_distance</div>" : "";
 					
 					if($send_to_enabled){
-						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
-						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
 					} else{
 						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>" : "";
 						$field_share_buttons_matched =  '';
@@ -1113,7 +1118,7 @@ function buildRequestTable( $type = '' ) {
 			} else {
 				// No Matches
 				$send_to_target = ($type === 'share_supply' || $type === 'share_demand') ? 'Trading' : 'Sharing';
-				$unmatched_send_to = $send_to_enabled ? "<button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
+				$unmatched_send_to = $send_to_enabled ? "<button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
 				$match_rows = $send_to_enabled ? "<div class='watersharing-match-block unmatched'><div class='match-detail'><div class='match-cell match-send-to unmatched-send-to watersharing-col-half'>$unmatched_send_to</div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>" : '';
 			}
 			
@@ -1208,6 +1213,16 @@ function buildRequestTable( $type = '' ) {
 			
 		</dialog>
 	";
+
+	// Output global JavaScript object with send-to data
+	if (!empty($send_to_data)) {
+		$table .= "\n<script>\n";
+		$table .= "if (typeof window.sendToData === 'undefined') {\n";
+		$table .= "  window.sendToData = {};\n";
+		$table .= "}\n";
+		$table .= "window.sendToData['" . $type . "'] = " . json_encode($send_to_data, JSON_HEX_QUOT | JSON_HEX_APOS | JSON_HEX_TAG) . ";\n";
+		$table .= "</script>\n";
+	}
 
 	return $table;
 }

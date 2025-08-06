@@ -259,6 +259,87 @@
 		runMoveMes();
 	}
 
+	function updateSendToForm(sPid, tableType){
+		console.log('actual typeof sPid:', typeof sPid);
+		console.log('tableType:', tableType);
+
+		// this function finds the send-to form information for this pid and finds form fields in the send-to form with names matching the keys in the data and fills the fields found with matching names to its keys
+		console.log('Updating send-to form for PID:', sPid, 'in table:', tableType);
+		
+		// Check if we have the global send-to data
+		if (typeof window.sendToData === 'undefined') {
+			console.warn('window.sendToData is not defined');
+			return;
+		}
+		
+		// Check if we have data for this table type
+		if (!window.sendToData[tableType]) {
+			console.warn('No data found for table type:', tableType);
+			console.warn('Available table types:', Object.keys(window.sendToData));
+			return;
+		}
+		
+		// Debug: log available keys and their types for this table
+		console.log('Available sendToData keys for', tableType, ':', Object.keys(window.sendToData[tableType]));
+		console.log('Looking for key:', sPid, 'as string:', String(sPid), 'as number:', Number(sPid));
+		
+		// Try both string and numeric lookups within the correct namespace
+		let formData = window.sendToData[tableType][sPid] || window.sendToData[tableType][String(sPid)] || window.sendToData[tableType][Number(sPid)];
+		
+		if (!formData) {
+			console.warn('No send-to data found for PID:', sPid, 'in table:', tableType);
+			console.warn('Available keys:', Object.keys(window.sendToData[tableType]));
+			return;
+		}
+		
+		console.log('Form data for PID', sPid, ':', formData);
+		
+		// Find the send-to dialog form
+		const sendToDialog = document.querySelector('.send-to-dialog');
+		if (!sendToDialog) {
+			console.warn('Send-to dialog not found');
+			return;
+		}
+		
+		// Iterate through each field in the form data
+		Object.keys(formData).forEach(fieldName => {
+			const fieldValue = formData[fieldName];
+			
+			// Skip the original pid field - it shouldn't be in the form except as cloned_from
+			if (fieldName === 'pid') {
+				return;
+			}
+			
+			// Look for form fields with matching names (including hidden fields)
+			const field = sendToDialog.querySelector(`[name="${fieldName}"]`);
+			
+			if (field) {
+				if (field.type === 'checkbox') {
+					// Handle checkboxes
+					field.checked = fieldValue == '1' || fieldValue === true || fieldValue === 'true';
+				} else if (field.type === 'radio') {
+					// Handle radio buttons - find the one with matching value
+					const radioGroup = sendToDialog.querySelectorAll(`[name="${fieldName}"]`);
+					radioGroup.forEach(radio => {
+						if (radio.value === fieldValue) {
+							radio.checked = true;
+						}
+					});
+				} else if (field.tagName.toLowerCase() === 'select') {
+					// Handle select dropdowns
+					field.value = fieldValue;
+				} else {
+					// Handle text inputs, hidden fields, textareas, etc.
+					field.value = fieldValue || '';
+				}
+				
+				console.log(`Set field ${fieldName} to:`, fieldValue);
+			} else {
+				console.log(`Field ${fieldName} not found in form`);
+			}
+		});
+	}
+
 	function setupSendToDialogs() {
 		console.log('Setting up Send-to dialogs');
 		const sendToDialog = document.querySelector(".send-to-dialog");
@@ -267,10 +348,12 @@
 		if( sendToDialog && sendToButtons.length) {
 			sendToButtons.forEach(function(sendToButton) {
 				const sPid = sendToButton.getAttribute('data-pid');
+				const tableType = sendToButton.getAttribute('data-table-type');
 				console.log('sendToButton',sendToButton);
-				console.log('sPid',sPid);
+				console.log('sPid',sPid, 'tableType:', tableType);
 				sendToButton.addEventListener('click', function() {
-					console.log('Opening dialog for PID:', sPid);
+					console.log('Opening dialog for PID:', sPid, 'tableType:', tableType);
+					updateSendToForm(sPid, tableType);
 					sendToDialog.showModal();
 				});
 			});
