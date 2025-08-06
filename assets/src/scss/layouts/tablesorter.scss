@@ -3,16 +3,15 @@
     border-spacing: 0;
     border-collapse: collapse;
     tbody{
+        box-shadow: none;
+        overflow: hidden;
         td:not(.dashboard-action-td){
             @media (min-width: $md-screen){
                 line-height: 1;
             }
         }
-        box-shadow: none;
-        overflow: hidden;        
         th,
         td{
-            // text-align: unset !important;
             text-align: left;
             border-top: 1px solid var(--table-border-color, #D9D9D9);
             border-left: 1px solid var(--table-border-color, #D9D9D9);
