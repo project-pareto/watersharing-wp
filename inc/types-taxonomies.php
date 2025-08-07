@@ -199,8 +199,76 @@ function watersharing_requests_fields( $post ) {
 	buildMetaField( 'input', 'start_date', 'Start Date', get_post_meta( $post->ID, 'start_date', true ), 'date' );
 	buildMetaField( 'input', 'end_date', 'End Date', get_post_meta( $post->ID, 'end_date', true ), 'date' );
 	buildMetaField( 'input', 'rate_bpd', 'Rate (BPD)', get_post_meta( $post->ID, 'rate_bpd', true ), 'text' );
-	buildMetaField( 'input', 'transport_radius', 'Transport Radius', get_post_meta( $post->ID, 'transport_radius', true ), 'text' );
-	buildMetaField( 'input', 'water_quality', 'Water Quality', get_post_meta( $post->ID, 'water_quality', true ), 'text' );
+	
+	buildMetaField( 'input', 'can_accept_trucks', 'I Can Accept trucks', get_post_meta($post->ID, "can_accept_trucks", true), 'checkbox');
+	buildMetaField( 'input', 'can_accept_layflats', 'I Can Accept pipes', get_post_meta($post->ID, "can_accept_layflats", true), 'checkbox');
+
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'input', 'truck_transport_radius', 'Truck Transport Radius', get_post_meta( $post->ID, 'truck_transport_radius', 'true'), 'text');
+	buildMetaField( 'input', 'truck_capacity', 'Truck Capacity',get_post_meta( $post->ID, 'truck_capacity', 'true'), 'text');
+	echo "</div>";
+	
+	echo "<div class='meta-field-group-inline'>";	
+	buildMetaField( 'input', 'layflats_transport_radius', 'Layflats Transport Radius',get_post_meta( $post->ID, 'layflats_transport_radius', 'true'), 'text');
+	buildMetaField( 'input', 'layflats_capacity', 'Layflats Capacity',get_post_meta( $post->ID, 'layflats_capacity', 'true'), 'text');
+	echo "</div>";
+
+	//Quality Disclosures
+
+	echo "<label class = 'input-label-group'>TSS</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'tss_limit', 'Limit', get_post_meta( $post->ID, 'tss_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'tss_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'tss_measure_value', true), 'text');
+	echo "</div>";
+	
+	echo "<label class = 'input-label-group'>TDS</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'tds_limit', 'Limit', get_post_meta( $post->ID, 'tds_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value'));
+	buildMetaField( 'input', 'tds_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'tds_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Chloride</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'chloride_limit', 'Limit', get_post_meta( $post->ID, 'chloride_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'chloride_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'chloride_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Barium</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'barium_limit', 'Limit', get_post_meta( $post->ID, 'barium_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'barium_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'barium_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Calcium</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'calciumcarbonate_limit', 'Limit', get_post_meta( $post->ID, 'calciumcarbonate_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'calciumcarbonate_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'calciumcarbonate_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Iron</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'iron_limit', 'Limit', get_post_meta( $post->ID, 'iron_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'iron_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'iron_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Boron</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'boron_limit', 'Limit', get_post_meta( $post->ID, 'boron_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'boron_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'boron_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Hydrogen Sulfide</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'hydrogensulfide_limit', 'Limit', get_post_meta( $post->ID, 'hydrogensulfide_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'hydrogensulfide_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'hydrogensulfide_measure_value', true), 'text');
+	echo "</div>";
+
+	echo "<label class = 'input-label-group'>Norm</label>";
+	echo "<div class='meta-field-group-inline'>";
+	buildMetaField( 'select', 'norm_limit', 'Limit', get_post_meta( $post->ID, 'norm_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
+	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
+	echo "</div>";
+
 
 	$matchlookup = [];
 	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_shares', 'fields' => 'ids' ) );
@@ -231,7 +299,6 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'rate_bpd', 'Rate (BPD)', get_post_meta( $post->ID, 'rate_bpd', true ), 'text' );
 	echo "</div>";
 
-	// buildMetaField( 'input', 'site_compatibility', 'Site Compatibility', get_post_meta($post->ID, 'site_compatibility', true), array( 'trucks' => 'Trucks', 'pipelines' => 'Pipelines') );
 	buildMetaField( 'input', 'can_accept_trucks', 'I Can Accept trucks', get_post_meta($post->ID, "can_accept_trucks", true), 'checkbox');
 	buildMetaField( 'input', 'can_accept_layflats', 'I Can Accept pipes', get_post_meta($post->ID, "can_accept_layflats", true), 'checkbox');
 
@@ -256,63 +323,54 @@ function watertrading_requests_fields( $post ) {
 
 	echo "<label class = 'input-label-group'>TSS</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'tss_measure_units', 'Units', get_post_meta( $post->ID, 'tss_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'tss_limit', 'Limit', get_post_meta( $post->ID, 'tss_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'tss_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'tss_measure_value', true), 'text');
 	echo "</div>";
 	
 	echo "<label class = 'input-label-group'>TDS</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'tds_measure_units', 'Units', get_post_meta( $post->ID, 'tds_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'tds_limit', 'Limit', get_post_meta( $post->ID, 'tds_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value'));
 	buildMetaField( 'input', 'tds_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'tds_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Chloride</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'chloride_measure_units', 'Units', get_post_meta( $post->ID, 'chloride_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'chloride_limit', 'Limit', get_post_meta( $post->ID, 'chloride_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'chloride_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'chloride_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Barium</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'barium_measure_units', 'Units', get_post_meta( $post->ID, 'barium_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'barium_limit', 'Limit', get_post_meta( $post->ID, 'barium_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'barium_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'barium_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Calcium</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'calciumcarbonate_measure_units', 'Units', get_post_meta( $post->ID, 'calciumcarbonate_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'calciumcarbonate_limit', 'Limit', get_post_meta( $post->ID, 'calciumcarbonate_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'calciumcarbonate_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'calciumcarbonate_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Iron</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'iron_measure_units', 'Units', get_post_meta( $post->ID, 'iron_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'iron_limit', 'Limit', get_post_meta( $post->ID, 'iron_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'iron_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'iron_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Boron</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'boron_measure_units', 'Units', get_post_meta( $post->ID, 'boron_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'boron_limit', 'Limit', get_post_meta( $post->ID, 'boron_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'boron_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'boron_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Hydrogen Sulfide</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'hydrogensulfide_measure_units', 'Units', get_post_meta( $post->ID, 'hydrogensulfide_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'hydrogensulfide_limit', 'Limit', get_post_meta( $post->ID, 'hydrogensulfide_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'hydrogensulfide_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'hydrogensulfide_measure_value', true), 'text');
 	echo "</div>";
 
 	echo "<label class = 'input-label-group'>Norm</label>";
 	echo "<div class='meta-field-group-inline'>";
-	// buildMetaField( 'select', 'norm_measure_units', 'Units', get_post_meta( $post->ID, 'norm_measure_units', true), array('ppm') );
 	buildMetaField( 'select', 'norm_limit', 'Limit', get_post_meta( $post->ID, 'norm_limit', true), array( 'gt' => 'Greater Than Value', 'lt' => 'Less Than Value') );
 	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
@@ -423,6 +481,42 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
+		'can_accept_trucks' => 'sanitize_text_field',
+		'can_accept_layflats' => 'sanitize_text_field',
+		'can_accept_pipes'  => 'sanitize_text_field',
+		'can_deliver' 		=> 'sanitize_text_field',
+		'truck_transport_radius' 	=> 'sanitize_text_field',
+		'truck_capacity' 	=> 'sanitize_text_field',
+		'layflats_transport_radius' => 'sanitize_text_field',
+		'layflats_capacity' => 'sanitize_text_field',
+		'quality_disclosures' 		=> 'sanitize_text_field',
+		'tss_measure_units'    => 'sanitize_text_field',
+		'tss_limit'    => 'sanitize_text_field',
+		'tss_measure_value'    => 'sanitize_text_field',
+		'tds_measure_units'     => 'sanitize_text_field',
+		'tds_limit'   => 'sanitize_text_field',
+		'tds_measure_value'     => 'sanitize_text_field',
+		'chloride_measure_units'     => 'sanitize_text_field',
+		'chloride_limit'   => 'sanitize_text_field',
+		'chloride_measure_value'     => 'sanitize_text_field',
+		'barium_measure_units'     => 'sanitize_text_field',
+		'barium_limit'   => 'sanitize_text_field',
+		'barium_measure_value'     => 'sanitize_text_field',
+		'calciumcarbonate_measure_units'     => 'sanitize_text_field',
+		'calciumcarbonate_limit'   => 'sanitize_text_field',
+		'calciumcarbonate_measure_value'     => 'sanitize_text_field',
+		'iron_measure_units'     => 'sanitize_text_field',
+		'iron_limit'   => 'sanitize_text_field',
+		'iron_measure_value'     => 'sanitize_text_field',
+		'boron_measure_units'     => 'sanitize_text_field',
+		'boron_limit'   => 'sanitize_text_field',
+		'boron_measure_value'     => 'sanitize_text_field',
+		'hydrogensulfide_measure_units'     => 'sanitize_text_field',
+		'hydrogensulfide_limit'   => 'sanitize_text_field',
+		'hydrogensulfide_measure_value'     => 'sanitize_text_field',
+		'norm_measure_units'     => 'sanitize_text_field',
+		'norm_limit'   => 'sanitize_text_field',
+		'norm_measure_value'     => 'sanitize_text_field',
 		'share_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field'
 	),
@@ -491,6 +585,42 @@ $custom_metafields = array(
 		'rate_bpd' 			=> 'sanitize_text_field',
 		'transport_radius' 	=> 'sanitize_text_field',
 		'water_quality' 	=> 'sanitize_text_field',
+		'can_accept_trucks' => 'sanitize_text_field',
+		'can_accept_layflats' => 'sanitize_text_field',
+		'can_accept_pipes'  => 'sanitize_text_field',
+		'can_deliver' 		=> 'sanitize_text_field',
+		'truck_transport_radius' 	=> 'sanitize_text_field',
+		'truck_capacity' 	=> 'sanitize_text_field',
+		'layflats_transport_radius' => 'sanitize_text_field',
+		'layflats_capacity' => 'sanitize_text_field',
+		'quality_disclosures' 		=> 'sanitize_text_field',
+		'tss_measure_units'    => 'sanitize_text_field',
+		'tss_limit'    => 'sanitize_text_field',
+		'tss_measure_value'    => 'sanitize_text_field',
+		'tds_measure_units'     => 'sanitize_text_field',
+		'tds_limit'   => 'sanitize_text_field',
+		'tds_measure_value'     => 'sanitize_text_field',
+		'chloride_measure_units'     => 'sanitize_text_field',
+		'chloride_limit'   => 'sanitize_text_field',
+		'chloride_measure_value'     => 'sanitize_text_field',
+		'barium_measure_units'     => 'sanitize_text_field',
+		'barium_limit'   => 'sanitize_text_field',
+		'barium_measure_value'     => 'sanitize_text_field',
+		'calciumcarbonate_measure_units'     => 'sanitize_text_field',
+		'calciumcarbonate_limit'   => 'sanitize_text_field',
+		'calciumcarbonate_measure_value'     => 'sanitize_text_field',
+		'iron_measure_units'     => 'sanitize_text_field',
+		'iron_limit'   => 'sanitize_text_field',
+		'iron_measure_value'     => 'sanitize_text_field',
+		'boron_measure_units'     => 'sanitize_text_field',
+		'boron_limit'   => 'sanitize_text_field',
+		'boron_measure_value'     => 'sanitize_text_field',
+		'hydrogensulfide_measure_units'     => 'sanitize_text_field',
+		'hydrogensulfide_limit'   => 'sanitize_text_field',
+		'hydrogensulfide_measure_value'     => 'sanitize_text_field',
+		'norm_measure_units'     => 'sanitize_text_field',
+		'norm_limit'   => 'sanitize_text_field',
+		'norm_measure_value'     => 'sanitize_text_field',
 		'share_request' 	=> 'sanitize_text_field',
 		'decline_set' 		=> 'sanitize_text_field'
 	),

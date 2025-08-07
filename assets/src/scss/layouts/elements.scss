@@ -168,10 +168,8 @@
 }
 
 .hide-on-mobile {
-	display: none;
-
 	@media (min-width: 768px) {
-		display: block;
+		display: none;
 	}
 }
 
