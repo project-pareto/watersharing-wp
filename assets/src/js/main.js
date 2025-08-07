@@ -501,20 +501,21 @@
 		});
 
 		//Calculating total / specific bid value
-		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
-			// Determine the prefix based on the triggered element's class
-			var prefix = $(this).hasClass("trade_supply-bid_amount") || $(this).hasClass("trade_supply-rate_bpd") || $(this).hasClass("trade_supply-bid_units") ? "trade_supply-" : "trade_demand-";
-			// Use the prefix to find the respective elements within the same group
-			var $bid = $("." + prefix + "bid_amount");
-			var $rate = $("." + prefix + "rate_bpd");
-			var $units = $("." + prefix + "bid_units");
-			var $total = $("." + prefix + "totalval");
-			var $specificTotal = $("." + prefix + "specval");
-		
+		$(document).on('change',"input[name=rate_bpd],input[name=bid_amount],select[name=bid_units]", function(){
+			const $formField = $(this);
+
+			const $container = $formField.closest('form, .send-to-dialog, .watersharing-form');
+			const $total = $container.find('[name="bid_total"]');
+			const $bid = $container.find('[name="bid_amount"]');
+			const $rate = $container.find('[name="rate_bpd"]');
+			const $units = $container.find('[name="bid_units"]');
+			const $specificTotal = $container.find('[name="bid_specific_total"]');
+
 			// Parse input values
-			var bid = parseFloat($bid.val());
-    		var rate = parseFloat($rate.val());
-			var unitsValue = $units.val();
+			const bid = parseFloat($bid.val());
+    		const rate = parseFloat($rate.val());
+			const unitsValue = $units.val();
+
 		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
 				if (unitsValue == "USD/bbl.day") {
@@ -528,7 +529,7 @@
 				$total.val('');
 				$specificTotal.val('');
 			}
-		});		
+		});
 
 		// Function to format numbers with thousands separator
 		function formatNumber(num) {
