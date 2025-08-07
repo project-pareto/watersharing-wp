@@ -202,7 +202,6 @@
 				$(params.dataTable).html('');
 			},
 			success: function(output) {
-				console.log(output);
 				$(params.dataTable).html(output);
 				sortTables();
 			},
@@ -237,7 +236,6 @@
 	});
 
 	function runMoveMes() {
-		// console.log('Running moveMes function');
 		const $appendTos = jQuery('[data-append-to]');
 		$appendTos.each(function() {
 			const $ele = jQuery(this);
@@ -249,7 +247,7 @@
 				$ele.removeAttr('data-append-to');
 				$ele.addClass('js-moved');
 			} else {
-				console.warn(`Target element ${targetSelector} not found for`, $ele);
+				// target element not found
 			}
 		});
 	}
@@ -257,7 +255,7 @@
 	function enableDisabledSendToFields(){
 		const sendToDialog = document.querySelector('.send-to-dialog');
 		if (!sendToDialog) {
-			console.warn('Send-to dialog not found');
+			// send-to dialog not found
 			return;
 		}
 
@@ -274,7 +272,7 @@
 	function updateCanProvideChecks(){
 		const sendToDialog = document.querySelector('#send-to-dialog');
 		if (!sendToDialog) {
-			console.warn('Send-to dialog not found');
+			// send-to dialog not found
 			return;
 		}
 
@@ -310,7 +308,6 @@
 		const layflatsCheckbox = sendToDialog.querySelector('#layflats-checkbox');
 		if (layflatsCheckbox) {
 			layflatsCheckbox.checked = hasLayflatsValue;
-			console.log('Set layflats checkbox to:', hasLayflatsValue);
 		}
 	}
 
@@ -319,44 +316,29 @@
 	}
 
 	function updateSendToForm(sPid, tableType){
-		console.log('actual typeof sPid:', typeof sPid);
-		console.log('tableType:', tableType);
 
 		// this function finds the send-to form information for this pid and finds form fields in the send-to form with names matching the keys in the data and fills the fields found with matching names to its keys
-		console.log('Updating send-to form for PID:', sPid, 'in table:', tableType);
 		
 		// Check if we have the global send-to data
 		if (typeof window.sendToData === 'undefined') {
-			console.warn('window.sendToData is not defined');
 			return;
 		}
 		
 		// Check if we have data for this table type
 		if (!window.sendToData[tableType]) {
-			console.warn('No data found for table type:', tableType);
-			console.warn('Available table types:', Object.keys(window.sendToData));
 			return;
 		}
-		
-		// Debug: log available keys and their types for this table
-		console.log('Available sendToData keys for', tableType, ':', Object.keys(window.sendToData[tableType]));
-		console.log('Looking for key:', sPid, 'as string:', String(sPid), 'as number:', Number(sPid));
-		
+				
 		// Try both string and numeric lookups within the correct namespace
 		let formData = window.sendToData[tableType][sPid] || window.sendToData[tableType][String(sPid)] || window.sendToData[tableType][Number(sPid)];
 		
 		if (!formData) {
-			console.warn('No send-to data found for PID:', sPid, 'in table:', tableType);
-			console.warn('Available keys:', Object.keys(window.sendToData[tableType]));
 			return;
 		}
 		
-		console.log('Form data for PID', sPid, ':', formData);
-		
-		// Find the send-to dialog form
 		const sendToDialog = document.querySelector('.send-to-dialog');
 		if (!sendToDialog) {
-			console.warn('Send-to dialog not found');
+			// send-to dialog not found
 			return;
 		}
 		
@@ -392,9 +374,8 @@
 					field.value = fieldValue || '';
 				}
 				
-				console.log(`Set field ${fieldName} to:`, fieldValue);
 			} else {
-				console.log(`Field ${fieldName} not found in form`);
+				// field was not found in the form
 			}
 		});
 	}
