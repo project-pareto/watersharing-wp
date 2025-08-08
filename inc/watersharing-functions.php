@@ -34,7 +34,34 @@ function create_new_post() {
 
 	// Retrieve form data with defaults
 	$well_name = isset($_POST['well_name']) ? sanitize_text_field($_POST['well_name']) : 'UNKWN';
-	$post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : '';
+	$post_type = isset($_POST['post_type']) ? sanitize_key($_POST['post_type']) : '';
+
+	// Constrain to expected post types only (prevent tampering) and honor feature toggles
+	$watersharing_enabled = (bool) get_option('watersharing_toggle');
+	$watertrading_enabled = (bool) get_option('watertrading_toggle');
+	$allowed_post_types = array();
+	if ( $watersharing_enabled ) {
+		$allowed_post_types[] = 'share_supply';
+		$allowed_post_types[] = 'share_demand';
+	}
+	if ( $watertrading_enabled ) {
+		$allowed_post_types[] = 'trade_supply';
+		$allowed_post_types[] = 'trade_demand';
+	}
+	$allowed_post_types = apply_filters('watersharing_allowed_post_types', $allowed_post_types);
+	if ( ! in_array( $post_type, $allowed_post_types, true ) ) {
+		wp_die('Invalid post type');
+	}
+
+	// Capability check for creating this post type
+	$pto = get_post_type_object( $post_type );
+	if ( ! $pto ) {
+		wp_die('Invalid post type');
+	}
+	$required_cap = isset($pto->cap->create_posts) ? $pto->cap->create_posts : ( isset($pto->cap->edit_posts) ? $pto->cap->edit_posts : 'edit_posts' );
+	if ( ! current_user_can( $required_cap ) ) {
+		wp_die('You are not allowed to create this request');
+	}
 	
 	// Validate required fields
 	if (empty($post_type) || empty($well_name)) {
