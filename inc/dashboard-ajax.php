@@ -90,7 +90,8 @@ function ajax_request_approval() {
 	wp_die();
 
 }
-add_action( 'wp_ajax_nopriv_ajax_approval', 'ajax_request_approval' );
+
+// AJAX handlers
 add_action( 'wp_ajax_ajax_approval', 'ajax_request_approval' );
 
 ?>

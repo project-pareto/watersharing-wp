@@ -155,7 +155,6 @@ function createAndDownloadCsv() {
 }
 
 add_action('wp_ajax_download_csv', 'createAndDownloadCsv');
-add_action('wp_ajax_nopriv_download_csv', 'createAndDownloadCsv');
 
 function my_custom_scripts() {
     // Ensure the script is already enqueued before localizing
@@ -233,7 +232,6 @@ function download_latest_summary_file() {
 
 
 add_action('wp_ajax_download_latest_summary', 'download_latest_summary_file');
-add_action('wp_ajax_nopriv_download_latest_summary', 'download_latest_summary_file');
 
 
 
