@@ -45,131 +45,129 @@
 }
 
 /* Watersharing Form Styles */
-.watersharing-blocks, .watertrading-blocks {
-	.watersharing-form {
-		.watersharing-row {
-			margin-bottom: var(--form-row-bottom-margin, 1rem);
-		}
+.watersharing-form {
+	.watersharing-row {
+		margin-bottom: var(--form-row-bottom-margin, 1rem);
+	}
 
-		input, input.input, input[type='date'], input[type='text'], select {
-			width: 100%;
-		}
+	input, input.input, input[type='date'], input[type='text'], select {
+		width: 100%;
+	}
 
-		label[for]{
-			cursor: pointer;
-		}
+	label[for]{
+		cursor: pointer;
+	}
 
-		.watersharing-form-label {
-			@media (min-width: 576px) {
-				text-align: left;
-				flex: 0 0 auto;
-				width: 25%;
-				align-items: center;
-				gap:5px;
-			}
-
-			p{
-				margin:0px;
-			}
-
-			display:flex;
-			flex-shrink: 0;
-			font-weight: 600;
-			line-height: 1.5;
-			max-width: 100%;
-			padding: 0 10px 0 0;
-			width: 100%;
-
-			&.accordion{
-				width: 100% !important;
-			}
-
-			.checkbox{
-				width:25% !important;
-			}
-		}
-
-		.watersharing-input-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				width: 75%;
-			}
-
-			flex-shrink: 0;
-			max-width: 100%;
-			width: 100%;
-			align-content: center;
-
-			&.accordion{
-				width: 100% !important;
-			}
-
-			&.two-col{
-				width: 42% !important;
-			}
-
-			&.three-col{
-				width: 31% !important;
-			}
-
-			&.no-label{
-				width:100%;
-			}
-		}
-
-		.watersharing-text-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				margin-bottom: 0;
-				width: 30%;
-				margin-right: 10px;
-			}
-
-			margin-bottom: 8px;
-		}
-
-		.watersharing-date-sep {
-			@media (min-width: 576px) {
-				display: block;
-			}
-
-			display: none;
+	.watersharing-form-label {
+		@media (min-width: 576px) {
+			text-align: left;
 			flex: 0 0 auto;
-			width: 4%;
-			align-self: center;
-			text-align: center;
+			width: 25%;
+			align-items: center;
+			gap:5px;
 		}
 
-		.watersharing-date-col {
-			@media (min-width: 576px) {
-				flex: 0 0 auto;
-				margin-bottom: 0;
-				width: 48%;
-			}
+		p{
+			margin:0px;
+		}
 
+		display:flex;
+		flex-shrink: 0;
+		font-weight: 600;
+		line-height: 1.5;
+		max-width: 100%;
+		padding: 0 10px 0 0;
+		width: 100%;
+
+		&.accordion{
+			width: 100% !important;
+		}
+
+		.checkbox{
+			width:25% !important;
+		}
+	}
+
+	.watersharing-input-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			width: 75%;
+		}
+
+		flex-shrink: 0;
+		max-width: 100%;
+		width: 100%;
+		align-content: center;
+
+		&.accordion{
+			width: 100% !important;
+		}
+
+		&.two-col{
+			width: 42% !important;
+		}
+
+		&.three-col{
+			width: 31% !important;
+		}
+
+		&.no-label{
+			width:100%;
+		}
+	}
+
+	.watersharing-text-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			margin-bottom: 0;
+			width: 30%;
+			margin-right: 10px;
+		}
+
+		margin-bottom: 8px;
+	}
+
+	.watersharing-date-sep {
+		@media (min-width: 576px) {
+			display: block;
+		}
+
+		display: none;
+		flex: 0 0 auto;
+		width: 4%;
+		align-self: center;
+		text-align: center;
+	}
+
+	.watersharing-date-col {
+		@media (min-width: 576px) {
+			flex: 0 0 auto;
+			margin-bottom: 0;
+			width: 48%;
+		}
+
+		margin-bottom: 8px;
+	}
+
+	.watersharing-section-break {
+		border-bottom: 1px solid $light-grey;
+		margin-top: 3rem;
+		margin-bottom: 1rem;
+
+		.watersharing-info-text {
+			font-size: 14px;
 			margin-bottom: 8px;
 		}
+	}
 
-		.watersharing-section-break {
-			border-bottom: 1px solid $light-grey;
-			margin-top: 3rem;
-			margin-bottom: 1rem;
-
-			.watersharing-info-text {
-				font-size: 14px;
-				margin-bottom: 8px;
-			}
-		}
-
-		.watersharing-submit-button {
-			width: 100%;
-		}
+	.watersharing-submit-button {
+		width: 100%;
 	}
 }
 
 .hide-on-mobile {
-	@media (min-width: 768px) {
-		display: none;
+	@media (max-width: 767px) {
+		display: none !important;
 	}
 }
 
@@ -183,8 +181,6 @@
 
 /* Watersharing Match Request Table Styles */
 table.watersharing-table, table.watertrading-table{
-	border-collapse: separate;
-	border-spacing: 0 .125em;
 	margin-bottom: 1rem;
 	vertical-align: top;
 	width: 100%;
@@ -201,6 +197,7 @@ table.watersharing-table, table.watertrading-table{
 		tr.watersharing-request-row {
 			> td {
 				border-bottom: 1px solid $light-blue;
+				border-right: 1px solid $light-blue;
 			}
 		}
 	}
@@ -210,7 +207,7 @@ table.watersharing-table, table.watertrading-table{
 
 		th {
 			line-height: 2;
-			padding: 4px 18px 4px 4px;
+			padding: 4px 4px 4px 18px;
 			text-align: left;
 		}
 	}
@@ -226,9 +223,14 @@ table.watersharing-table, table.watertrading-table{
 		&.collapse {
 			display: none;
 		}
+		&.show + .watersharing-request-row{
+			@media (max-width: 767px) {
+				margin-top: 3em;
+			}
+		}
 
 		&:not(collapse) > td > div {
-			max-height: 250px;
+			max-height: 350px;
 		}
 
 		&.collapsing > td > div {
@@ -245,24 +247,17 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	tr.watersharing-request-row {
-		background: #FFF;
-		box-shadow: $drop-shadow;
 		position: relative;
 
 		@media (max-width: 767px) {
 			margin-bottom: 10px;
 		}
 
-		&.closed {
-			background: #EAEAEA;
-		}
-
-		&.row-expanded {
-			background: #D8E2F3;
-		}
-
 		& > td {
 			padding: .5rem .5rem;
+			@media (min-width: $md-screen){
+				padding: .2rem .5rem;
+			}
 
 			&.align-middle {
 				vertical-align: middle;
@@ -270,8 +265,8 @@ table.watersharing-table, table.watertrading-table{
 
 			input[type=checkbox] {
 			    height: 20px;
-			    margin-top: 6px;
 			    width: 20px;
+				margin-block: 3px;
 
 				&:hover {
 					cursor: pointer;
@@ -293,6 +288,10 @@ table.watersharing-table, table.watertrading-table{
 				}
 			}
 		}
+
+		&:has(.status-closed){
+			background-color: $alt-gray;
+		}
 	}
 
 	span.status-matched {
@@ -306,31 +305,20 @@ table.watersharing-table, table.watertrading-table{
 	}
 
 	span.matches {
-		&.matched i {
-		    color: #70ad47
-		}
-
+		font-size: 16px;
 		i {
+			font-size: 15px;
 			color: #a32828;
 			margin-right: 10px
 		}
+
+		&.matched i {
+		    color: #219653
+		}
+
 	}
 
 	.watersharing-request-detail {
-		background: $light-blue;
-
-		.watersharing-match-block {
-			font-size: 14px;
-			padding: .5rem 1rem;
-
-			.watersharing-match-detail {
-				@media (min-width: 992px) {
-					flex: 0 0 auto;
-					width: 66.6666667%;
-				}
-			}
-		}
-
 		.watersharing-contact {
 			span {
 				display: block;
@@ -354,26 +342,36 @@ table.watersharing-table, table.watertrading-table{
 		border: 1px solid $light-blue;
 		padding: 10px;
 	}
-
 	.watersharing-match-action {
-	    background: none;
+		background: none;
 	    box-shadow: none;
 	    color: #4e79a7;
-	    padding: 0;
+		&.approval{
+			padding: 0.4em 0.5em;
+			display: flex;
+			flex-direction: row;
+			gap: 1ch;
+			align-items: center;
+			justify-content: center;
+			border-radius: 5px;
+			color: #000;
+			cursor: pointer;
+			font-size: 16px;
+			font-weight: 700;
+			text-decoration: none;
 
-		&.approval {
-		    color: #000;
-		    cursor: pointer;
-		    font-size: 16px;
-		    font-weight: 700;
-		    margin-right: 20px;
-		    text-decoration: none;
+			&.approve-action{
+				border: 1px solid #C1FFD2;
+			}
+			&.decline-action{
+				border: 1px solid #FFD9D6;
+			}
 
-			&.decline-action.checked i, &.decline-action:hover i {
+			&.decline-action i {
 				color: $red;
 			}
 
-			&.approve-action.checked i, &.approve-action:hover i {
+			&.approve-action i {
 				color: $green;
 			}
 
@@ -383,10 +381,77 @@ table.watersharing-table, table.watertrading-table{
 
 			i {
 				color: $light-blue;
-				font-size: 24px;
-				margin-right: 10px
+				font-size: 20px;
 			}
 		}
+		&.toggle-row{
+			display: inline-block;
+			min-width: 20px;
+			min-height: 20px;
+			border-radius: 10px;
+			background-color: var(--button-bg-color, #00678F);
+			color: #fff;
+			aspect-ratio: 1 / 1;
+			&.disabled{
+				@media (max-width: 767px) {
+					display: none;
+				}
+			}
+		}
+	}
+}
+
+.watersharing-match-block{
+	display: flex;
+	flex-direction: column;
+	.match-detail,
+	.match-summation{
+		padding: 1em;
+	}
+	.match-cell{
+		padding: 0.5em;
+		border-bottom: 1px solid var(--table-border-color, #D9D9D9);
+		border-right: 1px solid var(--table-border-color, #D9D9D9);
+		&.match-send-to,
+		&.match-buttons{
+			border-bottom: none;
+		}
+		
+		&.match-approval{
+			padding-block: 0;
+			display: flex;
+			gap: 1rem;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			border: none;
+		}
+	}
+	.match-summation{
+		order: 1;
+	}
+	.match-detail{
+		order: 2;
+		padding: 0
+	}
+	.status-message-matched{
+		color: var(--color-success, #219653);
+		font-weight: 700;
+	}
+
+	@media (min-width: $md-screen) {
+		flex-direction: row;
+		.match-summation{
+			order: unset;
+			flex-basis: 27.5%;
+			display: grid;
+			place-items: center;
+		}
+		.match-detail{
+			order: unset;
+			flex-basis: 72.5%;
+		}
+
 	}
 }
 
@@ -402,7 +467,7 @@ table.watersharing-table, table.watertrading-table{
 	position: relative;
 	width:100%;
 	margin-right:10px;
-	border:3px solid;
+	border: 3px solid;
 	border-radius:8px;
 	border-color: $blue;
 	padding-top:5px;
@@ -413,3 +478,6 @@ table.watersharing-table, table.watertrading-table{
 	display: none !important;
 }
 
+button [class^='fa-'] {
+	color: inherit;
+}
