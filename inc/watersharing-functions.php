@@ -41,13 +41,23 @@ function create_new_post() {
 		wp_die('Missing required fields');
 	}
 
-	// set the title
-	$post_type_prefix = ($post_type === 'share_supply') ? 'PRD' : 'CSM';
-	$author_name = wp_get_current_user()->display_name;
+	// set the title (use posted start_date if provided; sanitize/normalize; else fallback)
 	$pad = $well_name;
-	$date = isset($_POST['start_date']) ? $_POST['start_date'] : current_time('mdY');
+	if ( isset($_POST['start_date']) && $_POST['start_date'] !== '' ) {
+		$start_date_raw = sanitize_text_field( wp_unslash( $_POST['start_date'] ) );
+		$parsed = strtotime( $start_date_raw );
+		if ( $parsed ) {
+			$date_for_title = gmdate( 'Ymd', $parsed );
+		} else {
+			// Fallback: strip non-digits and attempt to use first 8 chars as Ymd
+			$digits = preg_replace('/[^0-9]/', '', $start_date_raw);
+			$date_for_title = ( strlen($digits) >= 8 ) ? substr($digits, 0, 8) : current_time('Ymd');
+		}
+	} else {
+		$date_for_title = current_time('Ymd');
+	}
 	$timestamp = current_time('His');
-	$title = $pad . ' ' . $date . ' ' . $timestamp;
+	$title = $pad . ' ' . $date_for_title . ' ' . $timestamp;
 
 	$new_post = array(
 		'post_title'    => $title,
@@ -87,14 +97,16 @@ function create_new_post() {
 	}
 
 	// Determine redirect URL - check form first, then Plugin Settings, and fallback to home() for success; For error, look in form or fallback to home()
-	$watersharing_prod_redirect_id = get_option('production_dashboard_page', '');
-	$watersharing_cons_redirect_id = get_option('consumption_dashboard_page', '');
-	$watertrading_prod_redirect_id = get_option('wt_production_dashboard_page', '');
-	$watertrading_cons_redirect_id = get_option('wt_consumption_dashboard_page', '');
+	$watersharing_prod_redirect_id = absint( get_option('production_dashboard_page', 0) );
+	$watersharing_cons_redirect_id = absint( get_option('consumption_dashboard_page', 0) );
+	$watertrading_prod_redirect_id = absint( get_option('wt_production_dashboard_page', 0) );
+	$watertrading_cons_redirect_id = absint( get_option('wt_consumption_dashboard_page', 0) );
 
-
+	// Optional per-form redirect path (relative to site home)
     if(isset($_POST['redirect_success']) && !empty($_POST['redirect_success'])) {
-        $redirect_url = home_url($_POST['redirect_success']);
+        $redirect_path = wp_parse_url( sanitize_text_field($_POST['redirect_success']), PHP_URL_PATH );
+        $redirect_path = ltrim( (string) $redirect_path, '/' );
+        $redirect_url = home_url( $redirect_path ? '/' . $redirect_path : '/' );
     } else {
         $redirect_url = home_url();
         switch ($post_type) {
@@ -113,7 +125,9 @@ function create_new_post() {
         }
     }
     if(isset($_POST['redirect_failure']) && !empty($_POST['redirect_failure'])) {
-        $redirect_failure_url = home_url($_POST['redirect_failure']);
+        $redirect_failure_path = wp_parse_url( sanitize_text_field($_POST['redirect_failure']), PHP_URL_PATH );
+        $redirect_failure_path = ltrim( (string) $redirect_failure_path, '/' );
+        $redirect_failure_url = home_url( $redirect_failure_path ? '/' . $redirect_failure_path : '/' );
     }
 	
 	// Log the redirect for debugging

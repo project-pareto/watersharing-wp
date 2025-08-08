@@ -227,7 +227,7 @@ if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
 	add_filter( 'block_categories_all', 'register_wt_guttenberg_categories' );
 
 } else {
-	add_filter( 'block_categories', 'register_ws_guttenberg_categories' );	
+	add_filter( 'block_categories', 'register_ws_guttenberg_categories' );
 	add_filter( 'block_categories', 'register_wt_guttenberg_categories' );
 }
 
@@ -261,21 +261,25 @@ if($watertrading_toggle){
 
 // handle request dashboard post updates
 function change_post_status_callback() {
-	if( isset( $_POST['post_ids'] ) && is_array( $_POST['post_ids'] ) ) {
-		$post_action = isset($_POST['post_action']) ? $_POST['post_action'] : '';
+	// Sanitize and validate inputs
+	$post_ids = [];
+	if ( isset($_POST['post_ids']) && is_array($_POST['post_ids']) ) {
+		$post_ids = array_filter( array_map('absint', $_POST['post_ids']) );
+	}
+	$post_action = isset($_POST['post_action']) ? sanitize_key($_POST['post_action']) : '';
 
-		foreach( $_POST['post_ids'] as $post_id ) {
-			if( $post_action === 'delete' ) {
-				wp_trash_post($post_id);
-			}
-			elseif( $post_action === 'close' ) {
+	if ( $post_ids && in_array( $post_action, ['delete', 'close'], true ) ) {
+		foreach ( $post_ids as $post_id ) {
+			if ( $post_action === 'delete' ) {
+				wp_trash_post( $post_id );
+			} elseif ( $post_action === 'close' ) {
 				update_post_meta( $post_id, 'status', 'closed' );
 			}
 		}
 	}
 
 	// Redirect back to the previous page after the action is completed
-	wp_safe_redirect(wp_get_referer() ? wp_get_referer() : home_url());
+	wp_safe_redirect( wp_get_referer() ? wp_get_referer() : home_url() );
 	exit;
 }
 add_action('admin_post_change_post_status', 'change_post_status_callback');
