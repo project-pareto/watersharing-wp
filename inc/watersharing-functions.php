@@ -22,12 +22,114 @@ function pad_exists_for_user( $user_id, $post_title ) {
 
 // handle water request submissions
 function create_new_post() {
+    // Early guard: if not POST (e.g., mirrored GET to admin-post), send user somewhere safe
+    if ( strtoupper($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST' ) {
+        // Prefer the correct mode using request hint, cookie, or referer
+        $watersharing_enabled = (bool) get_option('watersharing_toggle');
+        $watertrading_enabled = (bool) get_option('watertrading_toggle');
+        $ws_prod = absint( get_option('production_dashboard_page', 0) );
+        $ws_cons = absint( get_option('consumption_dashboard_page', 0) );
+        $wt_prod = absint( get_option('wt_production_dashboard_page', 0) );
+        $wt_cons = absint( get_option('wt_consumption_dashboard_page', 0) );
+
+        $mode = isset($_REQUEST['mode']) ? sanitize_key($_REQUEST['mode']) : '';
+        if ($mode !== 'watertrading' && $mode !== 'watersharing') {
+            $mode = isset($_COOKIE['ws_last_mode']) ? sanitize_key($_COOKIE['ws_last_mode']) : '';
+        }
+        if ($mode !== 'watertrading' && $mode !== 'watersharing') {
+            $ref = wp_get_referer();
+            if ($ref) {
+                $ref = (string) $ref;
+                if ( ($wt_prod && strpos($ref, get_permalink($wt_prod)) !== false) || ($wt_cons && strpos($ref, get_permalink($wt_cons)) !== false) ) {
+                    $mode = 'watertrading';
+                } elseif ( ($ws_prod && strpos($ref, get_permalink($ws_prod)) !== false) || ($ws_cons && strpos($ref, get_permalink($ws_cons)) !== false) ) {
+                    $mode = 'watersharing';
+                }
+            }
+        }
+
+        $fallback = home_url('/');
+        if ($mode === 'watertrading' && $watertrading_enabled) {
+            $fallback = $wt_prod ? get_permalink($wt_prod) : ( $wt_cons ? get_permalink($wt_cons) : $fallback );
+        } elseif ($watersharing_enabled) {
+            $fallback = $ws_prod ? get_permalink($ws_prod) : ( $ws_cons ? get_permalink($ws_cons) : $fallback );
+        } elseif ($watertrading_enabled) {
+            $fallback = $wt_prod ? get_permalink($wt_prod) : ( $wt_cons ? get_permalink($wt_cons) : $fallback );
+        }
+        nocache_headers();
+        if ( ob_get_length() ) { ob_end_clean(); }
+        if ( headers_sent() ) {
+            $safe_url = esc_url( $fallback );
+            echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $safe_url ) . '"><script>window.location.replace(' . json_encode( $safe_url ) . ');</script></head><body><p>Redirecting... <a href="' . esc_attr( $safe_url ) . '">Continue</a></p></body></html>';
+            exit;
+        }
+        wp_safe_redirect( $fallback, 303 );
+        exit;
+    }
+
     // Verify nonce
     if ( ! isset($_POST['watersharing_nonce']) || ! wp_verify_nonce($_POST['watersharing_nonce'], 'create_water_request') ) {
         wp_die('Invalid request');
     }
-	
-	// Basic validation
+
+    // Build an idempotency key that reflects this specific form payload (not just the nonce)
+    $nonce_value = (string) $_POST['watersharing_nonce'];
+    $payload = $_POST;
+    unset($payload['watersharing_nonce']);
+    // Also ignore common non-functional fields if present
+    unset($payload['_wp_http_referer']);
+    ksort($payload);
+    $payload_str = wp_json_encode($payload);
+    $idemp_key = 'ws_nonce_used_' . md5( $nonce_value . '|' . get_current_user_id() . '|' . $payload_str );
+
+    // Idempotency: bail out if this specific payload was already processed for this user (prevents duplicate posts in multi-pane)
+    if ( get_transient( $idemp_key ) ) {
+        // Compute the same redirect URL logic used below
+        $post_type = isset($_POST['post_type']) ? sanitize_key($_POST['post_type']) : '';
+        $watersharing_prod_redirect_id = absint( get_option('production_dashboard_page', 0) );
+        $watersharing_cons_redirect_id = absint( get_option('consumption_dashboard_page', 0) );
+        $watertrading_prod_redirect_id = absint( get_option('wt_production_dashboard_page', 0) );
+        $watertrading_cons_redirect_id = absint( get_option('wt_consumption_dashboard_page', 0) );
+
+        if(isset($_POST['redirect_success']) && !empty($_POST['redirect_success'])) {
+            $redirect_path = wp_parse_url( sanitize_text_field($_POST['redirect_success']), PHP_URL_PATH );
+            $redirect_path = ltrim( (string) $redirect_path, '/' );
+            $redirect_url = home_url( $redirect_path ? '/' . $redirect_path : '/' );
+        } else {
+            $redirect_url = home_url();
+            switch ($post_type) {
+                case 'share_supply':
+                    $redirect_url = $watersharing_prod_redirect_id ? get_permalink($watersharing_prod_redirect_id) : home_url();
+                    break;
+                case 'share_demand':
+                    $redirect_url = $watersharing_cons_redirect_id ? get_permalink($watersharing_cons_redirect_id) : home_url();
+                    break;
+                case 'trade_supply':
+                    $redirect_url = $watertrading_prod_redirect_id ? get_permalink($watertrading_prod_redirect_id) : home_url();
+                    break;
+                case 'trade_demand':
+                    $redirect_url = $watertrading_cons_redirect_id ? get_permalink($watertrading_cons_redirect_id) : home_url();
+                    break;
+            }
+        }
+
+        // Remember mode briefly to guide any mirrored admin-post hits
+        $mode = (strpos($post_type, 'trade_') === 0) ? 'watertrading' : 'watersharing';
+        @setcookie('ws_last_mode', $mode, time() + 300, '/');
+
+        // Redirect now
+        nocache_headers();
+        if ( ob_get_length() ) { ob_end_clean(); }
+        if ( headers_sent() ) {
+            $safe_url = esc_url( $redirect_url );
+            echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $safe_url ) . '"><script>window.location.replace(' . json_encode( $safe_url ) . ');</script></head><body><p>Redirecting... <a href="' . esc_attr( $safe_url ) . '">Continue</a></p></body></html>';
+            exit;
+        }
+        wp_safe_redirect( $redirect_url, 303 );
+        exit;
+    }
+
+    // Basic validation
 	if (empty($_POST) || !isset($_POST['post_type'])) {
 		wp_die('Invalid form submission');
 	}
@@ -160,7 +262,25 @@ function create_new_post() {
 	// Log the redirect for debugging
 	error_log("Redirecting to: " . $redirect_url);
 	
-    wp_safe_redirect( $redirect_url );
+	// Mark this payload as processed briefly to avoid duplicate posts (key includes payload hash)
+    set_transient( $idemp_key, 1, MINUTE_IN_SECONDS );
+
+    // Prepare for redirect
+    // Remember mode briefly to guide any mirrored admin-post hits
+    $mode = (strpos($post_type, 'trade_') === 0) ? 'watertrading' : 'watersharing';
+    @setcookie('ws_last_mode', $mode, time() + 300, '/');
+
+	nocache_headers();
+	if ( ob_get_length() ) { ob_end_clean(); }
+
+	if ( headers_sent() ) {
+		// HTML fallback with JS + meta refresh + link
+		$safe_url = esc_url( $redirect_url );
+		echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $safe_url ) . '"><script>window.location.replace(' . json_encode( $safe_url ) . ');</script></head><body><p>Redirecting... <a href="' . esc_attr( $safe_url ) . '">Continue</a></p></body></html>';
+		exit;
+	}
+
+	wp_safe_redirect( $redirect_url, 303 );
     exit;
 }
 add_action('admin_post_create_water_request', 'create_new_post');
@@ -292,6 +412,57 @@ function download_latest_summary_file() {
 
 add_action('wp_ajax_download_latest_summary', 'download_latest_summary_file');
 
+// Global guard: redirect bare admin-post.php hits without an action to a safe dashboard
+add_action('admin_init', 'ws_guard_empty_admin_post');
+function ws_guard_empty_admin_post() {
+    // Only handle admin-post.php within admin and when no action is provided
+    if ( ! is_admin() ) { return; }
+    global $pagenow;
+    if ( $pagenow !== 'admin-post.php' ) { return; }
+    $action = isset($_REQUEST['action']) ? (string) $_REQUEST['action'] : '';
+    if ( $action !== '' ) { return; }
 
+    $watersharing_enabled = (bool) get_option('watersharing_toggle');
+    $watertrading_enabled = (bool) get_option('watertrading_toggle');
+    $ws_prod = absint( get_option('production_dashboard_page', 0) );
+    $ws_cons = absint( get_option('consumption_dashboard_page', 0) );
+    $wt_prod = absint( get_option('wt_production_dashboard_page', 0) );
+    $wt_cons = absint( get_option('wt_consumption_dashboard_page', 0) );
 
-?>
+    // Infer mode: request > cookie > referer
+    $mode = isset($_REQUEST['mode']) ? sanitize_key($_REQUEST['mode']) : '';
+    if ($mode !== 'watertrading' && $mode !== 'watersharing') {
+        $mode = isset($_COOKIE['ws_last_mode']) ? sanitize_key($_COOKIE['ws_last_mode']) : '';
+    }
+    if ($mode !== 'watertrading' && $mode !== 'watersharing') {
+        $ref = wp_get_referer();
+        if ($ref) {
+            $ref = (string) $ref;
+            if ( ($wt_prod && strpos($ref, get_permalink($wt_prod)) !== false) || ($wt_cons && strpos($ref, get_permalink($wt_cons)) !== false) ) {
+                $mode = 'watertrading';
+            } elseif ( ($ws_prod && strpos($ref, get_permalink($ws_prod)) !== false) || ($ws_cons && strpos($ref, get_permalink($ws_cons)) !== false) ) {
+                $mode = 'watersharing';
+            }
+        }
+    }
+
+    $fallback = home_url('/');
+    if ($mode === 'watertrading' && $watertrading_enabled) {
+        $fallback = $wt_prod ? get_permalink($wt_prod) : ( $wt_cons ? get_permalink($wt_cons) : $fallback );
+    } elseif ($watersharing_enabled) {
+        $fallback = $ws_prod ? get_permalink($ws_prod) : ( $ws_cons ? get_permalink($ws_cons) : $fallback );
+    } elseif ($watertrading_enabled) {
+        $fallback = $wt_prod ? get_permalink($wt_prod) : ( $wt_cons ? get_permalink($wt_cons) : $fallback );
+    }
+
+    // Redirect with strong fallbacks
+    nocache_headers();
+    if ( ob_get_length() ) { ob_end_clean(); }
+    if ( headers_sent() ) {
+        $safe_url = esc_url( $fallback );
+        echo '<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=' . esc_attr( $safe_url ) . '"><script>window.location.replace(' . json_encode( $safe_url ) . ');</script></head><body><p>Redirecting... <a href="' . esc_attr( $safe_url ) . '">Continue</a></p></body></html>';
+        exit;
+    }
+    wp_safe_redirect( $fallback, 303 );
+    exit;
+}
