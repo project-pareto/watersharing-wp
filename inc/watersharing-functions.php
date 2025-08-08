@@ -22,6 +22,10 @@ function pad_exists_for_user( $user_id, $post_title ) {
 
 // handle water request submissions
 function create_new_post() {
+    // Verify nonce
+    if ( ! isset($_POST['watersharing_nonce']) || ! wp_verify_nonce($_POST['watersharing_nonce'], 'create_water_request') ) {
+        wp_die('Invalid request');
+    }
 	
 	// Basic validation
 	if (empty($_POST) || !isset($_POST['post_type'])) {
@@ -111,18 +115,21 @@ function create_new_post() {
     if(isset($_POST['redirect_failure']) && !empty($_POST['redirect_failure'])) {
         $redirect_failure_url = home_url($_POST['redirect_failure']);
     }
-
 	
 	// Log the redirect for debugging
 	error_log("Redirecting to: " . $redirect_url);
 	
-    wp_redirect( $redirect_url );
+    wp_safe_redirect( $redirect_url );
     exit;
 }
 add_action('admin_post_create_water_request', 'create_new_post');
 
 
 function createAndDownloadCsv() {
+    // Verify nonce
+    if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'download_csv') ) {
+        wp_die('Invalid request');
+    }
     // Get CSV data from POST request
     $csv_data = isset($_POST['csv_data']) ? json_decode(stripslashes($_POST['csv_data']), true) : [];
 
@@ -159,14 +166,25 @@ add_action('wp_ajax_download_csv', 'createAndDownloadCsv');
 function my_custom_scripts() {
     // Ensure the script is already enqueued before localizing
     if (wp_script_is('watersharing-scripts', 'enqueued')) {
-        // Localize the script with the AJAX URL
-        wp_localize_script('watersharing-scripts', 'my_ajax_object', array('ajax_url' => admin_url('admin-ajax.php')));
+        // Localize the script with the AJAX URL and nonces
+        wp_localize_script('watersharing-scripts', 'my_ajax_object', array(
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'nonces' => array(
+                'ajax_approval' => wp_create_nonce('ajax_approval'),
+                'download_csv' => wp_create_nonce('download_csv'),
+                'download_latest_summary' => wp_create_nonce('download_latest_summary')
+            )
+        ));
     }
 }
 add_action('wp_enqueue_scripts', 'my_custom_scripts');
 
 
 function download_latest_summary_file() {
+    // Verify nonce
+    if ( ! isset($_POST['nonce']) || ! wp_verify_nonce($_POST['nonce'], 'download_latest_summary') ) {
+        wp_die('Invalid request');
+    }
     // Ensure no output is sent
     if (ob_get_length()) {
         ob_end_clean();

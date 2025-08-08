@@ -194,7 +194,8 @@
 				parent_record	: params.parentid,
 				match_record	: params.matchid,
 				action_status	: params.interaction,
-				action_type		: params.interactiontype
+				action_type		: params.interactiontype,
+				nonce			: (window.my_ajax_object && window.my_ajax_object.nonces) ? window.my_ajax_object.nonces.ajax_approval : ''
 			},
 			dataType: 'json',
 
@@ -607,7 +608,8 @@
 				method: 'POST',
 				data: {
 					action: 'download_latest_summary',
-					trade_csv: tradeCsv // Pass the trade_csv value
+					trade_csv: tradeCsv, // Pass the trade_csv value
+					nonce: (window.my_ajax_object && window.my_ajax_object.nonces) ? window.my_ajax_object.nonces.download_latest_summary : ''
 				},
 				xhrFields: {
 					responseType: 'blob' // Ensure response is treated as binary blob
@@ -641,6 +643,7 @@
 		const formData = new FormData();
 		formData.append('action', 'download_csv');
 		formData.append('csv_data', JSON.stringify(volumeData));
+		formData.append('nonce', (window.my_ajax_object && window.my_ajax_object.nonces) ? window.my_ajax_object.nonces.download_csv : '');
 	
 		fetch(adminUrl, {
 			method: 'POST',

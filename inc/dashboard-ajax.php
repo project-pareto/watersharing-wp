@@ -3,6 +3,11 @@
 // this is the ajax function
 function ajax_request_approval() {
 
+	// Verify nonce
+	if ( ! isset($_POST['nonce']) || ! wp_verify_nonce( $_POST['nonce'], 'ajax_approval' ) ) {
+		wp_send_json_error( array('message' => 'Invalid request.'), 403 );
+	}
+
 	// assign passed variables from the ajax script
 	$data = $_POST;
 

@@ -405,6 +405,7 @@ function buildRequestForm($type = "", $title = "") {
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
+		<input type='hidden' name='watersharing_nonce' value='" . esc_attr( wp_create_nonce('create_water_request') ) . "'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		$primary_information
 		$delivery
@@ -512,6 +513,7 @@ function buildSendToRequestForm($type = "") {
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='WTF watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
+		<input type='hidden' name='watersharing_nonce' value='" . esc_attr( wp_create_nonce('create_water_request') ) . "'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		<input type='hidden' name='cloned_from' value=''>
 		$well_pad
@@ -646,36 +648,36 @@ function buildKpiTable($type = "", $title = ""){
 	// iterate through each row and get match data 
 	if( !empty( $data ) ) {
 		foreach( $data as $post_id ) {
-			// You can get the post object if needed
-			$post = get_post($post_id);
-			$post_date = $post->post_date;
-			
-			$trade_volume = get_post_meta( $post_id, 'total_volume', true );
-			$total_value = get_post_meta( $post_id, 'total_value', true );
-			$consumption_trade_approval = get_post_meta( $post_id, 'consumption_trade_approval', true);
-			$producer_trade_approval = get_post_meta( $post_id, 'producer_trade_approval', true);
+            $post = get_post( $post_id );
+            if ( ! $post ) { continue; }
+            $post_date = $post->post_date;
+            
+            $trade_volume = get_post_meta( $post_id, 'total_volume', true );
+            $total_value = get_post_meta( $post_id, 'total_value', true );
+            $consumption_trade_approval = get_post_meta( $post_id, 'consumption_trade_approval', true);
+            $producer_trade_approval = get_post_meta( $post_id, 'producer_trade_approval', true);
 
-			if($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve'){
-				$total_matches++;
-				$total_volume += (float) $trade_volume;
-			}
-			
-			$volume_proposed += (float) $trade_volume;
-			$trades_proposed++;
+            if($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve'){
+                $total_matches++;
+                $total_volume += (float) $trade_volume;
+            }
+            
+            $volume_proposed += (float) $trade_volume;
+            $trades_proposed++;
 
-			$request_data[] = array(
-				'volume' => (float) $trade_volume,
-				'date'   => date('Y-m-d', strtotime($post_date)),
-				'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
-			);
-		}
-	} else {
-		$request_data[] = array(
-			'volume' => '',
-			'date'   => '',
-			'matched' => ''
-		);
-	}
+            $request_data[] = array(
+                'volume' => (float) $trade_volume,
+                'date'   => date('Y-m-d', strtotime($post_date)),
+                'matched' => ($consumption_trade_approval == 'approve' && $producer_trade_approval == 'approve')
+            );
+        }
+    } else {
+        $request_data[] = array(
+            'volume' => '',
+            'date'   => '',
+            'matched' => ''
+        );
+    }
 	$volume = [];
 	$datesList = getTwoWeekIntervalsYTD();
 	$chart_data= [];
@@ -1252,5 +1254,3 @@ function getWaterRequestForSendTo($pid){
 
 	return $post_info;
 }
-
-?>
