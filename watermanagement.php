@@ -278,8 +278,45 @@ function change_post_status_callback() {
 		}
 	}
 
-	// Redirect back to the previous page after the action is completed
-	wp_safe_redirect( wp_get_referer() ? wp_get_referer() : home_url() );
+	// Determine a safe, mode-correct redirect destination
+	$redirect_url = '';
+	if ( isset($_POST['redirect_success']) && !empty($_POST['redirect_success']) ) {
+		$redirect_path = wp_parse_url( sanitize_text_field($_POST['redirect_success']), PHP_URL_PATH );
+		$redirect_path = ltrim( (string) $redirect_path, '/' );
+		$redirect_url = home_url( $redirect_path ? '/' . $redirect_path : '/' );
+	} elseif ( wp_get_referer() ) {
+		$redirect_url = wp_get_referer();
+	} elseif ( ! empty($post_ids) ) {
+		$first_type = get_post_type( $post_ids[0] );
+		if ( function_exists('ws_dashboard_url_for_post_type') ) {
+			$redirect_url = ws_dashboard_url_for_post_type( $first_type );
+		} else {
+			$redirect_url = home_url('/');
+		}
+	} else {
+		$mode = function_exists('ws_infer_mode') ? ws_infer_mode() : '';
+		if ( function_exists('ws_dashboard_url_for_mode') ) {
+			$redirect_url = ws_dashboard_url_for_mode( $mode );
+		} else {
+			$redirect_url = home_url('/');
+		}
+	}
+
+	// Remember mode briefly to guide any mirrored admin-post hits
+	if ( ! empty($post_ids) ) {
+		$first_type = isset($first_type) ? $first_type : get_post_type( $post_ids[0] );
+		if ( is_string($first_type) && $first_type !== '' ) {
+			$mode = (strpos($first_type, 'trade_') === 0) ? 'watertrading' : 'watersharing';
+			@setcookie('ws_last_mode', $mode, time() + 300, '/');
+		}
+	}
+
+	// Redirect with robust fallbacks
+	if ( function_exists('ws_send_redirect') ) {
+		ws_send_redirect( $redirect_url, 303 );
+	}
+	// Fallback if helper is unavailable
+	wp_safe_redirect( $redirect_url ? $redirect_url : home_url('/') );
 	exit;
 }
 add_action('admin_post_change_post_status', 'change_post_status_callback');
