@@ -507,8 +507,8 @@ function buildSendToRequestForm($type = "") {
 	$qd = qdHiddenBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']);
 
 	$action = esc_url( admin_url('admin-post.php') );
-	error_log("Form action URL: $action");
-	error_log("[POST Data] " . print_r($_POST, true));
+	// FOR IN-DEPTH DEBUGGING:
+	// error_log("[POST Data] " . print_r($_POST, true));
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='WTF watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>

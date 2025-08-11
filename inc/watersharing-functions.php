@@ -178,7 +178,7 @@ function create_new_post() {
 
     // Remember mode briefly to guide any mirrored admin-post hits
     $mode = (strpos($post_type, 'trade_') === 0) ? 'watertrading' : 'watersharing';
-    @setcookie('ws_last_mode', $mode, time() + 300, '/');
+    @setcookie('ws_last_mode', $mode, time() + 600, '/');
 
     // Centralized redirect
     ws_send_redirect( $redirect_url, 303 );
