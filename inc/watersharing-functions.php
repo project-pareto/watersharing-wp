@@ -93,7 +93,10 @@ function create_new_post() {
     }
     $required_cap = isset($pto->cap->create_posts) ? $pto->cap->create_posts : ( isset($pto->cap->edit_posts) ? $pto->cap->edit_posts : 'edit_posts' );
     if ( ! current_user_can( $required_cap ) ) {
-        wp_die('You are not allowed to create this request');
+        $user = wp_get_current_user();
+        if ( ! in_array( 'subscriber', (array) $user->roles, true ) ) {
+            wp_die('You are not allowed to create this request');
+        }
     }
 
     // Validate required fields
