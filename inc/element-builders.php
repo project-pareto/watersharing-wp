@@ -70,6 +70,10 @@ $first_accordion = false;
 function buildFormField( $id = "", $label = "", $type = 'text', $required = "", $parameters = "", $placeholder = "",$acf_key = "", $class = "", $readOnly = '', $dataset = [] ) {
 	if ($type) {
 		switch ($type) {
+			case 'hidden':
+				$input = "<input type='hidden' class='form-control-hidden $class' id='$id' name='$id'>";
+				break;
+
 			case 'text':
 				$input = "<input type='text' class='form-control $class' id='$id' name='$id' placeholder='$placeholder' $required $readOnly>";
 				break;
@@ -182,13 +186,18 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 			case 'accordion':
 				global $first_accordion;
 				$id_lower = strtolower(str_replace(' ', '-', $id));
-				if($first_accordion==false) {
+				$has_no_init_open = strpos( $class, 'no-init-open-accordion' ) !== false;
+				
+				if ( $first_accordion === false && !$has_no_init_open) {
 					$first_accordion = $id_lower;
 				}
-				$button_class = $first_accordion == $id_lower ? 'accordion-button' : 'accordion-button collapsed';
-				$state_class = $first_accordion == $id_lower ? 'show show-initial' : '';
-
-				$aria_expanded = $first_accordion == $id_lower ? 'true' : 'false';
+				
+				// If no-init-open-accordion is present, force all accordions to be closed
+				$should_be_open = !$has_no_init_open && ($first_accordion == $id_lower);
+				
+				$button_class = $should_be_open ? 'accordion-button' : 'accordion-button collapsed';
+				$state_class = $should_be_open ? 'show show-initial' : '';
+				$aria_expanded = $should_be_open ? 'true' : 'false';
 
 				$a_accordion_intros = [
 					'Quality Disclosures' => 'Use this optional section to declare quality properties associated with your request; either quality associated with water you have or requirements for water you need. You may populate some or all of the fields provided. Doing so can help refine the matches you receive but is not required.',
@@ -209,11 +218,11 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 								<div class='accordion' id='$id_lower'>
 									<div class='accordion-item'>
 										<label id='$id_lower-label' class='watersharing-form-label no-right-padding accordion'>
-										<button id='$id_lower-button' class='$button_class' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$class' aria-expanded='$aria_expanded' aria-controls='collapse-$class'>
+										<button id='$id_lower-button' class='$button_class' type='button' data-bs-toggle='collapse' data-bs-target='#collapse-$id_lower' aria-expanded='$aria_expanded' aria-controls='collapse-$id_lower'>
 											<strong>$label</strong>
 										</button>
 										</label>
-										<div id='collapse-$class' class='accordion-collapse collapse $state_class' aria-labelledby='$id_lower-label'>
+										<div id='collapse-$id_lower' class='accordion-collapse collapse $state_class' aria-labelledby='$id_lower-label'>
 											$intro_text_markup
 											<div class='accordion-body'>
 												$input
@@ -264,21 +273,27 @@ function buildFormField( $id = "", $label = "", $type = 'text', $required = "", 
 
 	str_contains($class,'toggle') ? $checkbox = "<input type='checkbox' name='$id-checkbox' id='$id-checkbox' class='meta-box-input checkbox $class' value='1'>": $checkbox = "";
 
-	$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox");
-	($add_label) ?
-	$html = "
-		<div class='watersharing-row'>
-			<label class='watersharing-form-label spot255'>$checkbox<p>$label$label_required</p></label>
-			<div class='watersharing-input-col'>
-				$input
-			</div>
-		</div>
-	": $html = 
-		"
-			<div class='watersharing-input-col no-label'>
-				$input
-			</div>
-		";
+	if($type == 'hidden'){
+		$html = $input;
+	} else {
+		$add_label = (!empty($label) && $type != "accordion" && $type != "checkbox" && $type != "hidden");
+		if($add_label){
+			$html = "
+				<div class='watersharing-row'>
+					<label class='watersharing-form-label spot255'>$checkbox<p>$label$label_required</p></label>
+					<div class='watersharing-input-col'>
+						$input
+					</div>
+				</div>
+			";
+		} else {
+			$html = "
+				<div class='watersharing-input-col no-label'>
+					$input
+				</div>
+			";
+		}
+	}
 
 	return $html;
 }
@@ -295,14 +310,25 @@ function qdBuilder($names = []){
 	return $qd;
 }
 
+function qdHiddenBuilder($names = []){
+	$qd = '';
+	foreach($names as $name){
+		$name_lower = strtolower(str_replace(' ', '', $name));
+		$field_limit = buildFormField($name_lower.'_limit', '', 'hidden', '', '', '', '', '');
+		$field_value = buildFormField($name_lower.'_measure_value', '', 'hidden', '', '', '', '', '');
+		$qd .= $field_limit . $field_value;
+	}
+	return $qd;
+}
+
+
 // function to build out request form
 function buildRequestForm($type = "", $title = "") {
 	$html = "";
-
 	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
 
-	#Trade Specific Fields
 	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+	$share = ($type === 'share_supply' || $type === 'share_demand');
 
 
 	// Set up the fields for the form
@@ -338,12 +364,6 @@ function buildRequestForm($type = "", $title = "") {
 
 	$primary_info_fields = [$well_pad, $well_name, $latlong, $site_compatibility, $dates, $rate, $bid_type,	$bid_info, $bid_totals_row];
 	$primary_information = buildFormField('Primary Information', '<span class=button-label>Primary Information</span>', 'accordion', '', '', '', '', $type . '-pi', '', $primary_info_fields);
-
-
-
-
-	$share = ($type === 'share_supply');
-
 
 	// Can Provide Transport (optional) Accordion
 	
@@ -385,7 +405,6 @@ function buildRequestForm($type = "", $title = "") {
 	$form = "
 	<form action='$action' method='POST' id='create-post-form' class='watersharing-form'>
 		<input type='hidden' name='action' value='create_water_request'>
-		<input type='hidden' name='redirect_success' value='/dashboard'>
 		<input type='hidden' name='redirect_failure' value='/404'>
 		$primary_information
 		$delivery
@@ -411,6 +430,114 @@ function buildRequestForm($type = "", $title = "") {
 				</div>
 			</div>
 		</div>
+	";
+
+
+	return $html;
+}
+
+// 	function to build out Send-to-Portal X request forms. $type is the post_type _target_ of the send-to-portal request
+function buildSendToRequestForm($type = "") {
+	$html = "";
+
+	$trade = ($type === 'trade_supply' || $type === 'trade_demand');
+	$share = ($type === 'share_supply' || $type === 'share_demand');
+
+	$supply_demand = ($type === 'share_supply' || $type === 'trade_supply') ? 'supply' : 'demand';
+	$trade_share_ing = ($type === 'trade_supply' || $type === 'trade_demand') ? 'Trading' : 'Sharing';
+
+	$well_pad = buildFormField('well_pad', '', 'hidden', '' );
+	$well_name = buildFormField('well_name', '', 'hidden', '' );
+	$lat = buildFormField('latitude', '', 'hidden', '', '', '', '', '', '');
+	$long = buildFormField('longitude', '', 'hidden', '', '', '', '', '', '');
+	$can_accept_trucks = buildFormField('can_accept_trucks', '', 'hidden', '', '', '', '', '', '');
+	$can_accept_layflats = buildFormField('can_accept_layflats', '', 'hidden', '', '', '', '', '', '');
+	$rate = buildFormField('rate_bpd', '', 'hidden', '', '','', '', '');
+	
+	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
+	
+	// Bid Info
+	$bid_type = $trade ? buildFormField('bid_type', 'Bid Type', 'radio', 'required', '', '', '', 'large-outer-label', '', ['Willing to pay', 'Want to be paid']): '';
+	$bid_array = [];
+	$bid_array[] = ["id" => "bid_amount", "label" => "", "type" => "number", "required" => "required", "parameters" => "step = '.01' min='0'", "placeholder" => "Bid Amount", "acf_key" => "", "class" => ' ' . $type . '-bid_amount', "readonly" => ""];
+	$bid_units = ["USD/day", "USD/bbl.day"];
+	$bid_array[] = ["id" => "bid_units", "label" => "", "type" => "select", "required" => "required", "parameters" => "","placeholder" => "Bid Units", "acf_key" => "", "class" => ' ' . $type . '-bid_units', "readonly" => "", "dataset" => $bid_units];
+	$bid_info = $trade ? buildFormField("bid_info", "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Enter a bid to provide or accept water. Enter positive values only, decimal values are allowed (e.g., 1.99). Do not enter other punctuation (commas, etc.). Use the dropdown menu to select units of either USD per barrel or USD total. The form will also show you whichever you did not specify.'><i class='fa-solid fa-circle-info'></i></span> Bid", "multi_column", "required", "", "", "", "two-col columns-grow", "", $bid_array): "";
+
+	$bid_totals = [];
+	$bid_totals_row = '';
+	if($trade){
+		$bid_totals[] = ["id" => "bid_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated total value of your bid, in USD.'><i class='fa-solid fa-circle-info'></i></span> Total Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "0", "acf_key" => "", "class" => $type . '-totalval', "readonly" => ""];
+		$bid_totals[] = ["id" => "bid_specific_total", "label" => "<span tabindex='0' data-tt-length='xlarge' data-tt-pos='up-left' aria-label='Calculated value of your bid, in USD per barrel.'><i class='fa-solid fa-circle-info'></i></span> Barrel Value", "type" => "text", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => $type . '-specval', "readonly" => ""];
+		$bid_totals_row = buildFormField("bid-totals-row", "", "multi_column", "", "", "", "", "two-col subs-stack columns-grow", "", $bid_totals);
+	} else {
+		$bid_totals_row = '';
+	}
+
+
+	// Can Provide Transport (optional) Accordion
+	$transport_col_class = $share ? 'two-col' : 'three-col';
+	//Trucks
+	if($trade){
+		$trucks_array[] = ["id" => "truck_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+		$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+		$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'","placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
+		$trucks = buildFormField('trucks', 'Can Provide Trucks', 'multi_column', '', '','', '', "$transport_col_class toggle $type-trucks-checkbox", '', $trucks_array);
+	} else {
+		$trucks_transport_radius = buildFormField("truck_transport_radius", "", "hidden", "", "", "", "", "", "");
+		$trucks_capacity = buildFormField('truck_capacity', '', 'hidden', '', '','', '', '', '');
+	}	
+	//Layflats
+	if($trade){
+		$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+		$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+		$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
+		$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "$transport_col_class toggle $type-layflats-checkbox", '', $layflats_array );
+	} else {
+		$layflats_transport_radius = buildFormField('layflats_transport_radius', '', "hidden", '', '', '', '', '', '');
+		$layflats_capacity = buildFormField('layflats_capacity', '', 'hidden', '', '','', '', '', '');
+	}
+	if($trade){
+		$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery no-init-open-accordion', '', [$trucks,$layflats]);
+	} else {
+		$delivery = $trucks_transport_radius.$trucks_capacity.$layflats_transport_radius.$layflats_capacity;
+	}
+
+	//Quality Disclosures | Quality Requirements Accordion
+	$qd = qdHiddenBuilder(['TSS','TDS', 'Chloride', 'Barium', 'Calcium Carbonate', 'Iron', 'Boron', 'Hydrogen Sulfide', 'NORM']);
+
+	$action = esc_url( admin_url('admin-post.php') );
+	error_log("Form action URL: $action");
+	error_log("[POST Data] " . print_r($_POST, true));
+	$form = "
+	<form action='$action' method='POST' id='create-post-form' class='WTF watersharing-form'>
+		<input type='hidden' name='action' value='create_water_request'>
+		<input type='hidden' name='redirect_failure' value='/404'>
+		<input type='hidden' name='cloned_from' value=''>
+		$well_pad
+		$well_name
+		$lat
+		$long
+		$can_accept_trucks
+		$can_accept_layflats
+		$rate
+		$qd
+		$dates
+		$bid_type
+		$bid_info
+		$bid_totals_row
+		$delivery
+		<input type='hidden' name='post_type' value='$type'>
+		<div class='watersharing-action-row'>
+			<div class='watersharing-input-col submit-column'>
+				<button type='button' class='dialog-closer clear-button'>Cancel</button> <button type='submit' class='watersharing-submit-button create-post-submit-button non-fat-btn'>Add to $trade_share_ing Portal</button>
+			</div>
+		</div>
+	</form>
+	";
+
+	$html = "
+		$form
 	";
 
 
@@ -726,6 +853,21 @@ function lookupMatches( $post_id = '', $post_type = '' ) {
 
 // function to build out a table of requests for a user
 function buildRequestTable( $type = '' ) {
+	$watersharing_enabled = get_option('watersharing_toggle', 0);
+	$watertrading_enabled = get_option('watertrading_toggle', 0);
+
+	// Send-To feature requires both toggles to be enabled
+	$watersharing_enabled = empty($watersharing_enabled) ? 0 : $watersharing_enabled;
+	$watertrading_enabled = empty($watertrading_enabled) ? 0 : $watertrading_enabled;
+	$send_to_enabled = $watersharing_enabled && $watertrading_enabled;
+
+	$share_or_trade = (strpos($type,'trade') !== false) ? 'trade' : 'share';
+	$send_to_trade_or_share = ($share_or_trade === 'trade') ? 'share' : 'trade';
+	$sending_to_type = ($share_or_trade === 'trade') ? 'sharing' : 'trading';
+	$supply_or_demand = (strpos($type,'supply') !== false) ? 'supply' : 'demand';
+
+	$send_to_type = $send_to_trade_or_share . '_' . $supply_or_demand;
+
 	$rows = "";
 
 	// query for the requsts
@@ -747,10 +889,16 @@ function buildRequestTable( $type = '' ) {
 
 	$data = $query->get_posts();
 
+	// collect send-to data for all posts
+	$send_to_data = [];
+
 	// iterate through each row
 	if( !empty( $data ) ) {
 		$number = 1;
 		foreach( $data as $post ) {
+			// collect send-to form data for this post
+			$send_to_data[$post] = getWaterRequestForSendTo($post);
+			
 			( get_post_meta( $post, 'well_name', true ) ) ? $well = get_post_meta( $post, 'well_name', true ) : $well = "";
 			( get_post_meta( $post, 'status', true ) ) ? $status = "<span class='status-" . get_post_meta( $post, 'status', true ) . "'>" . get_post_meta( $post, 'status', true ) . "</span>" : $status = "";
 
@@ -765,7 +913,7 @@ function buildRequestTable( $type = '' ) {
 			// check for matches
 			$match_rows = "";
 			$match_prompt = "<span class='matches no-match'><i class='fa-solid fa-bullseye'></i>Not Found</span>";
-			$toggle_disabled = " disabled";
+			$toggle_disabled = $send_to_enabled ? " copy-to-only" : " disabled";
 
 			$lookups = lookupMatches( $post, $type );
 			if( $lookups ) {
@@ -775,7 +923,6 @@ function buildRequestTable( $type = '' ) {
 				foreach( $lookups as $lookup ) {
 					$count++;
 
-					// ( $type === 'share_supply' ) ? $user_interaction = 'producer_approval' : $user_interaction = 'consumption_approval';
 					if($type === 'share_supply'){
 						$user_interaction = 'producer_approval';
 					}
@@ -881,27 +1028,24 @@ function buildRequestTable( $type = '' ) {
 					}
 
 					//Added logic for trading
-					( $type === 'share_demand' || $type === 'trade_demand') ? $avoid_label = "Sourced Water Saved (bbl)" : $avoid_label = "Disposal Avoided (bbl)";
-					
+					$avoid_label = ( $type === 'share_demand' || $type === 'trade_demand') ? "Sourced Water Saved (bbl)" : "Disposal Avoided (bbl)";
+
 					if($total_value){$total_value = number_format($total_value);}
 					if($total_volume){$total_volume = number_format($total_volume);}
 
-					(strpos($type,'share') !== false) ? $field1 = '' : $field1 = "<div class='match-cell match-field-1 watersharing-col-half'><strong>Total Value:</strong> $total_value USD</div>"; // Do not show dates in the details (its on the row headers)
-					(strpos($type,'share') !== false) ? $field2 = "<div class='match-cell match-field-2 match-rate match-fullfilled-rate watersharing-col-half'><strong>Rate (bpd):</strong> $fullfilled</div>" : $field2 = "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
-					(strpos($type,'share') !== false) ? $field3 = "
-					<div class='match-cell match-lookup-distance watersharing-col-half'>
-						<strong>Distance (miles):</strong> $lookup_distance
-					</div>"
-					:$field3 = "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' 
-					data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>";
+					$field1 = (strpos($type,'share') !== false) ? '' : "<div class='match-cell match-field-1 watersharing-col-half'><strong>Total Value:</strong> $total_value USD</div>"; // Do not show dates in the details (its on the row headers)
+					$field2 = (strpos($type,'share') !== false) ? "<div class='match-cell match-field-2 match-rate match-fullfilled-rate watersharing-col-half'><strong>Rate (bpd):</strong> $fullfilled</div>" : "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
+					$field_share_distance = (strpos($type,'share') !== false) ? "<div class='match-cell match-lookup-distance watersharing-col-half'><strong>Distance (miles):</strong> $lookup_distance</div>" : "";
 					
-					(strpos($type,'share') !== false) ? $avoid_field = 
-					"<div class='match-cell match-avoid-field watersharing-col-half'>
-						<strong>$avoid_label:</strong> $avoided
-					</div>"
-					: $avoid_field = "";
-					
+					if($send_to_enabled){
+						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+						$field_share_buttons_matched = (strpos($type,'share') !== false) ? "<div class='match-cell match-buttons'><button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to Trading Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
+					} else{
+						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button></div>" : "";
+						$field_share_buttons_matched =  '';
+					}
 
+					$avoid_field = (strpos($type,'share') !== false) ? "<div class='match-cell match-avoid-field watersharing-col-half'><strong>$avoid_label:</strong> $avoided</div>" : '';
 					$match_rows .= "
 							<div>
 								<div class='watersharing-match-block'>
@@ -912,9 +1056,11 @@ function buildRequestTable( $type = '' ) {
 											</div>
 											$field1
 											$field2
-											$field3
+											$field_share_distance
 											$avoid_field
 											$contact
+											$field_trade_buttons
+											$field_share_buttons_matched
 										</div>
 									</div>
 									<div class='match-summation'>
@@ -927,6 +1073,11 @@ function buildRequestTable( $type = '' ) {
 					$match_prompt = "<span class='matches matched'><i class='fa-solid fa-bullseye'></i><strong>$count</strong> Matches Found</span>";
 					$toggle_disabled = "";
 				}
+			} else {
+				// No Matches
+				$send_to_target = ($type === 'share_supply' || $type === 'share_demand') ? 'Trading' : 'Sharing';
+				$unmatched_send_to = $send_to_enabled ? "<button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to $send_to_target Portal <i class='fa-solid fa-circle-arrow-right'></i></button>" : '';
+				$match_rows = $send_to_enabled ? "<div class='watersharing-match-block unmatched'><div class='match-detail'><div class='match-cell match-send-to unmatched-send-to watersharing-col-half'>$unmatched_send_to</div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>" : '';
 			}
 			
 			$rate = number_format($rate);
@@ -941,7 +1092,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle'><strong class='label show-on-mobile'>Rate (bbp): </strong>$rate</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
 						<td class='align-middle text-center dashboard-action-td'>
-							<a class='watersharing-match-action toggle-row$toggle_disabled'>
+							<a class='watersharing-match-action toggle-row$toggle_disabled' data-toggle-disabled='$toggle_disabled'>
 								<i class='fa fa-chevron-right'></i>
 							</a>
 						</td>
@@ -955,7 +1106,7 @@ function buildRequestTable( $type = '' ) {
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Match Found? </strong>$match_prompt</td>
 						<td class='align-middle d-none'></td>
 						<td class='dashboard-row-inner-dt' colspan='7'>
-							$match_rows
+							$match_rows 
 						</td>
 					</tr>
 				";
@@ -1003,9 +1154,103 @@ function buildRequestTable( $type = '' ) {
 				</div>
 			</div>
 		</form>
+		<dialog id='send-to-dialog' class='dialog send-to-dialog' data-append-to='body'>
+			<header>
+				<button type='button' aria-label='Close dialog' id='js-close-button' class='dialog-closer dialog-closer-x'>
+					<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'><path d='M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z'/></svg>
+				</button>
+				<h4 class='text-centered'>Send Info to <span class='send-to-type text-capitalize'>$sending_to_type</span> Portal</h4>
+				</header>
+				<div class='form-container'>". 
+					(strpos($send_to_type, 'shar') === 0 ? '<p class="sharing-preamble">You are about to duplicate this information to the sharing portal. Bid fields will be removed from the new entry.</p>' : '') . "
+					<p class='dialog-intro'>Before this request can be sent to the $sending_to_type portal there are just a couple additional fields you need to review:</p>
+					". buildSendToRequestForm($send_to_type, '') ."
+				</div>
+			
+		</dialog>
 	";
 
+	// Output global JavaScript object with send-to data
+	if (!empty($send_to_data)) {
+		$table .= "\n<script>\n";
+		$table .= "if (typeof window.sendToData === 'undefined') {\n";
+		$table .= "  window.sendToData = {};\n";
+		$table .= "}\n";
+		$table .= "window.sendToData['" . $type . "'] = " . json_encode($send_to_data, JSON_HEX_QUOT | JSON_HEX_APOS | JSON_HEX_TAG) . ";\n";
+		$table .= "</script>\n";
+	}
+
 	return $table;
+}
+
+function getWaterRequestData($pid){
+	$post_info = [];
+	$post_info['pid'] = $pid;
+	$post_info['post_type'] = get_post_type($pid);
+	$post_info['rate_bpd'] = get_post_meta($pid, 'rate_bpd', true);
+	$post_info['post_author'] = get_post_field('post_author', $pid);
+	$post_info['author_name'] = get_the_author_meta('display_name', $post_info['post_author']);
+	$post_info['author_id'] = get_the_author_meta('ID', $post_info['post_author']);
+	$post_info['well_name'] = get_post_meta($pid, 'well_name', true);
+	$post_info['latitude'] = get_post_meta($pid, 'latitude', true);
+	$post_info['longitude'] = get_post_meta($pid, 'longitude', true);
+	$post_info['start_date'] = get_post_meta($pid, 'start_date', true);
+	$post_info['end_date'] = get_post_meta($pid, 'end_date', true);
+	$post_info['can_accept_trucks'] = get_post_meta($pid, 'can_accept_trucks', true);
+	$post_info['can_accept_layflats'] = get_post_meta($pid, 'can_accept_layflats', true);
+	$post_info['bid_type'] = get_post_meta($pid, 'bid_type', true);
+	$post_info['bid_amount'] = (float)get_post_meta($pid, 'bid_amount', true);
+	$post_info['bid_units'] = get_post_meta($pid, 'bid_units', true);
+	$post_info['truck_transport_radius'] = (float)get_post_meta($pid, 'truck_transport_radius', true);
+	$post_info['truck_transport_bid'] = (float)get_post_meta($pid, 'truck_transport_bid', true);
+	$post_info['truck_capacity'] = (float)get_post_meta($pid, 'truck_capacity', true);
+	$post_info['layflats_transport_radius'] = (float)get_post_meta($pid, 'layflats_transport_radius', true);
+	$post_info['layflats_transport_bid'] = (float)get_post_meta($pid, 'layflats_transport_bid', true);
+	$post_info['layflats_capacity'] = (float)get_post_meta($pid, 'layflats_capacity', true);
+	$post_info['tss_limit'] = get_post_meta($pid, 'tss_limit', true);
+	$post_info['tss_measure_value'] = (float)get_post_meta($pid, 'tss_measure_value', true);
+	$post_info['tds_limit'] = get_post_meta($pid, 'tds_limit', true);
+	$post_info['tds_measure_value'] = (float)get_post_meta($pid, 'tds_measure_value', true);
+	$post_info['chloride_limit'] = get_post_meta($pid, 'chloride_limit', true);
+	$post_info['chloride_measure_value'] = (float)get_post_meta($pid, 'chloride_measure_value', true);
+	$post_info['barium_limit'] = get_post_meta($pid, 'barium_limit', true);
+	$post_info['barium_measure_value'] = (float)get_post_meta($pid, 'barium_measure_value', true);
+	$post_info['calciumcarbonate_limit'] = get_post_meta($pid, 'calciumcarbonate_limit', true);
+	$post_info['calciumcarbonate_measure_value'] = (float)get_post_meta($pid, 'calciumcarbonate_measure_value', true);
+	$post_info['iron_limit'] = get_post_meta($pid, 'iron_limit', true);
+	$post_info['iron_measure_value'] = (float)get_post_meta($pid, 'iron_measure_value', true);
+	$post_info['boron_limit'] = get_post_meta($pid, 'boron_limit', true);
+	$post_info['boron_measure_value'] = (float)get_post_meta($pid, 'boron_measure_value', true);
+	$post_info['hydrogensulfide_limit'] = get_post_meta($pid, 'hydrogensulfide_limit', true);
+	$post_info['hydrogensulfide_measure_value'] = (float)get_post_meta($pid, 'hydrogensulfide_measure_value', true);
+	$post_info['norm_limit'] = get_post_meta($pid, 'norm_limit', true);
+	$post_info['norm_measure_value'] = (float)get_post_meta($pid, 'norm_measure_value', true);
+	return $post_info;
+
+
+
+}
+
+function getWaterRequestForSendTo($pid){
+	
+	$post_info = getWaterRequestData($pid);
+	$post_info['cloned_from'] = $pid;
+	$post_og_type = $post_info['post_type'];
+	if(strpos($post_og_type, 'trade_') === 0){
+		$post_info['post_type'] = str_replace('trade_', 'share_', $post_og_type);
+	} elseif(strpos($post_og_type, 'share_') === 0){
+		$post_info['post_type'] = str_replace('share_', 'trade_', $post_og_type);
+	} else {
+		$post_info['post_type'] = $post_og_type;
+	}
+	
+ 	if($post_info['post_type'] === 'share_supply' || $post_info['post_type'] === 'share_demand'){
+		$post_info['bid_amount'] = '';
+		$post_info['bid_type'] =  '';
+		$post_info['bid_units'] = '';
+	}
+
+	return $post_info;
 }
 
 ?>

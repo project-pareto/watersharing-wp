@@ -22,30 +22,47 @@ function pad_exists_for_user( $user_id, $post_title ) {
 
 // handle water request submissions
 function create_new_post() {
+	
+	// Basic validation
+	if (empty($_POST) || !isset($_POST['post_type'])) {
+		wp_die('Invalid form submission');
+	}
 
-	// Retrieve form data
-	$well_name = $_POST['well_name'];
-	$post_type = $_POST['post_type'];
+	// Retrieve form data with defaults
+	$well_name = isset($_POST['well_name']) ? sanitize_text_field($_POST['well_name']) : 'UNKWN';
+	$post_type = isset($_POST['post_type']) ? sanitize_text_field($_POST['post_type']) : '';
+	
+	// Validate required fields
+	if (empty($post_type) || empty($well_name)) {
+		wp_die('Missing required fields');
+	}
 
 	// set the title
 	$post_type_prefix = ($post_type === 'share_supply') ? 'PRD' : 'CSM';
 	$author_name = wp_get_current_user()->display_name;
-	(isset($_POST['well_name'])) ? $pad = $_POST['well_name'] : $pad = 'UNKWN';
-	(isset($_POST['start_date'])) ? $date = $_POST['start_date'] : $date = current_time('mdY');
+	$pad = $well_name;
+	$date = isset($_POST['start_date']) ? $_POST['start_date'] : current_time('mdY');
 	$timestamp = current_time('His');
 	$title = $pad . ' ' . $date . ' ' . $timestamp;
-
 
 	$new_post = array(
 		'post_title'    => $title,
 		'post_status'   => 'publish',
 		'post_type'     => $post_type
 	);
+	
 	$post_id = wp_insert_post( $new_post );
 
+	// Check if post creation failed
+	if (is_wp_error($post_id) || !$post_id) {
+		error_log('Failed to create post: ' . (is_wp_error($post_id) ? $post_id->get_error_message() : 'Unknown error'));
+		wp_die('Failed to create request. Please try again.');
+	}
 
+	// Note: Post meta is automatically saved by the save_post hook in types-taxonomies.php
+
+	// Create well pad if it doesn't exist
 	if( empty( pad_exists_for_user( get_current_user_id(), $well_name ) ) ) {
-
 		//new post for pads
 		$new_pad_post = array(
 			'post_title'    => $well_name,
@@ -55,55 +72,55 @@ function create_new_post() {
 		$pad_post_id = wp_insert_post($new_pad_post);
 
 		// save the user ID on the well pad record
-		update_post_meta( $pad_post_id, 'userid', get_current_user_id() );
+		if ($pad_post_id && !is_wp_error($pad_post_id)) {
+			update_post_meta( $pad_post_id, 'userid', get_current_user_id() );
+		}
 	}
 
+	// Set post status
 	if( $post_id ) {
 		update_post_meta( $post_id, 'status', 'open' );
 	}
 
-	if( $post_type === 'share_supply' ) {
-		$production_dashboard_page_id = get_option('production_dashboard_page');
+	// Determine redirect URL - check form first, then Plugin Settings, and fallback to home() for success; For error, look in form or fallback to home()
+	$watersharing_prod_redirect_id = get_option('production_dashboard_page', '');
+	$watersharing_cons_redirect_id = get_option('consumption_dashboard_page', '');
+	$watertrading_prod_redirect_id = get_option('wt_production_dashboard_page', '');
+	$watertrading_cons_redirect_id = get_option('wt_consumption_dashboard_page', '');
 
-		if ($production_dashboard_page_id) {
-		    $redirect_url = get_permalink($production_dashboard_page_id);
-		} else {
-		    $redirect_url = home_url();
-		}
-	}
-	elseif($post_type === 'share_demand'){
-		$consumption_dashboard_page_id = get_option('consumption_dashboard_page');
 
-		if ($consumption_dashboard_page_id) {
-		    $redirect_url = get_permalink($consumption_dashboard_page_id);
-		} else {
-		    $redirect_url = home_url();
-		}
-	}
-	elseif( $post_type === 'trade_supply' ) {
-		$wt_production_dashboard_page_id = get_option('wt_production_dashboard_page');
+    if(isset($_POST['redirect_success']) && !empty($_POST['redirect_success'])) {
+        $redirect_url = home_url($_POST['redirect_success']);
+    } else {
+        $redirect_url = home_url();
+        switch ($post_type) {
+            case 'share_supply':
+                $redirect_url = $watersharing_prod_redirect_id ? get_permalink($watersharing_prod_redirect_id) : home_url();
+                break;
+            case 'share_demand':
+                $redirect_url = $watersharing_cons_redirect_id ? get_permalink($watersharing_cons_redirect_id) : home_url();
+                break;
+            case 'trade_supply':
+                $redirect_url = $watertrading_prod_redirect_id ? get_permalink($watertrading_prod_redirect_id) : home_url();
+                break;
+            case 'trade_demand':
+                $redirect_url = $watertrading_cons_redirect_id ? get_permalink($watertrading_cons_redirect_id) : home_url();
+                break;
+        }
+    }
+    if(isset($_POST['redirect_failure']) && !empty($_POST['redirect_failure'])) {
+        $redirect_failure_url = home_url($_POST['redirect_failure']);
+    }
 
-		if ($wt_production_dashboard_page_id) {
-		    $redirect_url = get_permalink($wt_production_dashboard_page_id);
-		} else {
-		    $redirect_url = home_url();
-		}
-	}
-	elseif($post_type === 'trade_demand'){
-		$wt_consumption_dashboard_page_id = get_option('wt_consumption_dashboard_page');
-
-		if ($wt_consumption_dashboard_page_id) {
-		    $redirect_url = get_permalink($wt_consumption_dashboard_page_id);
-		} else {
-		    $redirect_url = home_url();
-		}
-	}
+	
+	// Log the redirect for debugging
+	error_log("Redirecting to: " . $redirect_url);
 	
     wp_redirect( $redirect_url );
     exit;
 }
 add_action('admin_post_create_water_request', 'create_new_post');
-// add_action('admin_post_nopriv_create_water_request', 'create_new_post');
+
 
 function createAndDownloadCsv() {
     // Get CSV data from POST request

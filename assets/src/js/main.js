@@ -202,7 +202,6 @@
 				$(params.dataTable).html('');
 			},
 			success: function(output) {
-				console.log(output);
 				$(params.dataTable).html(output);
 				sortTables();
 			},
@@ -234,9 +233,182 @@
 
 	$(document).ready( function() {
 		sortTables();
-	})
+	});
+
+	function runMoveMes() {
+		const $appendTos = jQuery('[data-append-to]');
+		$appendTos.each(function() {
+			const $ele = jQuery(this);
+			const targetSelector = $ele.data('append-to');
+			const $target = jQuery(targetSelector);
+
+			if ($target.length) {
+				$ele.appendTo($target);
+				$ele.removeAttr('data-append-to');
+				$ele.addClass('js-moved');
+			} else {
+				// target element not found
+			}
+		});
+	}
+
+	function enableDisabledSendToFields(){
+		const sendToDialog = document.querySelector('.send-to-dialog');
+		if (!sendToDialog) {
+			// send-to dialog not found
+			return;
+		}
+
+		const disabledFields = sendToDialog.querySelectorAll('input:disabled, select:disabled, textarea:disabled');
+		if (!disabledFields) {
+			return;
+		}
+
+		disabledFields.forEach(field => {
+			field.disabled = false;
+		});
+	}
+
+	function updateCanProvideChecks(){
+		const sendToDialog = document.querySelector('#send-to-dialog');
+		if (!sendToDialog) {
+			// send-to dialog not found
+			return;
+		}
+
+		// Check truck transport fields
+		const truckFields = ['truck_transport_radius', 'truck_transport_bid', 'truck_capacity'];
+		let hasTruckValue = false;
+		
+		truckFields.forEach(fieldId => {
+			const field = sendToDialog.querySelector(`#${fieldId}`);
+			if (field && field.value && field.value.trim() !== '' && field.value !== '0') {
+				hasTruckValue = true;
+			}
+		});
+		
+		// Check the trucks checkbox if any truck field has a value
+		const trucksCheckbox = sendToDialog.querySelector('#trucks-checkbox');
+		if (trucksCheckbox) {
+			trucksCheckbox.checked = hasTruckValue;
+		}
+
+		// Check layflats transport fields
+		const layflatsFields = ['layflats_transport_radius', 'layflats_transport_bid', 'layflats_capacity'];
+		let hasLayflatsValue = false;
+		
+		layflatsFields.forEach(fieldId => {
+			const field = sendToDialog.querySelector(`#${fieldId}`);
+			if (field && field.value && field.value.trim() !== '' && field.value !== '0') {
+				hasLayflatsValue = true;
+			}
+		});
+		
+		// Check the layflats checkbox if any layflats field has a value
+		const layflatsCheckbox = sendToDialog.querySelector('#layflats-checkbox');
+		if (layflatsCheckbox) {
+			layflatsCheckbox.checked = hasLayflatsValue;
+		}
+	}
+
+	function runDomMutators() {
+		runMoveMes();
+	}
+
+	function updateSendToForm(sPid, tableType){
+
+		// this function finds the send-to form information for this pid and finds form fields in the send-to form with names matching the keys in the data and fills the fields found with matching names to its keys
+		
+		// Check if we have the global send-to data
+		if (typeof window.sendToData === 'undefined') {
+			return;
+		}
+		
+		// Check if we have data for this table type
+		if (!window.sendToData[tableType]) {
+			return;
+		}
+				
+		// Try both string and numeric lookups within the correct namespace
+		let formData = window.sendToData[tableType][sPid] || window.sendToData[tableType][String(sPid)] || window.sendToData[tableType][Number(sPid)];
+		
+		if (!formData) {
+			return;
+		}
+		
+		const sendToDialog = document.querySelector('.send-to-dialog');
+		if (!sendToDialog) {
+			// send-to dialog not found
+			return;
+		}
+		
+		// Iterate through each field in the form data
+		Object.keys(formData).forEach(fieldName => {
+			const fieldValue = formData[fieldName];
+			
+			// Skip the original pid field - it shouldn't be in the form except as cloned_from
+			if (fieldName === 'pid') {
+				return;
+			}
+			
+			// Look for form fields with matching names (including hidden fields)
+			const field = sendToDialog.querySelector(`[name="${fieldName}"]`);
+			
+			if (field) {
+				if (field.type === 'checkbox') {
+					// Handle checkboxes
+					field.checked = fieldValue == '1' || fieldValue === true || fieldValue === 'true';
+				} else if (field.type === 'radio') {
+					// Handle radio buttons - find the one with matching value
+					const radioGroup = sendToDialog.querySelectorAll(`[name="${fieldName}"]`);
+					radioGroup.forEach(radio => {
+						if (radio.value === fieldValue) {
+							radio.checked = true;
+						}
+					});
+				} else if (field.tagName.toLowerCase() === 'select') {
+					// Handle selects
+					field.value = fieldValue;
+				} else {
+					// Handle text inputs, hidden fields, textareas, etc.
+					field.value = fieldValue || '';
+				}
+				
+			} else {
+				// field was not found in the form
+			}
+		});
+	}
+
+	function setupSendToDialogs() {
+		const sendToDialog = document.getElementById("send-to-dialog");
+		const sendToButtons = document.querySelectorAll(".send-to-btn");
+
+		if( sendToDialog && sendToButtons.length) {
+			sendToButtons.forEach(function(sendToButton) {
+				const sPid = sendToButton.getAttribute('data-pid');
+				const tableType = sendToButton.getAttribute('data-table-type');
+				sendToButton.addEventListener('click', function() {
+					enableDisabledSendToFields();
+					updateSendToForm(sPid, tableType);
+					updateCanProvideChecks();
+					sendToDialog.showModal();
+				});
+			});
+			sendToDialog.querySelectorAll(".dialog-closer").forEach(function(closeButton) {
+				closeButton.onclick = function () {
+					sendToDialog.close();
+				};
+			});
+		}
+
+	}
 
 	$(document).ready(function () {
+		runDomMutators();
+
+		setupSendToDialogs();
+
 		// Function to show the collapse
 		function showCollapse($element, $button) {
 			if (!$element.hasClass('collapsing') && (!$element.hasClass('show') && !$element.hasClass('show-initial'))) {
@@ -329,20 +501,21 @@
 		});
 
 		//Calculating total / specific bid value
-		$(".trade_supply-bid_amount, .trade_supply-rate_bpd, .trade_supply-bid_units, .trade_demand-bid_amount, .trade_demand-rate_bpd, .trade_demand-bid_units").change(function(){
-			// Determine the prefix based on the triggered element's class
-			var prefix = $(this).hasClass("trade_supply-bid_amount") || $(this).hasClass("trade_supply-rate_bpd") || $(this).hasClass("trade_supply-bid_units") ? "trade_supply-" : "trade_demand-";
-			// Use the prefix to find the respective elements within the same group
-			var $bid = $("." + prefix + "bid_amount");
-			var $rate = $("." + prefix + "rate_bpd");
-			var $units = $("." + prefix + "bid_units");
-			var $total = $("." + prefix + "totalval");
-			var $specificTotal = $("." + prefix + "specval");
-		
+		$(document).on('change',"input[name=rate_bpd],input[name=bid_amount],select[name=bid_units]", function(){
+			const $formField = $(this);
+
+			const $container = $formField.closest('form, .send-to-dialog, .watersharing-form');
+			const $total = $container.find('[name="bid_total"]');
+			const $bid = $container.find('[name="bid_amount"]');
+			const $rate = $container.find('[name="rate_bpd"]');
+			const $units = $container.find('[name="bid_units"]');
+			const $specificTotal = $container.find('[name="bid_specific_total"]');
+
 			// Parse input values
-			var bid = parseFloat($bid.val());
-    		var rate = parseFloat($rate.val());
-			var unitsValue = $units.val();
+			const bid = parseFloat($bid.val());
+    		const rate = parseFloat($rate.val());
+			const unitsValue = $units.val();
+
 		
 			if (!isNaN(bid) && !isNaN(rate) && unitsValue != null) {
 				if (unitsValue == "USD/bbl.day") {
@@ -356,7 +529,7 @@
 				$total.val('');
 				$specificTotal.val('');
 			}
-		});		
+		});
 
 		// Function to format numbers with thousands separator
 		function formatNumber(num) {
