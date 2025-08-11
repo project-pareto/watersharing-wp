@@ -43,7 +43,7 @@ function watersharing_plugin_enqueue()
 	wp_enqueue_style('watersharing-styles', plugins_url('assets/dist/css/watersharing.min.css', __FILE__), array(), filemtime(plugin_dir_path(__FILE__) . 'assets/dist/css/watersharing.min.css') );
 	wp_enqueue_style('datatables-styles', 'https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.css', array(), null);
 
- 	wp_enqueue_script('jquery');
+	wp_enqueue_script('jquery');
 	wp_enqueue_script('datatables-js', 'https://cdn.datatables.net/v/bs5/dt-1.13.4/datatables.min.js', array('jquery'), null, false);
 	wp_enqueue_script('watersharing-scripts', plugins_url('assets/dist/js/watersharing.min.js', __FILE__), array('jquery'), null, false);
 	wp_enqueue_script('tablesort', plugins_url('assets/dist/libs/tablesort.js', __FILE__), array('jquery'), null, false);
@@ -62,20 +62,20 @@ function watersharing_menu() {
 	require_once( plugin_dir_path( __FILE__ ) . 'inc/watersharing-settings.php' );
 
 	add_menu_page(
-        'Watersharing',
-        'Watersharing',
-        'edit_posts',
+		'Watersharing',
+		'Watersharing',
+		'manage_options',
 		'watersharing-settings',
 		'watersharing_settings_page',
-        'dashicons-location',
-        6
-    );
+		'dashicons-location',
+		6
+	);
 
 	add_submenu_page(
 		'watersharing-settings',
 		'Watersharing Settings',
 		'Settings',
-		'edit_posts',
+		'manage_options',
 		'watersharing-settings',
 	);
 
@@ -83,7 +83,7 @@ function watersharing_menu() {
 		'watersharing-settings',
 		'Production (Have Water) Requests',
 		'Production',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=share_supply',
 	);
 
@@ -91,7 +91,7 @@ function watersharing_menu() {
 		'watersharing-settings',
 		'Consumption (Need Water) Requests',
 		'Consumption',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=share_demand',
 	);
 
@@ -99,7 +99,7 @@ function watersharing_menu() {
 		'watersharing-settings',
 		'Match Lookup',
 		'Match Lookup',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=matched_shares',
 	);
 }
@@ -110,20 +110,20 @@ function watertrading_menu() {
 	require_once( plugin_dir_path( __FILE__ ) . 'inc/watertrading-settings.php' );
 
 	add_menu_page(
-        'Watertrading',
-        'Watertrading',
-        'edit_posts',
+		'Watertrading',
+		'Watertrading',
+		'manage_options',
 		'watertrading-settings',
 		'watertrading_settings_page',
-        'dashicons-location',
-        7
-    );
+		'dashicons-location',
+		7
+	);
 
 	add_submenu_page(
 		'watertrading-settings',
 		'Watertrading Settings',
 		'Settings',
-		'edit_posts',
+		'manage_options',
 		'watertrading-settings',
 	);
 
@@ -131,7 +131,7 @@ function watertrading_menu() {
 		'watertrading-settings',
 		'Production (Have Water) Requests',
 		'Production',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=trade_supply',
 	);
 
@@ -139,7 +139,7 @@ function watertrading_menu() {
 		'watertrading-settings',
 		'Consumption (Need Water) Requests',
 		'Consumption',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=trade_demand',
 	);
 
@@ -147,7 +147,7 @@ function watertrading_menu() {
 		'watertrading-settings',
 		'Match Lookup',
 		'Match Lookup',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=matched_trades',
 	);
 }
@@ -158,20 +158,20 @@ function watermanagement_menu() {
 	require_once( plugin_dir_path( __FILE__ ) . 'inc/watermanagement-settings.php' );
 
 	add_menu_page(
-        'PARETO Water Management',
-        'PARETO Water Management',
-        'edit_posts',
+		'PARETO Water Management',
+		'PARETO Water Management',
+		'manage_options',
 		'watermanagement-settings',
 		'watermanagement_settings_page',
-        'dashicons-location',
-        5
-    );
+		'dashicons-location',
+		5
+	);
 
 	add_submenu_page(
 		'watermanagement-settings',
 		'Watermanagement Settings',
 		'Settings',
-		'edit_posts',
+		'manage_options',
 		'watermanagement-settings',
 	);
 	
@@ -179,7 +179,7 @@ function watermanagement_menu() {
 		'watermanagement-settings',
 		'Well Pads',
 		'Well Pads',
-		'edit_posts',
+		'manage_options',
 		'edit.php?post_type=well_pad',
 	);
 
@@ -234,23 +234,23 @@ if ( version_compare( get_bloginfo( 'version' ), '5.8', '>=' ) ) {
 // register ws blocks
 function register_watersharing_blocks()
 {
-    $blocks_dir = __DIR__ . '/blocks/build/ws-';
-    $block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
+	$blocks_dir = __DIR__ . '/blocks/build/ws-';
+	$block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
 
-    foreach ( $block_directories as $block_dir ) {
-        register_block_type( $block_dir );
-    }
+	foreach ( $block_directories as $block_dir ) {
+		register_block_type( $block_dir );
+	}
 }
 
 //register wt blocks
 function register_watertrading_blocks()
 {
-    $blocks_dir = __DIR__ . '/blocks/build/wt-';
-    $block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
+	$blocks_dir = __DIR__ . '/blocks/build/wt-';
+	$block_directories = array_filter( glob( $blocks_dir . '*' ), 'is_dir' );
 
-    foreach ( $block_directories as $block_dir ) {
-        register_block_type( $block_dir );
-    }
+	foreach ( $block_directories as $block_dir ) {
+		register_block_type( $block_dir );
+	}
 }
 if($watersharing_toggle){
 	add_action('init', 'register_watersharing_blocks');
