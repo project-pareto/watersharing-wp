@@ -46,10 +46,10 @@ function watersharing_settings_page() {
 // save the settings fields
 function save_watersharing_settings() {
     if (isset($_POST['production_dashboard_page'])) {
-        update_option('production_dashboard_page', $_POST['production_dashboard_page']);
+        update_option('production_dashboard_page', absint($_POST['production_dashboard_page']) );
     }
     if (isset($_POST['consumption_dashboard_page'])) {
-        update_option('consumption_dashboard_page', $_POST['consumption_dashboard_page']);
+        update_option('consumption_dashboard_page', absint($_POST['consumption_dashboard_page']) );
     }
 }
 add_action('admin_init', 'save_watersharing_settings');
