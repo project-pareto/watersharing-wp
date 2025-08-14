@@ -11,7 +11,7 @@
  * Plugin Name:       PARETO Water Management
  * Plugin URI:        https://troyweb.com
  * Description:       Plugin recreates the basic features of <strong>share.producedwater.org</strong>, a produced water management prototype developed as part of a collaboration between the <strong>Ground Water Protection Council (watersharing)</strong> and the <strong>US Department of Energy (DOE)</strong>. Water management was created to collect information about produced water availability and needs from users, and suggests mutually beneficial trades that minimize transportation distances between users.
- * Version:           0.1.0
+ * Version:           0.2.0
  * Author:            Troy Web Consulting
  * Author URI:        https://troyweb.com
  * License:           GPL v2 or later
