@@ -340,7 +340,7 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "I can accept trucks on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "I can accept layflat pipelines on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', 'required', 'data-js-tag-outer-label="ok"', '', '', 'two-col large-outer-label no-bottom-margin', '', $sites_array);
+	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', '', 'data-js-tag-outer-label="ok"', '', '', 'two-col large-outer-label no-bottom-margin', '', $sites_array);
 	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', ' min="0"','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 	
