@@ -903,6 +903,8 @@ function buildRequestTable( $type = '' ) {
 			( get_post_meta( $post, 'well_name', true ) ) ? $well = get_post_meta( $post, 'well_name', true ) : $well = "";
 			( get_post_meta( $post, 'status', true ) ) ? $status = "<span class='status-" . get_post_meta( $post, 'status', true ) . "'>" . get_post_meta( $post, 'status', true ) . "</span>" : $status = "";
 
+			$transaction_status_class = ( get_post_meta( $post, 'status', true ) ) ? 'status-'. get_post_meta( $post, 'status', true ) : 'status-none';
+
 			$start = get_post_meta( $post, 'start_date', true );
 			( $start ) ? $start = DateTime::createFromFormat('Y-m-d', $start)->format('m/d/Y') : "";
 			$end = get_post_meta( $post, 'end_date', true );
@@ -1083,9 +1085,9 @@ function buildRequestTable( $type = '' ) {
 			
 			$rate = number_format($rate);
 
-			( isset( get_post_meta( $post, 'status', true )['value'] ) && get_post_meta( $post, 'status', true ) === 'closed' ) ? $row_class = " closed" : $row_class = "";
+			( isset( get_post_meta( $post, 'status', true )['value'] ) && get_post_meta( $post, 'status', true ) === 'closed' ) ? $row_class = "closed" : $row_class = "";
 			$rows .= "
-					<tr class='watersharing-request-row$row_class' data-row-number='row-$number'>
+					<tr class='watersharing-request-row $row_class $transaction_status_class' data-row-number='row-$number'>
 						<td class='align-middle hide-on-mobile check-cell'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
 						<td class='align-middle'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
@@ -1098,7 +1100,7 @@ function buildRequestTable( $type = '' ) {
 							</a>
 						</td>
 					</tr>
-					<tr class='watersharing-request-detail collapse' data-row-number='row-$number'>
+					<tr class='watersharing-request-detail collapse $transaction_status_class' data-row-number='row-$number'>
 						<td class='align-middle d-none'><input class='watersharing-input-row' type='checkbox' name='post_ids[]' value='$post' data-watershare-type='$type' /></td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Pad Name: </strong>$well</td>
 						<td class='align-middle d-none'><strong class='label show-on-mobile'>Date Range: </strong>$range</td>
