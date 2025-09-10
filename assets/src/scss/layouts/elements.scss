@@ -425,7 +425,22 @@ table.watersharing-table, table.watertrading-table{
 			align-items: center;
 			justify-content: center;
 			border: none;
+			&.is-approved .decline-action,
+			&.is-declined .approve-action {
+				filter: grayscale(100%);
+				opacity: 0.5;
+				transition: all 0.3s ease;
+			}
+			&.is-approved .decline-action,
+			&.is-declined .approve-action {
+				&:hover,
+				&:focus-visible{
+					filter: grayscale(0%);
+					opacity: 1;
+				}
+			}
 		}
+		
 	}
 	.match-summation{
 		order: 1;

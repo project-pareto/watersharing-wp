@@ -991,10 +991,28 @@ function buildRequestTable( $type = '' ) {
 					( $match_end ) ? $match_end = DateTime::createFromFormat('Y-m-d', $match_end)->format('m/d/Y') : "";
 					$match_range = "$match_start - $match_end";
 
+					switch ($user_action) {
+						case 'approve':
+							$approval_status = 'is-approved';
+							$approve_button_class = 'is-approved';
+							$decline_button_class = '';
+							break;
+						case 'decline':
+							$approval_status = 'is-declined';
+							$approve_button_class = '';
+							$decline_button_class = 'is-declined';
+							break;						
+						default:
+							$approval_status = '';
+							$approve_button_class = '';
+							$decline_button_class = '';
+							break;
+					}
+
 					$approve_actions = "
-						<div class='match-cell match-approval'>
-							<a class='watersharing-match-action approval approve-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='approve' data-table='$type-RequestTable'>Approve <i class='fa-solid fa-thumbs-up'></i></a>
-							<a class='watersharing-match-action approval decline-action' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='decline' data-table='$type-RequestTable'>Decline <i class='fa-solid fa-thumbs-down'></i></a>
+						<div class='match-cell match-approval $approval_status'>
+							<a class='watersharing-match-action approval approve-action $approve_button_class' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='approve' data-table='$type-RequestTable'>Approve <i class='fa-solid fa-thumbs-up'></i></a>
+							<a class='watersharing-match-action approval decline-action $decline_button_class' onclick='void(0)' data-lookup='$lookup' data-parent='$post' data-match='$match_id' data-match-type='$match_post_type' data-action='decline' data-table='$type-RequestTable'>Decline <i class='fa-solid fa-thumbs-down'></i></a>
 						</div>
 						";
 					$summation = $approve_actions;
