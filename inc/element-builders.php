@@ -1045,7 +1045,11 @@ function buildRequestTable( $type = '' ) {
 							";
 						$summation = "<span class='status-message-matched'>Operator Matched!</span>";
 					} else {
-						$contact = "";
+						$contact = "
+								<div class='match-cell match-contact match-contact-info-deferred'>
+									<span>Contact displays on match acceptance</span>
+								</div>
+							";
 					}
 
 					//Added logic for trading
