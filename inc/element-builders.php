@@ -340,7 +340,7 @@ function buildRequestForm($type = "", $title = "") {
 	$sites_array = [];
 	$sites_array[] = ["id" => "can_accept_trucks", "label" => "I can accept trucks on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
 	$sites_array[] = ["id" => "can_accept_layflats", "label" => "I can accept layflat pipelines on-site", "type" => "checkbox", "required" => "", "parameters" => "", "placeholder" => "", "acf_key" => "", "class" => "", "readonly" => ""];
-	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', 'required', 'data-js-tag-outer-label="ok"', '', '', 'two-col large-outer-label no-bottom-margin', '', $sites_array);
+	$site_compatibility = buildFormField('site_compatibility', 'I Can Accept Transport', 'multi_column', '', 'data-js-tag-outer-label="ok"', '', '', 'two-col large-outer-label no-bottom-margin', '', $sites_array);
 	$dates = buildFormField('date_range', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Select the dates between which you will have or need water. The date range is inclusive."><i class="fa-solid fa-circle-info"></i></span> Date Range', 'date', 'required');
 	$rate = buildFormField('rate_bpd', '<span tabindex="0" data-tt-length="xlarge" data-tt-pos="up-left" aria-label="Enter the rate at which can provide or accept water in barrels per day (bpd). Numeric entries only; no commas, etc."><i class="fa-solid fa-circle-info"></i></span> Water Availability Rate (bpd)', 'number', 'required', ' min="0"','Rate in barrels per day', '', ' ' . $type . '-rate_bpd');
 	
@@ -373,7 +373,7 @@ function buildRequestForm($type = "", $title = "") {
 		$trucks_array[] = ["id" => "truck_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
 	}
 	$trucks_array[] = ["id" => "truck_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'","placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-truck-input", "readonly" => ""];
-	$trucks = buildFormField('trucks', 'Can Provide Trucks', 'multi_column', '', '','', '', "$transport_col_class toggle $type-trucks-checkbox", '', $trucks_array);
+	$trucks = buildFormField('trucks', 'I Can Provide Trucks', 'multi_column', '', '','', '', "$transport_col_class toggle $type-trucks-checkbox", '', $trucks_array);
 
 	//Layflats
 	$layflats_array[] = ["id" => "layflats_transport_radius", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Range (mi)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
@@ -381,9 +381,9 @@ function buildRequestForm($type = "", $title = "") {
 		$layflats_array[] = ["id" => "layflats_transport_bid", "label" => "", "type" => "number", "required" => "", "parameters" => "step = '.01'", "placeholder" => "Bid (USD/bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
 	}
 	$layflats_array[] = ["id" => "layflats_capacity", "label" => "", "type" => "number", "required" => "", "parameters" => " min='0'", "placeholder" => "Capacity (bbl)", "acf_key" => "", "class" => "watertrading blocks input $type-layflat-input", "readonly" => ""];
-	$layflats = buildFormField('layflats', 'Can Provide Layflats', 'multi_column', '', '', '', '', "$transport_col_class toggle $type-layflats-checkbox", '', $layflats_array );
+	$layflats = buildFormField('layflats', 'I Can Provide Layflats', 'multi_column', '', '', '', '', "$transport_col_class toggle $type-layflats-checkbox", '', $layflats_array );
 
-	$delivery = buildFormField('Delivery', '<span class=button-label>Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]);
+	$delivery = buildFormField('Delivery', '<span class=button-label>I Can Provide Transport</span> <span class=font-normal-weight>(optional)</span>', 'accordion', '', '', '', '', $type . '-delivery', '', [$trucks,$layflats]);
 
 
 
