@@ -1030,17 +1030,58 @@ function buildRequestTable( $type = '' ) {
 					// check if match is approved
 					if ($lookup_status === 'approved') {
 
-						$name = get_userdata( get_post_field( 'post_author', $match_record ) )->first_name . ' ' . get_userdata( get_post_field( 'post_author', $match_record ) )->last_name;
-						$raw_phone = get_user_meta( get_post_field( 'post_author', $match_record ), 'phone_number', true );
+						$author_id = get_post_field( 'post_author', $match_record );
+						$user_data = get_userdata( $author_id );
+						
+						// Handle edge case where user data might not exist or fields might be empty
+						$first_name = '';
+						$last_name = '';
+						$email = '';
+						
+						if ($user_data) {
+							$first_name = !empty($user_data->first_name) ? $user_data->first_name : '';
+							$last_name = !empty($user_data->last_name) ? $user_data->last_name : '';
+							$email = !empty($user_data->user_email) ? $user_data->user_email : '';
+						}
+						
+						// Fallback to display name, company name, username, or "Unknown User" if first/last name are empty
+						$name = trim($first_name . ' ' . $last_name);
+						if (empty($name) && $user_data) {
+							if (!empty($user_data->display_name)) {
+								$name = $user_data->display_name;
+							} else {
+								// Try company name as fallback
+								$company_name = get_user_meta( $author_id, 'company_name', true );
+								if (!empty($company_name)) {
+									$name = $company_name;
+								} elseif (!empty($user_data->user_login)) {
+									$name = $user_data->user_login;
+								} else {
+									$name = 'Unknown User';
+								}
+							}
+						} elseif (empty($name)) {
+							$name = 'Unknown User';
+						}
+						
+						$raw_phone = get_user_meta( $author_id, 'phone_number', true );
 						$sanitized_phone = preg_replace('/[^0-9+]/', '', $raw_phone);
-						$email = get_userdata( get_post_field( 'post_author', $match_record ) )->user_email;
+						
+						// Build contact information with proper fallbacks
+						$contact_info = "<span>$name</span>";
+						
+						if (!empty($raw_phone)) {
+							$contact_info .= "<span><a href='tel:$sanitized_phone'>$raw_phone</a></span>";
+						}
+						
+						if (!empty($email)) {
+							$contact_info .= "<span><a href='mailto:$email'>$email</a></span>";
+						}
 						
 						$contact = "
 								<div class='match-cell match-contact'>
 									<strong class='heading'>Contact Information:</strong>
-									<span>$name</span>
-									<span><a href='tel:$sanitized_phone'>$raw_phone</a></span>
-									<span><a href='mailto:$email'>$email</a></span>
+									$contact_info
 								</div>
 							";
 						$summation = "<span class='status-message-matched'>Operator Matched!</span>";
