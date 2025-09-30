@@ -61,18 +61,33 @@ function process_water_management_data($data, $type) {
 
     // Check if we're dealing with 'share' or 'trade' type data
     if ($type == 'share') {
-        // Iterate over each item in the array, assuming $data is a list of shares
-        foreach ($data as $item) {
-            $title = $item['From operator'] . ' ' . $item['From index'] . ' - ' . $item['To operator'] . ' ' . $item['To index'];
+        if (!isset($data['Demand']) || !is_array($data['Demand'])) {
+            return;
+        }
+
+        foreach ($data['Demand'] as $item) {
+            if (!isset($item['Pair Index'])) {
+                continue;
+            }
+
+            $pair_index = (string) $item['Pair Index'];
+            $parts = explode('-', $pair_index);
+            if (count($parts) !== 2) {
+                continue;
+            }
+
+            list($from, $to) = $parts;
+
+            $title = $pair_index;
             $post_type = 'matched_shares';
 
             // Check if a post with the same title already exists
             $existing_post = new WP_Query([
-                'post_type' => $post_type,
-                'post_status' => 'any',
+                'post_type'      => $post_type,
+                'post_status'    => 'any',
                 'posts_per_page' => 1,
-                'fields' => 'ids',
-                'title' => $title
+                'fields'         => 'ids',
+                'title'          => $title,
             ]);
 
             if ($existing_post->have_posts()) {
@@ -81,21 +96,35 @@ function process_water_management_data($data, $type) {
 
             // Create new post
             $new_post = [
-                'post_type' => $post_type,
+                'post_type'   => $post_type,
                 'post_status' => 'publish',
-                'post_title' => $title,
+                'post_title'  => $title,
             ];
             $post_id = wp_insert_post($new_post);
 
             if ($post_id) {
+                $matched_rate = null;
+                if (isset($item['Demand Rate (bpd)'])) {
+                    $matched_rate = $item['Demand Rate (bpd)'];
+                } elseif (isset($item['Supply Rate (bpd)'])) {
+                    $matched_rate = $item['Supply Rate (bpd)'];
+                }
+
                 update_post_meta($post_id, 'match_status', 'open');
-                update_post_meta($post_id, 'matched_rate', $item['Rate']);
-                update_post_meta($post_id, 'producer_request', $item['From index']);
-                update_post_meta($post_id, 'consumption_request', $item['To index']);
+
+                if ($matched_rate !== null) {
+                    update_post_meta($post_id, 'matched_rate', $matched_rate);
+                }
+
+                if (isset($item['Match Total Volume (bbl)'])) {
+                    update_post_meta($post_id, 'total_volume', $item['Match Total Volume (bbl)']);
+                }
+
+                update_post_meta($post_id, 'producer_request', $to);
+                update_post_meta($post_id, 'consumption_request', $from);
             }
 
-            // Send email notifications
-            send_match_email($item['From index'], $item['To index']);
+            send_match_email($from, $to);
         }
 
     } else if ($type == 'trade') {
