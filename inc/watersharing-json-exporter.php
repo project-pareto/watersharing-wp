@@ -164,7 +164,7 @@ function process_water_management_data($data, $type) {
             update_post_meta($post_id, $settings['producer_meta'], $producer_id);
             update_post_meta($post_id, $settings['consumer_meta'], $consumer_id);
 
-            send_match_email($consumer_id, $producer_id);
+            send_match_email($producer_id, $consumer_id);
         }
     }
 }
