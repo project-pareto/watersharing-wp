@@ -402,6 +402,9 @@ table.watersharing-table, table.watertrading-table{
 
 	.dashboard-row-inner-dt{
 		padding: 0;
+		> div + div{
+			border-top: 1px solid var(--table-border-color, #D9D9D9);
+		}
 	}
 }
 
