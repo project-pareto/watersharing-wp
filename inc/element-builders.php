@@ -910,7 +910,7 @@ function buildRequestTable( $type = '' ) {
 			$end = get_post_meta( $post, 'end_date', true );
 			( $end ) ? $end = DateTime::createFromFormat('Y-m-d', $end)->format('m/d/Y') : "";
 			$range = "$start - $end";
-			$rate = ( get_post_meta( $post, 'rate_bpd', true ) ) ? get_post_meta( $post, 'rate_bpd', true ) : $rate = "";
+			$rate = ( get_post_meta( $post, 'rate_bpd', true ) ) ? get_post_meta( $post, 'rate_bpd', true ) : "";
 
 
 			// check for matches
@@ -939,7 +939,7 @@ function buildRequestTable( $type = '' ) {
 						$user_interaction = 'consumption_trade_approval';
 					}
 					$user_action = get_post_meta( $lookup, $user_interaction, true );
-					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
+
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
 
 					$total_value = get_post_meta( $lookup, 'total_value', true);
