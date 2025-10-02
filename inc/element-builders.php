@@ -1068,10 +1068,10 @@ function buildRequestTable( $type = '' ) {
 						$sanitized_phone = preg_replace('/[^0-9+]/', '', $raw_phone);
 						
 						// Build contact information with proper fallbacks
-						$contact_info = "<span>$name</span>";
+						$contact_info = "<span>$name</span> ";
 						
 						if (!empty($raw_phone)) {
-							$contact_info .= "<span><a href='tel:$sanitized_phone'>$raw_phone</a></span>";
+							$contact_info .= "<span><a href='tel:$sanitized_phone'>$raw_phone</a></span> ";
 						}
 						
 						if (!empty($email)) {
