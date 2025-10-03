@@ -46,10 +46,10 @@ function watertrading_settings_page() {
 // save the settings fields
 function save_watertrading_settings() {
     if (isset($_POST['wt_production_dashboard_page'])) {
-        update_option('wt_production_dashboard_page', $_POST['wt_production_dashboard_page']);
+        update_option('wt_production_dashboard_page', absint($_POST['wt_production_dashboard_page']) );
     }
     if (isset($_POST['wt_consumption_dashboard_page'])) {
-        update_option('wt_consumption_dashboard_page', $_POST['wt_consumption_dashboard_page']);
+        update_option('wt_consumption_dashboard_page', absint($_POST['wt_consumption_dashboard_page']) );
     }
 }
 add_action('admin_init', 'save_watertrading_settings');

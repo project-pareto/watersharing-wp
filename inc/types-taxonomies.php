@@ -269,15 +269,6 @@ function watersharing_requests_fields( $post ) {
 	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
 
-
-	$matchlookup = [];
-	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_shares', 'fields' => 'ids' ) );
-	if( $matches ) {
-		foreach( $matches as $match ) {
-			$matchlookup[$match] = get_the_title( $match );
-		}
-	}
-	buildMetaField( 'select', 'share_request', 'Match Lookup Record', get_post_meta( $post->ID, 'share_request', true ), $matchlookup );
 }
 
 // function to build out individual meta fields for the water trading request records
@@ -375,14 +366,6 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
 
-	$matchlookup = [];
-	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_trades', 'fields' => 'ids' ) );
-	if( $matches ) {
-		foreach( $matches as $match ) {
-			$matchlookup[$match] = get_the_title( $match );
-		}
-	}
-	buildMetaField( 'select', 'trade_request', 'Match Lookup Record', get_post_meta( $post->ID, 'trade_request', true ), $matchlookup );
 }
 
 // function to build out individual meta fields for the well pad records
@@ -419,10 +402,12 @@ function watersharing_match_fields( $post ) {
 	buildMetaField('select', 'consumption_request', 'Consumption Request Record', get_post_meta($post->ID, 'consumption_request', true), $consumerlookup);
 	buildMetaField('select', 'consumption_approval', 'Consumption Request Approval Status', get_post_meta($post->ID, 'consumption_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
-	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
 	buildMetaField('input', 'matched_rate', 'Matched Rate', get_post_meta($post->ID, 'matched_rate', true), 'text');
-	buildMetaField( 'input', 'disposal_avoided', 'Disposal Avoided', get_post_meta( $post->ID, 'disposal_avoided', true ), 'text' );
+	buildMetaField('input', 'total_volume', 'Total Volume', get_post_meta($post->ID, 'total_volume', true), 'text');
+
 	buildMetaField( 'select', 'match_status', 'Match Status', get_post_meta( $post->ID, 'match_status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'approved' => 'Approved', 'decline' => 'Decline' ) );
+
+	
 }
 
 // function to build out individual meta fields for trading match lookup records
@@ -450,9 +435,7 @@ function watertrading_match_fields( $post ) {
 	buildMetaField('select', 'consumption_trade', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade', true), $trade_consumerlookup);
 	buildMetaField('select', 'consumption_trade_approval', 'Consumption Trade Request Approval Status', get_post_meta($post->ID, 'consumption_trade_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
-	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
 	buildMetaField('input', 'matched_rate', 'Matched Rate', get_post_meta($post->ID, 'matched_rate', true), 'text');
-	buildMetaField( 'input', 'disposal_avoided', 'Disposal Avoided', get_post_meta( $post->ID, 'disposal_avoided', true ), 'text' );
 	buildMetaField('input', 'total_volume', 'Total Volume', get_post_meta($post->ID, 'total_volume', true), 'text');
 	buildMetaField('input', 'total_value', 'Total Value', get_post_meta($post->ID, 'total_value', true), 'text');
 	buildMetaField( 'select', 'match_status', 'Match Status', get_post_meta( $post->ID, 'match_status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'approved' => 'Approved', 'decline' => 'Decline' ) );
