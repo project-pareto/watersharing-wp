@@ -402,10 +402,12 @@ function watersharing_match_fields( $post ) {
 	buildMetaField('select', 'consumption_request', 'Consumption Request Record', get_post_meta($post->ID, 'consumption_request', true), $consumerlookup);
 	buildMetaField('select', 'consumption_approval', 'Consumption Request Approval Status', get_post_meta($post->ID, 'consumption_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
-	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
 	buildMetaField('input', 'matched_rate', 'Matched Rate', get_post_meta($post->ID, 'matched_rate', true), 'text');
-	buildMetaField( 'input', 'disposal_avoided', 'Disposal Avoided', get_post_meta( $post->ID, 'disposal_avoided', true ), 'text' );
+	buildMetaField('input', 'total_volume', 'Total Volume', get_post_meta($post->ID, 'total_volume', true), 'text');
+
 	buildMetaField( 'select', 'match_status', 'Match Status', get_post_meta( $post->ID, 'match_status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'approved' => 'Approved', 'decline' => 'Decline' ) );
+
+	
 }
 
 // function to build out individual meta fields for trading match lookup records
@@ -433,9 +435,7 @@ function watertrading_match_fields( $post ) {
 	buildMetaField('select', 'consumption_trade', 'Consumption Trade Request Record', get_post_meta($post->ID, 'consumption_trade', true), $trade_consumerlookup);
 	buildMetaField('select', 'consumption_trade_approval', 'Consumption Trade Request Approval Status', get_post_meta($post->ID, 'consumption_trade_approval', true), array('none' => 'None', 'approve' => 'Approved', 'decline' => 'Decline'));
 
-	buildMetaField('input', 'matched_distance', 'Matched Distance', get_post_meta($post->ID, 'matched_distance', true), 'text');
 	buildMetaField('input', 'matched_rate', 'Matched Rate', get_post_meta($post->ID, 'matched_rate', true), 'text');
-	buildMetaField( 'input', 'disposal_avoided', 'Disposal Avoided', get_post_meta( $post->ID, 'disposal_avoided', true ), 'text' );
 	buildMetaField('input', 'total_volume', 'Total Volume', get_post_meta($post->ID, 'total_volume', true), 'text');
 	buildMetaField('input', 'total_value', 'Total Value', get_post_meta($post->ID, 'total_value', true), 'text');
 	buildMetaField( 'select', 'match_status', 'Match Status', get_post_meta( $post->ID, 'match_status', true ), array( 'open' => 'Open', 'pending' => 'Pending', 'approved' => 'Approved', 'decline' => 'Decline' ) );
