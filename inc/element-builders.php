@@ -910,8 +910,8 @@ function buildRequestTable( $type = '' ) {
 			$end = get_post_meta( $post, 'end_date', true );
 			( $end ) ? $end = DateTime::createFromFormat('Y-m-d', $end)->format('m/d/Y') : "";
 			$range = "$start - $end";
+			$rate = ( get_post_meta( $post, 'rate_bpd', true ) ) ? get_post_meta( $post, 'rate_bpd', true ) : "";
 
-			( get_post_meta( $post, 'rate_bpd', true ) ) ? $rate = get_post_meta( $post, 'rate_bpd', true ) : $rate = "";
 
 			// check for matches
 			$match_rows = "";
@@ -939,9 +939,7 @@ function buildRequestTable( $type = '' ) {
 						$user_interaction = 'consumption_trade_approval';
 					}
 					$user_action = get_post_meta( $lookup, $user_interaction, true );
-					$avoided = get_post_meta( $lookup, 'disposal_avoided', true );
-					$fullfilled = get_post_meta( $lookup, 'matched_rate', true );
-					$lookup_distance = get_post_meta( $lookup, 'matched_distance', true );
+
 					$lookup_status = get_post_meta( $lookup, 'match_status', true );
 
 					$total_value = get_post_meta( $lookup, 'total_value', true);
@@ -1068,10 +1066,10 @@ function buildRequestTable( $type = '' ) {
 						$sanitized_phone = preg_replace('/[^0-9+]/', '', $raw_phone);
 						
 						// Build contact information with proper fallbacks
-						$contact_info = "<span>$name</span>";
+						$contact_info = "<span>$name</span> ";
 						
 						if (!empty($raw_phone)) {
-							$contact_info .= "<span><a href='tel:$sanitized_phone'>$raw_phone</a></span>";
+							$contact_info .= "<span><a href='tel:$sanitized_phone'>$raw_phone</a></span> ";
 						}
 						
 						if (!empty($email)) {
@@ -1094,14 +1092,12 @@ function buildRequestTable( $type = '' ) {
 					}
 
 					//Added logic for trading
-					$avoid_label = ( $type === 'share_demand' || $type === 'trade_demand') ? "Sourced Water Saved (bbl)" : "Disposal Avoided (bbl)";
 
 					if($total_value){$total_value = number_format($total_value);}
 					if($total_volume){$total_volume = number_format($total_volume);}
 
 					$field1 = (strpos($type,'share') !== false) ? '' : "<div class='match-cell match-field-1 watersharing-col-half'><strong>Total Value:</strong> $total_value USD</div>"; // Do not show dates in the details (its on the row headers)
-					$field2 = (strpos($type,'share') !== false) ? "<div class='match-cell match-field-2 match-rate match-fullfilled-rate watersharing-col-half'><strong>Rate (bpd):</strong> $fullfilled</div>" : "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
-					$field_share_distance = (strpos($type,'share') !== false) ? "<div class='match-cell match-lookup-distance watersharing-col-half'><strong>Distance (miles):</strong> $lookup_distance</div>" : "";
+					$field2 = (strpos($type,'share') !== false) ? "<div class='match-cell match-field-2 match-total-volume watersharing-col-half'><strong>Total Volume:</strong> $total_volume bbl</div>" : "<div class='match-cell match-field-2 match-total-volume watersharing-col'><strong>Total Volume:</strong> $total_volume bbl</div>";
 					
 					if($send_to_enabled){
 						$field_trade_buttons = (strpos($type,'trade') !== false) ? "<div class='match-cell match-buttons'><button class='watersharing-submit-button download-summary-btn' data-trade-csv='" . esc_attr($trade_csv) . "'>Download Detailed Summary <i class='fa-solid fa-download'></i></button> <button type='button' class='watersharing-submit-button send-to-btn' data-pid='$post' data-table-type='$type'>Send to Sharing Portal <i class='fa-solid fa-circle-arrow-right'></i></button></div>" : "";
@@ -1111,7 +1107,6 @@ function buildRequestTable( $type = '' ) {
 						$field_share_buttons_matched =  '';
 					}
 
-					$avoid_field = (strpos($type,'share') !== false) ? "<div class='match-cell match-avoid-field watersharing-col-half'><strong>$avoid_label:</strong> $avoided</div>" : '';
 					$match_rows .= "
 							<div>
 								<div class='watersharing-match-block'>
@@ -1122,8 +1117,6 @@ function buildRequestTable( $type = '' ) {
 											</div>
 											$field1
 											$field2
-											$field_share_distance
-											$avoid_field
 											$contact
 											$field_trade_buttons
 											$field_share_buttons_matched
@@ -1146,8 +1139,6 @@ function buildRequestTable( $type = '' ) {
 				$match_rows = $send_to_enabled ? "<div class='watersharing-match-block unmatched'><div class='match-detail'><div class='match-cell match-send-to unmatched-send-to watersharing-col-half'>$unmatched_send_to</div></div><div class='match-summation'><span class='status-message-not-matched'>Not Matched</span></div></div>" : '';
 			}
 			
-			$rate = number_format($rate);
-
 			( isset( get_post_meta( $post, 'status', true )['value'] ) && get_post_meta( $post, 'status', true ) === 'closed' ) ? $row_class = "closed" : $row_class = "";
 			$rows .= "
 					<tr class='watersharing-request-row $row_class $transaction_status_class' data-row-number='row-$number'>

@@ -269,15 +269,6 @@ function watersharing_requests_fields( $post ) {
 	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
 
-
-	$matchlookup = [];
-	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_shares', 'fields' => 'ids' ) );
-	if( $matches ) {
-		foreach( $matches as $match ) {
-			$matchlookup[$match] = get_the_title( $match );
-		}
-	}
-	buildMetaField( 'select', 'share_request', 'Match Lookup Record', get_post_meta( $post->ID, 'share_request', true ), $matchlookup );
 }
 
 // function to build out individual meta fields for the water trading request records
@@ -375,14 +366,6 @@ function watertrading_requests_fields( $post ) {
 	buildMetaField( 'input', 'norm_measure_value', 'Value (ppm)', get_post_meta( $post->ID, 'norm_measure_value', true), 'text');
 	echo "</div>";
 
-	$matchlookup = [];
-	$matches = get_posts(array( 'numberposts' => -1,  'post_type' => 'matched_trades', 'fields' => 'ids' ) );
-	if( $matches ) {
-		foreach( $matches as $match ) {
-			$matchlookup[$match] = get_the_title( $match );
-		}
-	}
-	buildMetaField( 'select', 'trade_request', 'Match Lookup Record', get_post_meta( $post->ID, 'trade_request', true ), $matchlookup );
 }
 
 // function to build out individual meta fields for the well pad records
