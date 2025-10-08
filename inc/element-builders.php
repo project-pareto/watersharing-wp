@@ -905,11 +905,9 @@ function buildRequestTable( $type = '' ) {
 
 			$transaction_status_class = ( get_post_meta( $post, 'status', true ) ) ? 'status-'. get_post_meta( $post, 'status', true ) : 'status-none';
 
-			$start = get_post_meta( $post, 'start_date', true );
-			( $start ) ? $start = DateTime::createFromFormat('Y-m-d', $start)->format('m/d/Y') : "";
-			$end = get_post_meta( $post, 'end_date', true );
-			( $end ) ? $end = DateTime::createFromFormat('Y-m-d', $end)->format('m/d/Y') : "";
-			$range = "$start - $end";
+			$start = waterportal_format_date_meta( get_post_meta( $post, 'start_date', true ) );
+			$end = waterportal_format_date_meta( get_post_meta( $post, 'end_date', true ) );
+			$range = trim( "$start - $end", ' -' );
 			$rate = ( get_post_meta( $post, 'rate_bpd', true ) ) ? get_post_meta( $post, 'rate_bpd', true ) : "";
 
 
@@ -1238,6 +1236,27 @@ function buildRequestTable( $type = '' ) {
 	}
 
 	return $table;
+}
+
+function waterportal_format_date_meta( $raw_date ) {
+	if ( empty( $raw_date ) ) {
+		return '';
+	}
+
+	$formats = [
+		'Y-m-d',
+		'Y-m-d H:i:s',
+		'Y-m-d\TH:i:sP',
+	];
+
+	foreach ( $formats as $format ) {
+		$dt = DateTime::createFromFormat( $format, $raw_date );
+		if ( $dt instanceof DateTime ) {
+			return $dt->format( 'm/d/Y' );
+		}
+	}
+
+	return '';
 }
 
 function getWaterRequestData($pid){
